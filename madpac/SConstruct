@@ -42,6 +42,8 @@ def printTargets():
    print "         jacobi                  : Jacobi Poisson Solver"
    print "         puregrid                : Application Using the Regular Grid"
    print "         tarch                   : Technical Architecture"
+   print "         mardyn                  : MarDyn MD Simulation"
+   print "         madpac                  : MADPAC MarDyn Peano Coupling"
    
    
    

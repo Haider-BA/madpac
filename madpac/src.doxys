@@ -1,0 +1,206 @@
+/**
+  \mainpage "Peano - Source Directory and Architecture"
+  
+  
+  <h1>Peano's Source Code Documentation</h1>
+
+  @include ../title-page-header.doxys
+
+  <table border="0" width="100%">
+  
+  
+  <tr><td align="left">
+  <table border="0">
+
+  <tr><td align="center">
+  <table border="0">
+    <tr><td bgcolor="#CC6600">
+      Das &Uuml;berverallgemeineren einer Schnittstelle ist deshalb so kritisch, weil <br />
+      es ihre strukturiende Wirkung zunichte macht. Wenn eine Schnittstelle einer Komponente <br />
+      alles zul&auml;sst, muss jeder, der sie verwendet, auf alles gefasst sein. <br />
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      Daniel M&ouml;lle [3]
+    </td></tr>
+  </table>  
+  </td></tr>  
+
+    <tr><td bgcolor="#FFCC66">
+      Systems are filled with so much goop - in order to build an ASP.NET <br />
+      web service-y thing you need to know about this API and this tool and <br />
+      you need to write in three different languages [...]. And each of <br />
+      them has a fat book that describes it. [...] It's like learning a <br />
+      language - a human language - there's a large vocabulary. For me, that's <br />
+      no fun. I never learned my multiplication tables. 
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Simon_Peyton_Jones">Simon Peyton Jones</a> [1]
+    </td></tr>
+  </table>
+  </td></tr>  
+
+  <tr><td align="left">
+  <table border="0">
+    <tr><td bgcolor="#FFCC66">
+      Concurrency, and parallel programming generally, is a many-faceted <br />
+      beast and I don't think it will be slain by a single bullet. 
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Simon_Peyton_Jones">Peyton Jones</a> [1]
+    </td></tr>
+  </table>
+  </td></tr>  
+
+    
+  <tr><td align="center">
+  <table border="0">
+    <tr><td bgcolor="#CC6600">
+      I like documentation. [...] I think it's unprofessional these <br />
+      people who say, "What does is do? Read the code." The code <br />
+      shows me what it does. It doesn't show me what it's supposed <br />
+      to do. 
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Joe_Armstrong_%28programming%29">Joe Armstrong</a> [1]
+    </td></tr>
+  </table>  
+  </td></tr>  
+  
+  
+  
+  <tr><td align="right">
+  <table border="0">
+    <tr><td bgcolor="#CCCC99">
+     The cleaner and nicer the program, the faster it's going to run. <br />
+     And if it doesn't, it'll be easy to make it fast. As they say, it's <br />
+     easier to optimize correct code than to correct optimized code.
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://de.wikipedia.org/wiki/Joshua_Bloch">Joshua Bloch</a> [1]
+    </td></tr>
+  </table>  
+  </td></tr> 
+  
+  
+  <tr><td align="left">
+  <table border="0">
+    <tr><td bgcolor="#FFCC66">
+      It will be standardized and deployed before we know <br /> 
+      that it works
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Douglas_Crockford">Douglas Crockford</a> [1]
+    </td></tr>
+  </table>
+  </td></tr>  
+
+
+  <tr><td align="right">
+  <table border="0">
+    <tr><td bgcolor="#CCCC99">
+     Mit wachsendem Projektumfang [...] litten die (Grafiker und Level <br />
+     Designer) zunehmend von der unmittelbaren Abh&auml;ngigkeit von den <br />
+     Programmierern und wurden so in ihrer Produktivit&auml;t und <br />
+     Kreativit&auml;t eingeschr&auml;nkt. Die Programmierer haben auf diesen <br />
+     Anforderungsdruck mit einem neuen Fokus geantwortet: Tools!
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      Folker Schamel [2]
+    </td></tr>
+  </table>  
+  </td></tr> 
+  
+  
+  <tr><td align="center">
+  <table border="0">
+    <tr><td bgcolor="#CC6600">
+      Well, people have lots of other funny ideas. People have <br />
+      this strange idea that we want to write our programs as <br />
+      worlds themselves so that everybody else can just set up a <br />
+      few parameters and our program will do it for them.
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Donald_Knuth">Donald Knuth</a> [1]
+    </td></tr>
+  </table>  
+  </td></tr>  
+
+  
+  <tr><td align="right">
+  <table border="0">
+    <tr><td bgcolor="#CCCC99">
+      If you spend the time to build the perfect framework that's <br />
+      going to do what you want and that's going to carry you from <br />
+      release 1.0 through release 5.0 [...] you never shipped your <br />
+      1.0 because someone else ate your lunch.
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Jamie_Zawinski">Jamie Zawinski</a> [1]
+    </td></tr>
+  </table>  
+  </td></tr>  
+  
+  
+  <tr><td align="left">
+  <table border="0">
+    <tr><td bgcolor="#FFCC66">
+      I think the best way to make (JavaScript) better would be to <br />
+      make it smaller. If we cuold just get it down to what it does <br />
+      really well and remove the features that add little or no value, <br />
+      it's actually a better [...] language.
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Douglas_Crockford">Douglas Crockford</a> [1]
+    </td></tr>
+  </table>  
+  </td></tr>  
+  
+  
+  <tr><td align="right">
+  <table border="0">
+    <tr><td bgcolor="CC6600">
+      Who were the big Fortran users? They're big scientific computation <br />
+      users. [...] Do they care how efficient their program is? Not <br />
+      really. What they really want to do is to show [...] that they <br />
+      need a new cmoputer and more money.
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Dan_Ingalls">Dan Ingalls</a> [1]
+    </td></tr>
+  </table>  
+  </td></tr>  
+  
+  
+  <tr><td align="center">
+  <table border="0">
+    <tr><td bgcolor="#CCCC99">
+      I think one of the most important things [...] is, as quickly <br />
+      as posssible, getting the program to a state that you [...] can <br />
+      use it. Even a little bit. Because that tells you where to go <br />
+      next in a very visceral way.
+    </td></tr>
+    <tr><td align="right" bgcolor="#efefef">
+      <a href="http://en.wikipedia.org/wiki/Jamie_Zawinski">Jamie Zawinski</a> [1]
+    </td></tr>
+  </table>  
+  </td></tr>    
+  </table>  
+  
+  <ol>
+    <li> 
+      citations stem from Peter Seibel's book 
+      <a href="http://www.amazon.de/Coders-at-Work-Peter-Seibel/dp/1430219483/ref=sr_1_1?ie=UTF8&s=books-intl-de&qid=1283239129&sr=8-1">Coders at Work</a>.
+    </li>
+    <li> 
+      Von der Programmierung zum Authoring. making games 05/2010
+    </li>
+    <li> 
+      Lippenbekenntnis - Von Plattformen und Plattit&uuml;den. iX 06/2011
+    </li>
+  </il>
+   
+   
+
+  @include ../title-page-trailer.doxys
+    
+ */
