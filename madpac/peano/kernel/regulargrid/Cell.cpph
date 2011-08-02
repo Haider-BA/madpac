@@ -1,0 +1,116 @@
+template <class CellData>
+peano::kernel::regulargrid::Cell<CellData>::Cell():
+  _cellData() {
+  _cellData.setIsInside(false);
+}
+
+
+template <class CellData>
+peano::kernel::regulargrid::Cell<CellData>::Cell(const PersistentCell& argument):
+  _cellData( (typename CellData::Packed(argument)).convert() ) {
+}
+
+
+template <class CellData>
+peano::kernel::regulargrid::Cell<CellData>::~Cell() {
+}
+
+
+template <class CellData>
+bool peano::kernel::regulargrid::Cell<CellData>::isOutside() const {
+  return !_cellData.getIsInside();
+}
+
+
+template <class CellData>
+bool peano::kernel::regulargrid::Cell<CellData>::isInside() const {
+  return _cellData.getIsInside();
+}
+
+
+template <class CellData>
+void peano::kernel::regulargrid::Cell<CellData>::switchToInside() {
+  assertion1( isOutside(), *this );
+  _cellData.setIsInside(true);
+}
+
+
+template <class CellData>
+void peano::kernel::regulargrid::Cell<CellData>::switchToOutside() {
+  assertion1( !isOutside(), *this );
+  _cellData.setIsInside(false);
+}
+
+
+template <class CellData>
+typename peano::kernel::regulargrid::Cell<CellData>::PersistentCell peano::kernel::regulargrid::Cell<CellData>::getRecords() const {
+  #if defined(StoreOnlyPersistentAttributes) && defined(PackedRecords)
+  return _cellData.convert().getPersistentRecords();
+  #endif
+  #if !defined(StoreOnlyPersistentAttributes) && defined(PackedRecords)
+  return _cellData.convert();
+  #endif
+  #if defined(StoreOnlyPersistentAttributes) && !defined(PackedRecords)
+  return _cellData.getPersistentRecords();
+  #endif
+  #if !defined(StoreOnlyPersistentAttributes) && !defined(PackedRecords)
+  return _cellData;
+  #endif
+}
+
+
+template <class CellData>
+std::string peano::kernel::regulargrid::Cell<CellData>::toString() const {
+  return _cellData.toString();
+}
+
+
+template <class CellData>
+void peano::kernel::regulargrid::Cell<CellData>::toString(std::ostream& out) const {
+  _cellData.toString(out);
+}
+
+
+template <class CellData>
+std::ostream& operator<<(std::ostream& out, const peano::kernel::regulargrid::Cell<CellData>& arg) {
+  arg.toString(out);
+  return out;
+}
+
+
+#ifdef Parallel
+template <class CellData>
+void peano::kernel::regulargrid::Cell<CellData>::initDatatype() {
+  if (MPIDatatypeContainer::Datatype==0) {
+    MPIDatatypeContainer::initDatatype();
+  }
+
+  assertion(MPIDatatypeContainer::Datatype!=0);
+}
+
+
+template <class CellData>
+void peano::kernel::regulargrid::Cell<CellData>::send(int destination, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  _cellData.convert().send(destination,tag);
+  #else
+  _cellData.send(destination,tag);
+  #endif
+}
+
+
+template <class CellData>
+void peano::kernel::regulargrid::Cell<CellData>::receive(int source, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  MPIDatatypeContainer receivedMessage;
+  receivedMessage.receive(source,tag);
+  _cellData = receivedMessage.convert();
+  #else
+  _cellData.receive(source,tag);
+  #endif
+}
+#endif

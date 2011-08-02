@@ -1,0 +1,18 @@
+#include "peano/utils/Globals.h"
+
+
+/**
+ * The packed type should be defined by the application's dof. I recommend short
+ * int, i.e. using the following statement:
+ *
+ * Packed-Type: short int;
+ */
+
+class peano::kernel::grid::dastgen::RegularCell {
+  /**
+   * A cell is inside if it is completely inside the (compact/closed) 
+   * computational domain. If the computational domain boundary cuts the cell, 
+   * it is outside. 
+   */
+  persistent packed bool  isInside;
+};

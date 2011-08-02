@@ -1,0 +1,104 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /jacobitutorial.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/poisson/jacobitutorial/dastgen/JacobiBatchJobRepositoryState.def
+ - /peano/applications/poisson/jacobitutorial/dastgen/RegularGridVertex.def
+ - /peano/applications/poisson/jacobitutorial/dastgen/SpacetreeGridVertex.def
+ - /peano/applications/poisson/jacobitutorial/dastgen/RegularGridCell.def
+ - /peano/applications/poisson/jacobitutorial/dastgen/SpacetreeGridCell.def
+ - /peano/applications/poisson/jacobitutorial/dastgen/RegularGridState.def
+ - /peano/applications/poisson/jacobitutorial/dastgen/SpacetreeGridState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /RegularGridVertex.h
+ - /RegularGridVertex.cpp
+ - /RegularGridCell.h
+ - /RegularGridCell.cpp
+ - /State.h
+ - /RegularGridState.h
+ - /RegularGridState.cpp
+ - /mappings/RegularGrid2SetupExperiment.h
+ - /mappings/RegularGrid2SetupExperiment.cpp
+ - /mappings/RegularGrid2JacobiStep.h
+ - /mappings/RegularGrid2JacobiStep.cpp
+ - /mappings/RegularGrid2PlotSolution.h
+ - /mappings/RegularGrid2PlotSolution.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/JacobiBatchJobRepository.h
+ - /repositories/JacobiBatchJobRepositoryForRegularGrid.h
+ - /repositories/JacobiBatchJobRepositoryForRegularGridStandardImplementation.h
+ - /repositories/JacobiBatchJobRepositoryForRegularGridStandardImplementation.cpp
+ - /repositories/JacobiBatchJobRepositoryFactory.h
+ - /repositories/JacobiBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-JacobiBatchJob-on-regular-grid.xml
+ - /configurations/JacobiBatchJobConfigurationForRegularGrid.h
+ - /configurations/JacobiBatchJobConfigurationForRegularGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/JacobiBatchJobRunnerForRegularGrid.h
+ - /runners/JacobiBatchJobRunnerForRegularGrid.cpp
+ - /runners/JacobiBatchJobRunnerForRegularGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/RegularGrid2SetupExperiment.h
+ - /adapters/RegularGrid2SetupExperiment.cpp
+ - /adapters/RegularGrid2SetupExperimentAndPlotGrid.h
+ - /adapters/RegularGrid2SetupExperimentAndPlotGrid.cpp
+ - /adapters/RegularGrid2SetupExperimentAndPlotStartSolution.h
+ - /adapters/RegularGrid2SetupExperimentAndPlotStartSolution.cpp
+ - /adapters/RegularGrid2JacobiStep.h
+ - /adapters/RegularGrid2JacobiStep.cpp
+ - /adapters/RegularGrid2JacobiStepAndPlotSolution.h
+ - /adapters/RegularGrid2JacobiStepAndPlotSolution.cpp
+ - /adapters/RegularGrid2PlotSolution.h
+ - /adapters/RegularGrid2PlotSolution.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/JacobiBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/JacobiBatchJobForRegularGridImplementation.h
+ - /cca/JacobiBatchJobForRegularGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/JacobiBatchJobTest.h
+ - /tests/JacobiBatchJobTest.cpp
+*/

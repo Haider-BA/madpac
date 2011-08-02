@@ -1,0 +1,18 @@
+  peano::toolbox::stencil::Stencil stencil;
+  #if defined(Dim2)
+    assignList(stencil) = 
+    -1.0/3.0, -1.0/3.0, -1.0/3.0,
+    -1.0/3.0,  8.0/3.0, -1.0/3.0,
+    -1.0/3.0, -1.0/3.0, -1.0/3.0;
+  #elif defined(Dim3)
+    assignList(stencil) = 
+    -1.0/12.0, -2.0/12.0, -1.0/12.0, -2.0/12.0,  0.0/12.0, -2.0/12.0, -1.0/12.0, -2.0/12.0, -1.0/12.0,
+    -2.0/12.0,  0.0/12.0, -2.0/12.0,  0.0/12.0, 32.0/12.0,  0.0/12.0, -2.0/12.0,  0.0/12.0, -2.0/12.0,
+    -1.0/12.0, -2.0/12.0, -1.0/12.0, -2.0/12.0,  0.0/12.0, -2.0/12.0, -1.0/12.0, -2.0/12.0, -1.0/12.0;
+  #else
+    assertionMsg( false, "Jacobi for d>3 is not implemented!" );
+  #endif
+  
+  peano::toolbox::stencil::ElementMatrix elementMatrix;
+  
+  _elementWiseAssemblyMatrix = elementMatrix.getElementWiseAssemblyMatrix(stencil);

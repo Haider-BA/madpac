@@ -1,0 +1,44 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+/**
+ * This file describes some interfaces which are used by all Peano components 
+ * due to the common technical architecture.
+ */
+package peano {
+  package integration {
+    package cca {
+      package ports {
+        interface Log {
+          debug  (in int indentLevel, in int timeStamp, in string timeStampHumanReadable, in string machine, in string trace, in string message);
+          info   (in int indentLevel, in int timeStamp, in string timeStampHumanReadable, in string machine, in string trace, in string message);
+          warning(in int indentLevel, in int timeStamp, in string timeStampHumanReadable, in string machine, in string trace, in string message);
+          error  (in int indentLevel, in int timeStamp, in string timeStampHumanReadable, in string machine, in string trace, in string message);
+        }
+
+        package grid {
+          interface Grid {
+            getNumberOfInnerVertices(out double vertices);
+            getNumberOfBoundaryVertices(out double vertices);
+            getNumberOfOuterVertices(out double vertices);
+            getNumberOfInnerCells(out double cells);
+            getNumberOfOuterCells(out double cells);
+            getMaximumMeshWidth(in int dimension, out double h);
+            getMinimumMeshWidth(in int dimension, out double h);
+          }
+
+          interface Statistics {
+            addAdapterRuntime(in string adapterName, in int numberOfAdapterRuns, in double CPUTime, in double calendarTime );
+            setMemoryFootprint(in int bytesPerCell, in int bytesPerVertex, in int bytesPerPersistentCell, in int bytesPerPersistentVertex, in int bytesPerState );
+          }
+          
+          interface Visualisation {
+            addGridCell( in int dimension, in double[] x, in double[] h, in int level );
+            addGridVertex( in int dimension, in double[] x, in int level );
+          }
+        }
+      }
+    }
+  }
+}

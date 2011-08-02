@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-puregrid-on-spacetree-grid>
+    <log-filter target="debug" switch="off" component="tarch" />
+    <log-filter target="debug" switch="off" component="peano::kernel" />
+    <log-filter target="debug" switch="off" component="peano::geometry" />
+    <log-filter target="debug" switch="off" component="peano::applications::puregrid::adapters" />
+
+    <log-filter target="debug" switch="on" component="peano::applications::puregrid::mappings" />
+
+    <log-output column-separator=" " log-time-stamp="no" log-time-stamp-human-readable="yes" log-machine-name="no" log-message-type="yes" log-trace="yes" />
+  </run-puregrid-on-spacetree-grid>
+</peano-configuration>

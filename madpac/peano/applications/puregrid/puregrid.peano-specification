@@ -1,0 +1,29 @@
+component: puregrid
+
+configuration-tag: puregrid
+repository: PuregridBatchJob
+namespace: peano::applications::puregrid
+
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  
+  
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+  
+state:
+  name: State
+  dastgen-file: State.def
+
+
+event-mapping:
+  name: SetupGrid
+ 
+
+adapter:
+  name: SetupGrid
+  merge-with-user-defined-mapping: SetupGrid
+  merge-with-predefined-mapping: VTKGridVisualiser

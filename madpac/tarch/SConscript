@@ -1,0 +1,48 @@
+
+sourcesLA = [
+   Glob('la/*.cpp'),
+   Glob('la/traits/*.cpp'),
+   Glob('la/tests/*.cpp')
+   ]
+   
+sourcesMulticore = [
+   Glob('multicore/*.cpp')
+   ]
+   
+sourcesLogging = [
+   Glob('logging/*.cpp'),
+   Glob('logging/configurations/*.cpp')
+   ]
+   
+#sourcesPlotter = [
+#   Glob('plotter/*.cpp'),
+#   Glob('plotter/globaldata/*.cpp'),
+#   Glob('plotter/globaldata/tests/*.cpp'),
+#   Glob('plotter/griddata/*.cpp'),
+#   Glob('plotter/griddata/regular/*.cpp'),
+#   Glob('plotter/griddata/regular/vtk/*.cpp'),
+#   Glob('plotter/griddata/unstructured/*.cpp'),
+#   Glob('plotter/griddata/unstructured/vtk/*.cpp'),
+#   Glob('plotter/griddata/unstructured/vtk/tests/*.cpp')
+#   ]
+   
+sourcesTests = [
+   Glob('tests/*.cpp'),
+   Glob('tests/configurations/*.cpp')
+   ]
+
+sources = [
+   Glob('*.cpp'), 
+   Glob('compiler/*.cpp'),
+   Glob('configuration/*.cpp'),
+   Glob('irr/*.cpp'),
+   sourcesLA,
+   sourcesMulticore,
+   sourcesLogging,
+   #sourcesPlotter,
+   Glob('services/*.cpp'),
+   sourcesTests,
+   Glob('utils/*.cpp')
+   ]
+   
+Return ('sources')

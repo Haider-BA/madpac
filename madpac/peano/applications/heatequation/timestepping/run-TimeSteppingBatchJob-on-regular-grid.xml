@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+
+<!--
+    <fadingSinus />
+-->
+
+<!--
+    <rotatingHeatSource kappa="1.0" stimulus-radius="0.10" />
+    -->
+
+<peano-configuration>
+  <run-heatEquationTimeStepping-on-regular-grid  
+    initial-time-step-size="1.0/100" 
+    solver="implicit-Euler-with-Jacobi"
+    solver-accuracy="1e-10"
+    number-of-snapshots-per-sequence="1" number-of-sequences="0" relaxation-factor="1.0" >
+  
+    <log-filter target="debug" switch="off" component="tarch" />
+    <log-filter target="debug" switch="off" component="peano::kernel" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping::adapters" />
+    <log-filter target="debug" switch="off" component="peano::geometry" />
+    <log-filter target="debug" switch="off" component="peano::kernel::regulargrid::loops" />
+    <log-filter target="debug" switch="off" component="peano::kernel::regulargrid::GridContainer" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping::mappings" />
+
+    <fadingSinus />
+
+    <regular-grid number-of-vertices="82;82;82" />
+  </run-heatEquationTimeStepping-on-regular-grid>
+
+</peano-configuration>
+
+

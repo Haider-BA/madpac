@@ -1,0 +1,62 @@
+component: multigrid
+
+configuration-tag: poissonmultigrid
+repository: MultigridBatchJob
+namespace: peano::applications::poisson::multigrid
+
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  read scalar: Residual
+  read scalar: U
+  read stencil: Stencil
+  read vector2PowD: TempP
+  read vector2PowD: TempAP
+  write scalar: Residual
+  write stencil: Stencil
+  write vector2PowD: TempP
+  write vector2PowD: TempAP
+  
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+state:
+  name: State
+  dastgen-file: State.def
+
+event-mapping:
+  name: SetupExperiment
+ 
+event-mapping:
+  name: Smooth
+ 
+event-mapping:
+  name: PlotSolution
+  
+event-mapping:
+  name: ComputeGalerkinCoarseGridOperator  
+ 
+adapter:
+  name: SetupExperiment
+  merge-with-user-defined-mapping: SetupExperiment
+
+adapter:
+  name: SetupExperimentAndPlotGrid
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-predefined-mapping: VTKGridVisualiser
+
+adapter:
+  name: SetupExperimentAndPlotStartSolution
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: SmoothAndComputeGalerkinCoarseGridOperator
+  merge-with-user-defined-mapping: Smooth
+  merge-with-user-defined-mapping: ComputeGalerkinCoarseGridOperator  
+
+adapter:
+  name: PlotSolution
+  merge-with-user-defined-mapping: PlotSolution
+  

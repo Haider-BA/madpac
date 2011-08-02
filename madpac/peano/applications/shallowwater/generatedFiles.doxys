@@ -1,0 +1,98 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /shallowwater.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/shallowwater/dastgen/ShallowWaterBatchJobRepositoryState.def
+ - /peano/applications/shallowwater/dastgen/RegularGridVertex.def
+ - /peano/applications/shallowwater/dastgen/SpacetreeGridVertex.def
+ - /peano/applications/shallowwater/dastgen/RegularGridCell.def
+ - /peano/applications/shallowwater/dastgen/SpacetreeGridCell.def
+ - /peano/applications/shallowwater/dastgen/RegularGridState.def
+ - /peano/applications/shallowwater/dastgen/SpacetreeGridState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /RegularGridVertex.h
+ - /RegularGridVertex.cpp
+ - /RegularGridCell.h
+ - /RegularGridCell.cpp
+ - /State.h
+ - /RegularGridState.h
+ - /RegularGridState.cpp
+ - /mappings/RegularGrid2SetupExperiment.h
+ - /mappings/RegularGrid2SetupExperiment.cpp
+ - /mappings/RegularGrid2GodunovMethod.h
+ - /mappings/RegularGrid2GodunovMethod.cpp
+ - /mappings/RegularGrid2PlotSolution.h
+ - /mappings/RegularGrid2PlotSolution.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/ShallowWaterBatchJobRepository.h
+ - /repositories/ShallowWaterBatchJobRepositoryForRegularGrid.h
+ - /repositories/ShallowWaterBatchJobRepositoryForRegularGridStandardImplementation.h
+ - /repositories/ShallowWaterBatchJobRepositoryForRegularGridStandardImplementation.cpp
+ - /repositories/ShallowWaterBatchJobRepositoryFactory.h
+ - /repositories/ShallowWaterBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-ShallowWaterBatchJob-on-regular-grid.xml
+ - /configurations/ShallowWaterBatchJobConfigurationForRegularGrid.h
+ - /configurations/ShallowWaterBatchJobConfigurationForRegularGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/ShallowWaterBatchJobRunnerForRegularGrid.h
+ - /runners/ShallowWaterBatchJobRunnerForRegularGrid.cpp
+ - /runners/ShallowWaterBatchJobRunnerForRegularGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/RegularGrid2SetupExperiment.h
+ - /adapters/RegularGrid2SetupExperiment.cpp
+ - /adapters/RegularGrid2SetupExperimentAndPlotGrid.h
+ - /adapters/RegularGrid2SetupExperimentAndPlotGrid.cpp
+ - /adapters/RegularGrid2SetupExperimentAndPlotStartSolution.h
+ - /adapters/RegularGrid2SetupExperimentAndPlotStartSolution.cpp
+ - /adapters/RegularGrid2GodunovMethod.h
+ - /adapters/RegularGrid2GodunovMethod.cpp
+ - /adapters/RegularGrid2GodunovMethodAndPlotSolution.h
+ - /adapters/RegularGrid2GodunovMethodAndPlotSolution.cpp
+ - /adapters/RegularGrid2PlotSolution.h
+ - /adapters/RegularGrid2PlotSolution.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/ShallowWaterBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/ShallowWaterBatchJobForRegularGridImplementation.h
+ - /cca/ShallowWaterBatchJobForRegularGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+*/

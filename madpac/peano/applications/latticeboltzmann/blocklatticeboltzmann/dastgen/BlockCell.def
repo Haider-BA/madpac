@@ -1,0 +1,5 @@
+
+Packed-Type: short int;
+
+class peano::applications::latticeboltzmann::blocklatticeboltzmann::dastgen::BlockCellRecord {
+};

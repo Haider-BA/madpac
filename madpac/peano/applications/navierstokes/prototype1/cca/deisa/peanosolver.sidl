@@ -1,0 +1,27 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+/**
+ * This file describes some interfaces which are used by all Peano components 
+ * due to the common technical architecture.
+ */
+package peano {
+  package applications {
+  	package navierstokes {
+  	  package prototype1{
+      package cca {
+      	package deisa {
+          /**
+  	       * Extremely simple example where the solver only creates a 100^d grid 
+  	       * for a sphere and visualises this grid afterwards.
+  	       */
+          class PeanoSolver 
+            implements-all de.tum.queries.QueryServer uses peano.integration.cca.ports.Log as logger{
+          }
+      	}
+      }
+  	  }
+    }
+  }
+}

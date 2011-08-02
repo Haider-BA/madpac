@@ -1,0 +1,52 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package applications { 
+    package diffusionequation { 
+      package explicittimestepping {
+      package cca {
+        package ports {
+          interface ForwardBatchJob {
+            switchToSetupExperiment();
+            switchToSetupExperimentAndPlot();
+            switchToPerformExplitEulerTimeStep();
+            switchToPerformExplitEulerTimeStepAndPlot();
+            switchToPlotSolution();
+            switchToApplyRefineDeleteCriterion();
+
+            iterate();    
+
+            /**
+             * @todo Add your own operations here
+             */
+          }
+        }
+        
+          
+        class ForwardBatchJobForRegularGrid
+          implements-all 
+            peano.applications.diffusionequation.explicittimestepping.cca.ports.ForwardBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+        
+          
+        class ForwardBatchJobForSpacetreeGrid
+          implements-all 
+            peano.applications.diffusionequation.explicittimestepping.cca.ports.ForwardBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+      }
+}
+}
+}
+}

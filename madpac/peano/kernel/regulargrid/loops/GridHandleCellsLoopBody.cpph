@@ -1,0 +1,101 @@
+template <class Vertex, class Cell, class State, class EventHandle>
+tarch::logging::Log peano::kernel::regulargrid::loops::GridHandleCellsLoopBody<Vertex,Cell,State,EventHandle>::_log( "peano::kernel::regulargrid::loops::GridHandleCellsLoopBody" );
+
+#ifdef CCA
+template <class Vertex, class Cell, class State, class EventHandle>
+int peano::kernel::regulargrid::loops::GridHandleCellsLoopBody<Vertex,Cell,State,EventHandle>::_iterationCounter = 0;
+#endif
+
+template <class Vertex, class Cell, class State, class EventHandle>
+peano::kernel::regulargrid::loops::GridHandleCellsLoopBody<Vertex,Cell,State,EventHandle>::GridHandleCellsLoopBody(
+  peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>& grid,
+  Vertex * const vertices
+):
+  _grid(grid),
+  _vertices(vertices),
+  _enumerator(
+    _grid._dataContainer.getNumberOfGridVertices(),
+    tarch::la::Vector<DIMENSIONS,int>(0),
+    _grid.getH(),
+    _grid._domainOffset
+  ),
+  _numberOfInnerCells(0.0),
+  _numberOfOuterCells(0.0),
+  _changedCellState(false) {
+
+
+  //Dirty (!) workaround for performance problems in DiParTS
+  #ifdef CCA
+  if(_iterationCounter < 2){
+    _iterationCounter++;
+  }
+#endif
+
+}
+
+
+template <class Vertex, class Cell, class State, class EventHandle>
+void peano::kernel::regulargrid::loops::GridHandleCellsLoopBody<Vertex,Cell,State,EventHandle>::updateGlobalValues() {
+  _grid._state.incNumberOfInnerCells( _numberOfInnerCells );
+  _grid._state.incNumberOfOuterCells( _numberOfOuterCells );
+  _grid._state.notifyAboutGridChange( _changedCellState );
+}
+
+
+template <class Vertex, class Cell, class State, class EventHandle>
+void peano::kernel::regulargrid::loops::GridHandleCellsLoopBody<Vertex,Cell,State,EventHandle>::operator() (const peano::kernel::datatraversal::Action& action) {
+  logTraceInWith1Argument( "operator()", action._cartesianPosition );
+  assertion( action._id==0 );
+
+  Cell   cell(_grid._dataContainer.getCell( action._cartesianPosition ));
+  logDebug( "operator()", "enter cell " << cell.toString() );
+
+  _enumerator.setOffset( action._cartesianPosition );
+
+  //Dirty (!) workaround for performance problems in DiParTS
+  #ifdef CCA
+  if(_iterationCounter < 2) {
+  #endif
+    switch (
+      peano::geometry::GeometryHelper::getCellCommand(
+        _grid._geometry.isCompletelyInside( peano::geometry::GeometryHelper::getCellCenter(_enumerator.getVertexPosition(),_enumerator.getCellSize()),_enumerator.getCellSize()/2.0),
+        _grid._geometry.isCompletelyOutside( peano::geometry::GeometryHelper::getCellCenter(_enumerator.getVertexPosition(),_enumerator.getCellSize()),_enumerator.getCellSize()/2.0),
+        cell.isInside()
+      )
+    ) {
+      case peano::geometry::GeometryHelper::LeaveCellUnaltered:
+        break;
+      case peano::geometry::GeometryHelper::CreateInnerCell:
+        _grid._eventHandle.createCell( _vertices, cell, _enumerator );
+        cell.switchToInside();
+        _changedCellState = true;
+        logDebug( "iterate()", "switch cell to inside. cell=" << cell.toString() );
+        break;
+      case peano::geometry::GeometryHelper::CreateOuterCell:
+      case peano::geometry::GeometryHelper::CreateOuterCellAndDoNotAnalyseItFurtherIfItsRefined:
+        _grid._eventHandle.destroyCell( _vertices, cell, _enumerator );
+        cell.switchToOutside();
+        _changedCellState = true;
+        logDebug( "iterate()", "switch cell to outside. cell=" << cell.toString() );
+        break;
+    }
+  #ifdef CCA
+  }
+  #endif
+
+  if ( cell.isInside() ) {
+    _grid._eventHandle.handleCell(
+      _vertices,
+      cell,
+      _enumerator
+    );
+    _numberOfInnerCells += 1.0;
+  }
+  else {
+    _numberOfOuterCells += 1.0;
+  }
+
+  _grid._dataContainer.setCell(action._cartesianPosition,cell.getRecords());
+
+  logTraceOut( "operator()" );
+}

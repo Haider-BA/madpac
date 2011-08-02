@@ -1,0 +1,310 @@
+component: lbf
+
+configuration-tag: lbandfaxen
+repository: LBFBatchJob
+namespace: peano::applications::faxen::lbf
+  
+ vertex:
+  name: BlockVertex
+  dastgen-file: BlockVertex.def
+  read scalar: P0
+  read scalar: P1
+  read scalar: F0
+  read scalar: F1
+  read scalar: G0
+  read scalar: G1
+  read scalar: U0
+  read scalar: U1
+  read scalar: U2
+  read scalar: V0
+  read scalar: V1
+  read scalar: V2
+  read scalar: Flag
+  write scalar: P0
+  write scalar: P1
+  write scalar: F0
+  write scalar: F1
+  write scalar: G0
+  write scalar: G1
+  write scalar: U0
+  write scalar: U1
+  write scalar: U2
+  write scalar: V0
+  write scalar: V1
+  write scalar: V2
+  write scalar: Flag
+  
+cell:
+  name: BlockCell
+  dastgen-file: BlockCell.def
+  
+state:
+  name: BlockState
+  dastgen-file: BlockState.def
+  
+/**
+ *  Mappings of Faxen component
+ */
+  
+/**
+ * Setting initial values for pressure and velocities
+ */
+event-mapping:
+  name: Initialize
+  
+/**
+ * Setting boundary flag for vertices
+ */
+ event-mapping:
+  name: ExploreBoundaries
+  
+/**
+ * Step size control
+ */
+ event-mapping:
+  name: ControlTimeStep
+  
+/**
+ * Setting boundary values for velocities
+ */
+ event-mapping:
+  name: SetVelocitiesBoundary
+  
+/**
+ * Setting scenario special boundary conditions
+ */
+ event-mapping:
+ name: SetScenarioBoundary
+  
+/**
+ * Computing velocities derivatives
+ */
+ event-mapping:
+  name: ComputeVelocitiesDerivatives
+
+/**
+ * Setting right-hand side for pressure equation
+ */
+ event-mapping:
+  name: ComputeRightHandSide
+  
+/**
+ * Setting pressure boundary values to zero
+ */
+ event-mapping:
+  name: SetZeroPressureBoundary
+  
+/**
+ * Setting boundary values for pressure
+ */
+ event-mapping:
+  name: SetPressureBoundary
+  
+/**
+ * SOR one step
+ */
+ event-mapping:
+  name: SORStep
+  
+/**
+ * Computing residual norm
+ */
+ event-mapping:
+  name: ComputeResidualNorm
+  
+/**
+ * Computing velocities
+ */
+ event-mapping:
+  name: ComputeVelocities
+ 
+/**
+ * Plot the solution to a vtk file.
+ */
+event-mapping:
+  name: PlotSolution
+  
+ /**
+ * Mappings for Faxen correction.
+ */
+ 
+ /**
+ * Move particles.
+ */
+ event-mapping:
+  name: MoveParticles
+  
+/**
+ * Mappings of Lattice Boltzmann component
+ */
+  
+event-mapping:
+  name: RegularBlockSolver
+ 
+event-mapping:
+  name: BlockVTKOutput
+  
+event-mapping:
+  name: BlockCCAOutput 
+  
+event-mapping:
+  name: InitialiseSpacetreeGrid
+  
+event-mapping:
+  name: DynamicRefinementForSpacetreeGrid
+  
+ /**
+  * Mapping for switching from Lattice Boltzmann to NSE
+  */
+ event-mapping:
+  name: SwitchFromLB2NSE
+  
+ /**
+  * Mapping for extracting data from NSE to LB
+  */
+ event-mapping:
+  name: ExtractDataNSE2LB
+  
+ /**
+  * Mapping for densities correction after
+  * injecting data from NSE to LB
+  */
+ event-mapping:
+  name: CorrectDensity4LB
+  
+ /**
+  * Mapping for equilibrium PDF computation
+  * after injecting data from NSE to LB
+  */
+ event-mapping:
+  name: ComputeEqPDF4LB
+  
+/**
+ * Mapping for tracing data of NSE solver
+ */
+ event-mapping:
+  name: TraceNSEData
+
+/**
+ * Mapping for tracing data of LB component
+ */
+ event-mapping:
+  name: TraceLBData
+ 
+/**
+ * Adapters of Faxen component
+ */
+ 
+adapter:
+  name: Initialize
+  merge-with-user-defined-mapping: Initialize
+  
+adapter:
+  name: InitializeAndSetBoundary
+  merge-with-user-defined-mapping: Initialize
+  merge-with-user-defined-mapping: ExploreBoundaries
+
+adapter:
+  name: PlotGrid
+  merge-with-predefined-mapping: VTKGridVisualiser
+  
+adapter:
+  name: ControlTimeStep
+  merge-with-user-defined-mapping: ControlTimeStep
+  
+adapter:
+  name: SetVelocitiesBoundary
+  merge-with-user-defined-mapping: SetVelocitiesBoundary
+  
+adapter:
+  name: SetScenarioBoundary
+  merge-with-user-defined-mapping: SetScenarioBoundary
+  
+adapter:
+  name: ComputeVelocitiesDerivatives
+  merge-with-user-defined-mapping: ComputeVelocitiesDerivatives
+  
+adapter:
+  name: ComputeRightHandSide
+  merge-with-user-defined-mapping: ComputeRightHandSide
+  
+adapter:
+  name: SetZeroPressureBoundary
+  merge-with-user-defined-mapping: SetZeroPressureBoundary
+  
+adapter:
+  name: SetPressureBoundary
+  merge-with-user-defined-mapping: SetPressureBoundary
+  
+adapter:
+  name: SORStep
+  merge-with-user-defined-mapping: SORStep
+  
+adapter:
+  name: ComputeResidualNorm
+  merge-with-user-defined-mapping: ComputeResidualNorm
+  
+adapter:
+  name: ComputeVelocities
+  merge-with-user-defined-mapping: ComputeVelocities
+
+adapter:
+  name: PlotSolution
+  merge-with-user-defined-mapping: PlotSolution
+  
+/**
+* Adapters of Faxen correction
+*/
+adapter:
+  name: MoveParticles
+  merge-with-user-defined-mapping: MoveParticles
+  
+adapter:
+  name: SwitchFromLB2NSE
+  merge-with-user-defined-mapping: SwitchFromLB2NSE
+  
+adapter:
+  name: ExtractDataNSE2LB
+  merge-with-user-defined-mapping: ExtractDataNSE2LB
+  
+adapter:
+  name: CorrectDensityAndComputeEqPDF4LB
+  merge-with-user-defined-mapping: CorrectDensity4LB
+  merge-with-user-defined-mapping: ComputeEqPDF4LB
+  
+/**
+ * Adapters of Lattice Boltzmann component
+ */   
+adapter:
+  name: RegularBlockSolverAdapter
+  merge-with-user-defined-mapping: RegularBlockSolver
+  
+adapter:
+  name: InitialiseSpacetreeGridAdapter
+  merge-with-user-defined-mapping: InitialiseSpacetreeGrid
+
+adapter:
+  name: BlockCCAOutputAdapter
+  merge-with-user-defined-mapping: BlockCCAOutput
+
+adapter:
+  name: DynamicRefinementForSpacetreeGridAdapter
+  merge-with-user-defined-mapping: DynamicRefinementForSpacetreeGrid
+
+adapter:
+  name: BlockVTKOutputAdapter
+  merge-with-user-defined-mapping: BlockVTKOutput
+
+adapter:
+  name: RegularBlockSolverAndVTKOutputAdapter
+  merge-with-user-defined-mapping: BlockVTKOutput
+  merge-with-user-defined-mapping: RegularBlockSolver
+  merge-with-user-defined-mapping: BlockCCAOutput
+  
+adapter:
+  name: TraceNSEData
+  merge-with-user-defined-mapping: TraceNSEData
+ 
+adapter:
+  name: TraceLBData
+  merge-with-user-defined-mapping: TraceLBData

@@ -1,0 +1,13 @@
+#include "peano/utils/Globals.h"
+
+Constant: DIMENSIONS;
+
+class peano::kernel::grid::dastgen::RegularState {
+  persistent parallelise double meshWidth[DIMENSIONS];
+  persistent parallelise double numberOfInnerVertices;
+  persistent parallelise double numberOfBoundaryVertices;
+  persistent parallelise double numberOfOuterVertices;
+  persistent parallelise double numberOfInnerCells;
+  persistent parallelise double numberOfOuterCells;
+  persistent packed parallelise bool gridIsStationary;
+};

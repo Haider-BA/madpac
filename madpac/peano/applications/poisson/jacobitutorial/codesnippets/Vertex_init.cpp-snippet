@@ -1,0 +1,6 @@
+  for (int d=0; d<DIMENSIONS; d++) {
+    assertion( h(d) > 0.0 );
+    rhs *= h(d);
+  }
+  _vertexData.setU(initialValue);
+  _vertexData.setRhs(rhs);

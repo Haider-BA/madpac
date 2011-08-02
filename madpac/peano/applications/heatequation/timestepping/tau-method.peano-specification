@@ -1,0 +1,139 @@
+component: heatequation
+
+configuration-tag: heatEquationTimeStepping
+repository: TimeSteppingBatchJob
+namespace: peano::applications::heatequation::timestepping
+
+vertex:
+  name: SingleStepVertex
+  dastgen-file: SingleStepVertex.def
+  read scalar: Rhs
+  read scalar: OldU
+  read scalar: U
+  read scalar: Residual
+  read stencil: Stencil
+  read vector2PowD: TempP
+  read vector: LinearSurplus
+  write vector: LinearSurplus
+  write scalar: Rhs
+  write scalar: Residual
+  write stencil: Stencil
+  write vector2PowD: TempAP
+  
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+state:
+  name: State
+  dastgen-file: State.def
+
+event-mapping:
+  name: SetupExperiment
+
+event-mapping:
+  name: SetupOneLevelOfExperiment
+ 
+event-mapping:
+  name: PerformExplitEulerTimeStep
+ 
+event-mapping:
+  name: PerformImplicitTimeStep
+ 
+event-mapping:
+  name: PlotSolution
+ 
+event-mapping:
+  name: ComputeImplicitSolutionWithJacobi
+
+event-mapping:
+  name: Smooth
+
+event-mapping:
+  name: CoarseSolution
+ 
+event-mapping:
+  name: ComputeHierarchicalSurplus
+  
+event-mapping:
+  name: RestrictRhs
+  
+event-mapping:
+  name: Prolong
+
+event-mapping:
+  name: ComputeHierarchicalResidual
+
+event-mapping:
+  name: ProbeSolution
+ 
+event-mapping:
+  name: ApplyRefineDeleteCriterion
+ 
+adapter:
+  name: SetupExperiment
+  merge-with-user-defined-mapping: SetupExperiment
+
+adapter:
+  name: SetupExperimentAndPlot
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: PerformExplitEulerTimeStep
+  merge-with-user-defined-mapping: PerformExplitEulerTimeStep
+
+adapter:
+  name: PerformImplicitTimeStep
+  merge-with-user-defined-mapping: PerformImplicitTimeStep
+
+adapter:
+  name: PerformImplicitTimeStepAndPlot
+  merge-with-user-defined-mapping: PerformImplicitTimeStep
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: ComputeImplicitSolutionWithJacobi
+  merge-with-user-defined-mapping: ComputeImplicitSolutionWithJacobi
+  merge-with-user-defined-mapping: CoarseSolution
+
+adapter:
+  name: PerformExplitEulerTimeStepAndPlot
+  merge-with-user-defined-mapping: PerformExplitEulerTimeStep
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: PlotSolution
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: PlotGrid 
+  merge-with-predefined-mapping: VTKGridVisualiser
+
+adapter:
+  name: Smooth
+  merge-with-user-defined-mapping: Smooth
+  merge-with-user-defined-mapping: CoarseSolution
+  
+adapter:
+  name: Coarse
+  merge-with-user-defined-mapping: ComputeHierarchicalSurplus
+  merge-with-user-defined-mapping: ComputeHierarchicalResidual
+  merge-with-user-defined-mapping: RestrictRhs
+
+adapter:
+  name: Prolong
+  merge-with-user-defined-mapping: Prolong
+  merge-with-user-defined-mapping: Smooth
+
+adapter:
+  name: ApplyRefineDeleteCriterion
+  merge-with-user-defined-mapping: ApplyRefineDeleteCriterion
+
+adapter:
+  name: SetupOneLevelOfExperiment
+  merge-with-user-defined-mapping: SetupOneLevelOfExperiment
+
+adapter:
+  name: ProbeSolution
+  merge-with-user-defined-mapping: ProbeSolution

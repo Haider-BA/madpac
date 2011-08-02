@@ -1,0 +1,28 @@
+component: Navierstokes
+
+configuration-tag: navierstokes
+repository: Prototype
+namespace: peano::applications::navierstokes::prototype2
+
+vertex:
+  name: FluidVertexEnhancedDivFreeEulerExplicit
+  // this path is set relative to the PDE's subdirectory dastgen 
+  dastgen-file: FluidVertex.def
+  
+cell:
+  name: FluidCellEnhancedDivFreeEulerExplicit
+  dastgen-file: FluidCell.def
+
+state:
+  name: FluidStateEnhancedDivFreeEulerExplicit
+  dastgen-file: FluidState.def
+  
+  
+//event-mapping:
+//  name: 
+  
+  
+//adapter:
+//  name: 
+//  merge-with-user-defined-mapping: 
+ 

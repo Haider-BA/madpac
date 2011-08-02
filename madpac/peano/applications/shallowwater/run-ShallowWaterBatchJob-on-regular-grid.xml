@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <!--<assert-compiler-switch state="on" switch="SharedTBB||SharedOMP" />-->
+
+  <run-shallowwater-on-regular-grid>
+    <log-filter target="debug" component="tarch" switch="off" />
+    <log-filter target="debug" component="peano::geometry" switch="off" />
+    <log-filter target="debug" component="peano::kernel" switch="off" />
+    <log-filter target="debug" component="peano::applications::shallowwater" switch="on" />
+    <log-output column-separator=" " log-time-stamp="no" log-time-stamp-human-readable="yes" log-machine-name="no" log-message-type="yes" log-trace="yes" />
+    
+    <scenario-default-simulation
+      bathymetry-file="/home/alexander/Desktop/sf_shallowwater/debug/bathymetry/"
+      displacement-file="/home/alexander/Desktop/sf_shallowwater/debug/displacement/"
+      output-file="/home/alexander/Desktop/sf_shallowwater/debug/plot/plotdebug"
+      output-time-distance="10"
+      number-of-grid-points="1001;1001"
+      simulation-area="175;-40;10"
+      displacement-location="-179;-35"
+      number-of-time-steps="500"
+      grain-size="1"
+    />
+    <!--<multicore threads="*" />-->
+  </run-shallowwater-on-regular-grid>
+</peano-configuration>

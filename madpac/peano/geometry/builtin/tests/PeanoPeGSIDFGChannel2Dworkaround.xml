@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+	2D Channel workaround consisting of 5 touching rectangles for integration test.
+	author: Tobias Neckel
+-->
+
+<pegsi-configuration initial-refinement="4">
+
+	<bounding-box h0="1.845" h1="1.845" h2="0" halfWidth="5.535"  />
+	
+	
+	<!-- surrounding "touching" structure boxes 0,1,2,3-->
+	<geometry id="0" type="primitive" source="primitive-rectangle" isInversed="false">
+		<transformation scale-x0="1" scale-x1="1" scale-x2="1" translate-x0="0" translate-x1="0" translate-x2="0"/>
+		<origin x0="-3.691" x1="2.05" />
+		<dimensions h0="3.691" h1="0.41"/>
+	</geometry>
+	
+	<geometry id="1" type="primitive" source="primitive-rectangle" isInversed="false">
+		<transformation scale-x0="1" scale-x1="1" scale-x2="1" translate-x0="0" translate-x1="0" translate-x2="0"/>
+		<origin x0="-3.691" x1="1.64" />
+		<dimensions h0="11.072" h1="5.331"/>
+	</geometry>
+	
+	<geometry id="2" type="primitive" source="primitive-rectangle" isInversed="false">
+		<transformation scale-x0="1" scale-x1="1" scale-x2="1" translate-x0="0" translate-x1="0" translate-x2="0"/>
+		<origin x0="2.46" x1="2.05" />
+		<dimensions h0="4.921" h1="0.41"/>
+	</geometry>
+	
+	<geometry id="3" type="primitive" source="primitive-rectangle" isInversed="false">
+		<transformation scale-x0="1" scale-x1="1" scale-x2="1" translate-x0="0" translate-x1="0" translate-x2="0"/>
+		<origin x0="-3.691" x1="7.381" />
+		<dimensions h0="11.072" h1="5.331"/>
+	</geometry>
+	
+	
+	<!-- fluid box -->
+	<geometry id="10" type="primitive" source="primitive-rectangle" isInversed="true">
+		<transformation scale-x0="1" scale-x1="1" scale-x2="1" translate-x0="0" translate-x1="0" translate-x2="0"/>
+		<origin x0="0.0" x1="2.05" />
+		<dimensions h0="2.46" h1="0.41"/>
+	</geometry>
+	
+</pegsi-configuration>

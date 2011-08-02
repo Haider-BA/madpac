@@ -1,0 +1,14 @@
+#include "tarch/configuration/ConfigurationRegistry.h"
+
+
+template <class TopLevelConfigurationType>
+tarch::configuration::TopLevelConfigurationFactory<TopLevelConfigurationType>::TopLevelConfigurationFactory(){
+  _configuration = new TopLevelConfigurationType();
+  ConfigurationRegistry::getInstance().addTopLevelConfiguration( _configuration );
+}
+
+
+template <class TopLevelConfigurationType>
+tarch::configuration::TopLevelConfigurationFactory<TopLevelConfigurationType>::~TopLevelConfigurationFactory() {
+  delete _configuration;
+}

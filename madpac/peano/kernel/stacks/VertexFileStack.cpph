@@ -1,0 +1,97 @@
+template <class Vertex>
+peano::kernel::stacks::VertexFileStack<Vertex>::VertexFileStack(
+  int blockSize,
+  int numberOfBlocks,
+  int minFillThreshold,
+  int maxFillThreshold,
+  const std::string& tempFilePrefix
+):
+  _currentInputStack(0){
+  _inputOutputStack[0].init( blockSize, numberOfBlocks, minFillThreshold, maxFillThreshold, tempFilePrefix );
+  _inputOutputStack[1].init( blockSize, numberOfBlocks, minFillThreshold, maxFillThreshold, tempFilePrefix );
+  for (int i=0; i<NUMBER_OF_TEMPORARY_STACKS; i++) {
+	_temporaryStack[i].init( blockSize, numberOfBlocks, minFillThreshold, maxFillThreshold, tempFilePrefix );
+  }
+}
+
+
+template <class Vertex>
+peano::kernel::stacks::VertexFileStack<Vertex>::~VertexFileStack() {
+}
+
+
+template <class Vertex>
+Vertex peano::kernel::stacks::VertexFileStack<Vertex>::pop(int stackNumber) {
+  if (stackNumber==peano::kernel::stacks::Constants::InOutStack) {
+    return _inputOutputStack[_currentInputStack].pop();
+  }
+  else {
+    return _temporaryStack[stackNumber].pop();
+  }
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexFileStack<Vertex>::push( int stackNumber, const Vertex& vertex ) {
+  if (stackNumber==peano::kernel::stacks::Constants::InOutStack) {
+    _inputOutputStack[1-_currentInputStack].push(vertex.getRecords());
+  }
+  else {
+    _temporaryStack[stackNumber].push(vertex);
+  }
+}
+
+
+template <class Vertex>
+int peano::kernel::stacks::VertexFileStack<Vertex>::sizeOfInputStack() const {
+  return _inputOutputStack[_currentInputStack].size();
+}
+
+
+template <class Vertex>
+int peano::kernel::stacks::VertexFileStack<Vertex>::sizeOfOutputStack() const {
+  return _inputOutputStack[1-_currentInputStack].size();
+}
+
+
+template <class Vertex>
+bool peano::kernel::stacks::VertexFileStack<Vertex>::isInputStackEmpty() const {
+  return _inputOutputStack[_currentInputStack].isEmpty();
+}
+
+
+template <class Vertex>
+bool peano::kernel::stacks::VertexFileStack<Vertex>::isOutputStackEmpty() const {
+  return _inputOutputStack[1-_currentInputStack].isEmpty();
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexFileStack<Vertex>::clear() {
+  _inputOutputStack[0].clear();
+  _inputOutputStack[1].clear();
+  for (int i=0; i<NUMBER_OF_TEMPORARY_STACKS; i++) {
+	_temporaryStack[i].clear();
+  }
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexFileStack<Vertex>::flipInputAndOutputStack() {
+  assertion( isInputStackEmpty() );
+  _currentInputStack = 1-_currentInputStack;
+}
+
+
+template <class Vertex>
+template <class Cell>
+void peano::kernel::stacks::VertexFileStack<Vertex>::writeToCheckpoint( peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) const {
+  assertionMsg( false, "not implemented yet" );
+}
+
+
+template <class Vertex>
+template <class Cell>
+void peano::kernel::stacks::VertexFileStack<Vertex>::readFromCheckpoint( const peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) {
+  assertionMsg( false, "not implemented yet" );
+}

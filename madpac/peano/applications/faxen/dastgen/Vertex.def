@@ -1,0 +1,37 @@
+Packed-Type: long int;
+
+class peano::applications::faxen::dastgen::Vertex {
+
+  /**
+   *  Averages of pressure from neighborhood cells
+   */
+  persistent double P0;
+  persistent double P1;
+
+  /**
+   * Averages of F and G from neighborhood cells
+   */
+  persistent double F0;
+  persistent double F1;
+  
+  persistent double G0;
+  persistent double G1;
+  
+  /**
+  * Averages of U and V from neighborhood cells
+  */
+  persistent double U0;
+  persistent double U1;
+  persistent double U2;
+  
+  persistent double V0;
+  persistent double V1;
+  persistent double V2;
+  
+  
+  /**
+   * cell type flag to distinguish different boundaries 
+   */
+  persistent int flag;
+  
+};

@@ -1,0 +1,31 @@
+Packed-Type: short int;
+
+class peano::applications::poisson::jacobi::dastgen::Vertex {
+
+  /**
+   * The PDE's right-hand side. It is to be stored persistent, i.e. in-between 
+   * two iterations, we may not throw this value away. 
+   */
+  persistent double  rhs;
+
+  /**
+   * The PDE's solution. It is to be stored persistent, i.e. in-between 
+   * two iterations, we may not throw this value away. If the point is a 
+   * boundary point, we store the Dirichlet boundary conditions here instead of 
+   * the approximation of the solution.
+   */
+  persistent double  u;
+  
+  /**
+   * For the Jacobi iteration, we compute @f$ u \mapsto u + \omega diag^{-1} residual @f$. 
+   * The latter is defined as @f$ residual = rhs - Au @f$, and we accumulate the 
+   * vector while we run through the grid element-wise. As soon as we have 
+   * traversed the grid, the residual is complete and we can update the 
+   * approximation u. Consequently, we do not have to store it in-between two 
+   * iterations. However, we have to exchange the residual if a vertex is 
+   * located at the interface of two parallel partitions. 
+   */
+  persistent parallelise double     residual;
+  
+  
+};

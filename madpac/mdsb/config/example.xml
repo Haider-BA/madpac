@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- New document created with EditiX at Thu Oct 07 17:09:14 CEST 2010 -->
+
+<config xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+        xs:noNamespaceSchemaLocation="ConfigFile.xsd"
+> 
+
+    <timedata delta="0.01" end="10"/> 
+    <output filebase="md_out" frequency="10"/>
+
+    <!-- Multiple files allowed-->
+    <inputfile name="eingabe-sonne.txt"/>
+    <inputfile name="eingabe-sonne2.txt"/>
+
+    <!-- Multiple Cudoids allowed -->
+    <inputcuboid x0="0" x1="0" x2="0"  v0="0" v1="0" v2="0"  n0="10" n1="10" n2="10" h="1.3"/>
+
+</config>

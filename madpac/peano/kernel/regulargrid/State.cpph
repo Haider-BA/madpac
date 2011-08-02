@@ -1,0 +1,177 @@
+template <class StateData>
+peano::kernel::regulargrid::State<StateData>::State():
+  _stateData() {
+}
+
+
+template <class StateData>
+peano::kernel::regulargrid::State<StateData>::State(const PersistentState& argument):
+  _stateData( (typename StateData::Packed(argument)).convert() ) {
+}
+
+
+template <class StateData>
+peano::kernel::regulargrid::State<StateData>::~State() {
+}
+
+
+template <class StateData>
+std::string peano::kernel::regulargrid::State<StateData>::toString() const {
+  return _stateData.toString();
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::toString(std::ostream& out) const {
+  _stateData.toString(out);
+}
+
+
+template <class StateData>
+std::ostream& operator<<(std::ostream& out, const peano::kernel::regulargrid::State<StateData>& arg) {
+  arg.toString(out);
+  return out;
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::notifyAboutGridChange( bool iHaveChangedIt ) {
+  _stateData.setGridIsStationary( _stateData.getGridIsStationary() || iHaveChangedIt );
+}
+
+
+template <class StateData>
+double peano::kernel::regulargrid::State<StateData>::getNumberOfInnerVertices() const {
+  return _stateData.getNumberOfInnerVertices();
+}
+
+
+template <class StateData>
+double peano::kernel::regulargrid::State<StateData>::getNumberOfBoundaryVertices() const {
+  return _stateData.getNumberOfBoundaryVertices();
+}
+
+
+template <class StateData>
+double peano::kernel::regulargrid::State<StateData>::getNumberOfOuterVertices() const {
+  return _stateData.getNumberOfOuterVertices();
+}
+
+
+template <class StateData>
+double peano::kernel::regulargrid::State<StateData>::getNumberOfInnerCells() const {
+  return _stateData.getNumberOfInnerCells();
+}
+
+
+template <class StateData>
+double peano::kernel::regulargrid::State<StateData>::getNumberOfOuterCells() const {
+  return _stateData.getNumberOfOuterCells();
+}
+
+
+template <class StateData>
+tarch::la::Vector<DIMENSIONS,double> peano::kernel::regulargrid::State<StateData>::getMaximumMeshWidth() const {
+  return _stateData.getMeshWidth();
+}
+
+
+template <class StateData>
+tarch::la::Vector<DIMENSIONS,double> peano::kernel::regulargrid::State<StateData>::getMinimumMeshWidth() const {
+  return _stateData.getMeshWidth();
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::resetStateAtBeginOfIteration(const tarch::la::Vector<DIMENSIONS,double>& value) {
+  _stateData.setMeshWidth(value);
+  _stateData.setNumberOfInnerVertices(0.0);
+  _stateData.setNumberOfBoundaryVertices(0.0);
+  _stateData.setNumberOfOuterVertices(0.0);
+  _stateData.setNumberOfInnerCells(0.0);
+  _stateData.setNumberOfOuterCells(0.0);
+  _stateData.setGridIsStationary(true);
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::incNumberOfInnerVertices( double increment ) {
+  _stateData.setNumberOfInnerVertices(_stateData.getNumberOfInnerVertices()+increment);
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::incNumberOfBoundaryVertices( double increment ) {
+  _stateData.setNumberOfBoundaryVertices(_stateData.getNumberOfBoundaryVertices()+increment);
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::incNumberOfOuterVertices( double increment ) {
+  _stateData.setNumberOfOuterVertices(_stateData.getNumberOfOuterVertices()+increment);
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::incNumberOfInnerCells( double increment ) {
+  _stateData.setNumberOfInnerCells(_stateData.getNumberOfInnerCells()+increment);
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::incNumberOfOuterCells( double increment ) {
+  _stateData.setNumberOfOuterCells(_stateData.getNumberOfOuterCells()+increment);
+}
+
+
+#ifdef Parallel
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::mergeWithWorkerState(const peano::kernel::regulargrid::State<StateData>& workerState) {
+  assertionEquals( _stateData.getMeshWidth(), workerState._stateData.getMeshWidth() );
+
+  incNumberOfInnerVertices(workerState._stateData.getNumberOfInnerVertices());
+  incNumberOfBoundaryVertices(workerState._stateData.getNumberOfBoundaryVertices());
+  incNumberOfOuterVertices(workerState._stateData.getNumberOfOuterVertices());
+  incNumberOfInnerCells(workerState._stateData.getNumberOfInnerCells());
+  incNumberOfOuterCells(workerState._stateData.getNumberOfOuterCells());
+
+  notifyAboutGridChange(workerState._stateData.getGridIsStationary());
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::initDatatype() {
+  if (MPIDatatypeContainer::Datatype==0) {
+    MPIDatatypeContainer::initDatatype();
+  }
+
+  assertion(MPIDatatypeContainer::Datatype!=0);
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::send(int destination, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  _stateData.convert().send(destination,tag);
+  #else
+  _stateData.send(destination,tag);
+  #endif
+}
+
+
+template <class StateData>
+void peano::kernel::regulargrid::State<StateData>::receive(int source, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  MPIDatatypeContainer receivedMessage;
+  receivedMessage.receive(source,tag);
+  _stateData = receivedMessage.convert();
+  #else
+  _stateData.receive(source,tag);
+  #endif
+}
+#endif
+

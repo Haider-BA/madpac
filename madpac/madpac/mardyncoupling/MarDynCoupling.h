@@ -132,6 +132,13 @@ namespace madpac
         return 0.0;
       }
 
+
+      void
+      addNumInsertMolecules(int i)
+      {
+    	  _dataContainer->addNumInsertMolecules(i);
+      }
+
       /**
        * Moves the particles to simulate a moving wall.
        */

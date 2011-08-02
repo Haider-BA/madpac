@@ -54,6 +54,7 @@ namespace madpac
 
     private:
       int iteration;
+      log4cxx::LoggerPtr logger;
       MDSB *_mdsb;
       MDSBSetVelocity *_setV;
       MDSBGetVelocity *_getV;

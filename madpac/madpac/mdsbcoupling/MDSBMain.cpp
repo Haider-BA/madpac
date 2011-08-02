@@ -23,6 +23,9 @@ namespace madpac
   namespace mdsbcoupling
   {
 
+
+
+
     MDSBMain::MDSBMain(ExchangeDataContainerWDCwithOutput* dc, int dim, MDSBConfiguration *mdsbConfig) : _dc(dc)
     {
 
@@ -43,6 +46,18 @@ namespace madpac
     MDSBMain::init(int numberOfTimesteps)
     {
       iteration = 0;
+
+  	logger = log4cxx::Logger::getRootLogger();
+      std::string loggerConfiguration("log4cxx.properties");
+		try {
+			log4cxx::PropertyConfigurator::configure(loggerConfiguration);
+			LOG4CXX_INFO(logger, "Logger configured.");
+		} catch(log4cxx::helpers::Exception& e) {
+			std::cout << "Caught Exception in setup of logging framework!" << std::endl;
+		}
+
+
+
       return this;
     }
 
@@ -63,8 +78,9 @@ namespace madpac
           _mdsb->applyThermostat(iteration);
           _mdsb->writeOutput(iteration);
           //_mdsb->current_time += _mdsb->delta_t;
-          _getV->getV();
           _setV->setV();
+          if(i != 0)_getV->getV();
+
           _mdsb->deleteP();
           _mdsb->insertP();
 

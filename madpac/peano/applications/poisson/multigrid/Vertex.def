@@ -1,0 +1,40 @@
+#include "peano/utils/Globals.h"
+
+Packed-Type: short int;
+
+Constant: THREE_POWER_D;
+Constant: FIVE_POWER_D;
+Constant: TWO_POWER_D;
+
+class peano::applications::poisson::multigrid::dastgen::Vertex {
+  /**
+   * The PDE's right-hand side. It is to be stored persistent, i.e. in-between 
+   * two iterations, we may not throw this value away. 
+   */
+  persistent double rhs;
+
+  /**
+   * The PDE's solution. It is to be stored persistent, i.e. in-between 
+   * two iterations, we may not throw this value away. If the point is a 
+   * boundary point, we store the Dirichlet boundary conditions here instead of 
+   * the approximation of the solution.
+   */
+  persistent double u;
+
+  persistent parallelise double residual;
+  
+  persistent double stencil[THREE_POWER_D];  
+  persistent double prolongation[FIVE_POWER_D];  
+  persistent double restriction[FIVE_POWER_D];  
+  
+  /**
+   * This is needed for the calculation of the Petrov-Galerkin coarse grid operators.
+   */
+  discard double tempP[TWO_POWER_D];
+
+  /**
+   * This is needed for the calculation of the Petrov-Galerkin coarse grid operators.
+   */
+  discard double tempAP[TWO_POWER_D];
+  
+};

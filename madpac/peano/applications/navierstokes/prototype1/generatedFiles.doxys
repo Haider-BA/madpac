@@ -1,0 +1,191 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /navierstokes.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/navierstokes/prototype1/dastgen/PrototypeRepositoryState.def
+ - /peano/applications/navierstokes/prototype1/dastgen/RegularGridFluidVertexEnhancedDivFreeEulerExplicit.def
+ - /peano/applications/navierstokes/prototype1/dastgen/SpacetreeGridFluidVertexEnhancedDivFreeEulerExplicit.def
+ - /peano/applications/navierstokes/prototype1/dastgen/RegularGridFluidCellEnhancedDivFreeEulerExplicit.def
+ - /peano/applications/navierstokes/prototype1/dastgen/SpacetreeGridFluidCellEnhancedDivFreeEulerExplicit.def
+ - /peano/applications/navierstokes/prototype1/dastgen/RegularGridFluidStateEnhancedDivFreeEulerExplicit.def
+ - /peano/applications/navierstokes/prototype1/dastgen/SpacetreeGridFluidStateEnhancedDivFreeEulerExplicit.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /RegularGridFluidVertexEnhancedDivFreeEulerExplicit.h
+ - /RegularGridFluidVertexEnhancedDivFreeEulerExplicit.cpp
+ - /SpacetreeGridFluidVertexEnhancedDivFreeEulerExplicit.h
+ - /SpacetreeGridFluidVertexEnhancedDivFreeEulerExplicit.cpp
+ - /RegularGridFluidCellEnhancedDivFreeEulerExplicit.h
+ - /RegularGridFluidCellEnhancedDivFreeEulerExplicit.cpp
+ - /SpacetreeGridFluidCellEnhancedDivFreeEulerExplicit.h
+ - /SpacetreeGridFluidCellEnhancedDivFreeEulerExplicit.cpp
+ - /FluidStateEnhancedDivFreeEulerExplicit.h
+ - /RegularGridFluidStateEnhancedDivFreeEulerExplicit.h
+ - /RegularGridFluidStateEnhancedDivFreeEulerExplicit.cpp
+ - /SpacetreeGridFluidStateEnhancedDivFreeEulerExplicit.h
+ - /SpacetreeGridFluidStateEnhancedDivFreeEulerExplicit.cpp
+ - /mappings/RegularGrid2InitialiseScenario.h
+ - /mappings/RegularGrid2InitialiseScenario.cpp
+ - /mappings/SpacetreeGrid2InitialiseScenario.h
+ - /mappings/SpacetreeGrid2InitialiseScenario.cpp
+ - /mappings/RegularGrid2MergeA.h
+ - /mappings/RegularGrid2MergeA.cpp
+ - /mappings/SpacetreeGrid2MergeA.h
+ - /mappings/SpacetreeGrid2MergeA.cpp
+ - /mappings/RegularGrid2CalculateF.h
+ - /mappings/RegularGrid2CalculateF.cpp
+ - /mappings/SpacetreeGrid2CalculateF.h
+ - /mappings/SpacetreeGrid2CalculateF.cpp
+ - /mappings/RegularGrid2MergeF.h
+ - /mappings/RegularGrid2MergeF.cpp
+ - /mappings/SpacetreeGrid2MergeF.h
+ - /mappings/SpacetreeGrid2MergeF.cpp
+ - /mappings/RegularGrid2CalculatePPERHS.h
+ - /mappings/RegularGrid2CalculatePPERHS.cpp
+ - /mappings/SpacetreeGrid2CalculatePPERHS.h
+ - /mappings/SpacetreeGrid2CalculatePPERHS.cpp
+ - /mappings/RegularGrid2GaussSeidelForEnhancedDivFree.h
+ - /mappings/RegularGrid2GaussSeidelForEnhancedDivFree.cpp
+ - /mappings/SpacetreeGrid2GaussSeidelForEnhancedDivFree.h
+ - /mappings/SpacetreeGrid2GaussSeidelForEnhancedDivFree.cpp
+ - /mappings/RegularGrid2MergePressureGradientUpdate.h
+ - /mappings/RegularGrid2MergePressureGradientUpdate.cpp
+ - /mappings/SpacetreeGrid2MergePressureGradientUpdate.h
+ - /mappings/SpacetreeGrid2MergePressureGradientUpdate.cpp
+ - /mappings/RegularGrid2UpdateVelocity.h
+ - /mappings/RegularGrid2UpdateVelocity.cpp
+ - /mappings/SpacetreeGrid2UpdateVelocity.h
+ - /mappings/SpacetreeGrid2UpdateVelocity.cpp
+ - /mappings/RegularGrid2PlotSolutionVTK.h
+ - /mappings/RegularGrid2PlotSolutionVTK.cpp
+ - /mappings/SpacetreeGrid2PlotSolutionVTK.h
+ - /mappings/SpacetreeGrid2PlotSolutionVTK.cpp
+ - /mappings/RegularGrid2PlotRegularSolutionVTK.h
+ - /mappings/RegularGrid2PlotRegularSolutionVTK.cpp
+ - /mappings/SpacetreeGrid2PlotRegularSolutionVTK.h
+ - /mappings/SpacetreeGrid2PlotRegularSolutionVTK.cpp
+ - /mappings/RegularGrid2UpdateScenario.h
+ - /mappings/RegularGrid2UpdateScenario.cpp
+ - /mappings/SpacetreeGrid2UpdateScenario.h
+ - /mappings/SpacetreeGrid2UpdateScenario.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/PrototypeRepository.h
+ - /repositories/PrototypeRepositoryForRegularGrid.h
+ - /repositories/PrototypeRepositoryForRegularGridStandardImplementation.h
+ - /repositories/PrototypeRepositoryForRegularGridStandardImplementation.cpp
+ - /repositories/PrototypeRepositoryForSpacetreeGrid.h
+ - /repositories/PrototypeRepositoryForSpacetreeGridArrayStackImplementation.h
+ - /repositories/PrototypeRepositoryForSpacetreeGridArrayStackImplementation.cpp
+ - /repositories/PrototypeRepositoryForSpacetreeGridFileStackImplementation.h
+ - /repositories/PrototypeRepositoryForSpacetreeGridFileStackImplementation.cpp
+ - /repositories/PrototypeRepositoryForSpacetreeGridSTDDoubleStackImplementation.h
+ - /repositories/PrototypeRepositoryForSpacetreeGridSTDDoubleStackImplementation.cpp
+ - /repositories/PrototypeRepositoryForSpacetreeGridSTDStackImplementation.h
+ - /repositories/PrototypeRepositoryForSpacetreeGridSTDStackImplementation.cpp
+ - /repositories/PrototypeRepositoryForSpacetreeGridDynamicStackImplementation.h
+ - /repositories/PrototypeRepositoryForSpacetreeGridDynamicStackImplementation.cpp
+ - /repositories/PrototypeRepositoryFactory.h
+ - /repositories/PrototypeRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-Prototype-on-regular-grid.xml
+ - /configurations/PrototypeConfigurationForRegularGrid.h
+ - /configurations/PrototypeConfigurationForRegularGrid.cpp
+ - /run-Prototype-on-spacetree-grid.xml
+ - /configurations/PrototypeConfigurationForSpacetreeGrid.h
+ - /configurations/PrototypeConfigurationForSpacetreeGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/PrototypeRunnerForRegularGrid.h
+ - /runners/PrototypeRunnerForRegularGrid.cpp
+ - /runners/PrototypeRunnerForRegularGridParallelWorker.cpp
+ - /runners/PrototypeRunnerForSpacetreeGrid.h
+ - /runners/PrototypeRunnerForSpacetreeGrid.cpp
+ - /runners/PrototypeRunnerForSpacetreeGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/RegularGrid2InitialiseScenario.h
+ - /adapters/RegularGrid2InitialiseScenario.cpp
+ - /adapters/SpacetreeGrid2InitialiseScenario.h
+ - /adapters/SpacetreeGrid2InitialiseScenario.cpp
+ - /adapters/RegularGrid2MergeA.h
+ - /adapters/RegularGrid2MergeA.cpp
+ - /adapters/SpacetreeGrid2MergeA.h
+ - /adapters/SpacetreeGrid2MergeA.cpp
+ - /adapters/RegularGrid2CalculateF.h
+ - /adapters/RegularGrid2CalculateF.cpp
+ - /adapters/SpacetreeGrid2CalculateF.h
+ - /adapters/SpacetreeGrid2CalculateF.cpp
+ - /adapters/RegularGrid2CalculatePPERHS.h
+ - /adapters/RegularGrid2CalculatePPERHS.cpp
+ - /adapters/SpacetreeGrid2CalculatePPERHS.h
+ - /adapters/SpacetreeGrid2CalculatePPERHS.cpp
+ - /adapters/RegularGrid2GaussSeidelForEnhancedDivFree.h
+ - /adapters/RegularGrid2GaussSeidelForEnhancedDivFree.cpp
+ - /adapters/SpacetreeGrid2GaussSeidelForEnhancedDivFree.h
+ - /adapters/SpacetreeGrid2GaussSeidelForEnhancedDivFree.cpp
+ - /adapters/RegularGrid2UpdateVelocity.h
+ - /adapters/RegularGrid2UpdateVelocity.cpp
+ - /adapters/SpacetreeGrid2UpdateVelocity.h
+ - /adapters/SpacetreeGrid2UpdateVelocity.cpp
+ - /adapters/RegularGrid2PlotSolutionVTK.h
+ - /adapters/RegularGrid2PlotSolutionVTK.cpp
+ - /adapters/SpacetreeGrid2PlotSolutionVTK.h
+ - /adapters/SpacetreeGrid2PlotSolutionVTK.cpp
+ - /adapters/RegularGrid2PlotRegularSolutionVTK.h
+ - /adapters/RegularGrid2PlotRegularSolutionVTK.cpp
+ - /adapters/SpacetreeGrid2PlotRegularSolutionVTK.h
+ - /adapters/SpacetreeGrid2PlotRegularSolutionVTK.cpp
+ - /adapters/RegularGrid2UpdateScenario.h
+ - /adapters/RegularGrid2UpdateScenario.cpp
+ - /adapters/SpacetreeGrid2UpdateScenario.h
+ - /adapters/SpacetreeGrid2UpdateScenario.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/Prototype.sidl
+ - /cca/cca.doxys
+ - /cca/PrototypeForRegularGridImplementation.h
+ - /cca/PrototypeForRegularGridImplementation.cpp
+ - /cca/PrototypeForSpacetreeGridImplementation.h
+ - /cca/PrototypeForSpacetreeGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/PrototypeTest.h
+ - /tests/PrototypeTest.cpp
+*/

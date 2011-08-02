@@ -1,0 +1,52 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+
+package de {
+  package tum {
+    package queries {
+      interface QueryServer {
+        /**
+         * Returns something like a bounding of computational domain.
+         *
+         * @param dimension Dimension of problem.
+         * @param offset    Offset of bounding box of computational domain.
+         * @param boundingBox Size of bounding box.
+         */
+        getSimulationOutline(
+          out int       dimension,
+          out double[]  boundingBoxOffset,
+          out double[]  boundingBox
+        );
+
+        /**
+         * Ask the server which data of the simulation is available. For CFD, 
+         * e.g., the operation returns the following data:
+         *
+         * @param numberOfScopes 2 (for velocities (first entry) and pressure)
+         * @param scopeDimension Array of length numberOfScopes with {d,1}
+         * @param descriptionOfScope Array of length numberOfScopes with 
+         *        {"velocity", "pressure" }
+         */
+        getScopes(
+          out int       numberOfScopes,
+          out int[]     scopeCardinality,
+          out string[]  descriptionOfScope
+        );
+        
+        /**
+         * Give me data with respect to results of getScopes(). 
+         */
+        getData(
+          in int        scope,
+          in double[]   boundingBoxOffset,
+          in double[]   boundingBox,
+          in int[]      resolution,
+          out double[]  data
+        );
+      }
+      
+    }
+  }
+}

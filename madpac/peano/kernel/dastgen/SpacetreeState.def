@@ -1,0 +1,33 @@
+#include "peano/utils/Globals.h"
+
+Constant: DIMENSIONS;
+
+class peano::kernel::grid::dastgen::SpacetreeState {
+  /**
+   * Statistics. All of this information is prolongated bottom-up.
+   */
+  persistent parallelise double minMeshWidth[DIMENSIONS];
+  persistent parallelise double maxMeshWidth[DIMENSIONS];
+  persistent parallelise double numberOfInnerVertices;
+  persistent parallelise double numberOfBoundaryVertices;
+  persistent parallelise double numberOfOuterVertices;
+  persistent parallelise double numberOfInnerCells;
+  persistent parallelise double numberOfOuterCells;
+
+  persistent parallelise int    maxLevel;
+  
+  persistent packed parallelise bool hasRefined;
+  persistent packed parallelise bool hasTriggeredRefinementForNextIteration;
+  persistent packed parallelise bool hasErased;
+  persistent packed parallelise bool hasTriggeredEraseForNextIteration;
+  persistent packed parallelise bool hasChangedVertexOrCellState;
+
+  persistent parallelise bool   isTraversalInverted;
+  
+  #ifdef Parallel
+  /**
+   * See peano::kernel::parallel::loadbalancing::Oracle for a description.
+   */
+  persistent parallelise int   loadBalancingFlag;
+  #endif
+};

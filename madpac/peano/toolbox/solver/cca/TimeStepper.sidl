@@ -1,0 +1,23 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package toolbox { 
+    package solver { 
+      /**
+       * Very simple interface to control a time stepping algorithm. The user
+       * prescribes the time step size and the time in-between two snapshots.
+       * Then he pressed run and the simulation starts.
+       */
+      interface TimeStepper {
+        run(in double timeInterval); 
+        
+        /**
+         * Parameter 0 switches snapshots off.
+         */
+        setTimeInBetweenTwoSnapshots(in double time);
+      }
+    }
+  }
+}

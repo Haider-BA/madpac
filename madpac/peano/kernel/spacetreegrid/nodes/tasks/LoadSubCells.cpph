@@ -1,0 +1,41 @@
+#include "peano/utils/Globals.h"
+
+
+template < class Cell, class CellStack >
+tarch::logging::Log peano::kernel::spacetreegrid::nodes::tasks::LoadSubCells< Cell, CellStack >::_log( "peano::kernel::spacetreegrid::nodes::tasks::LoadSubCells" );
+
+
+
+template < class Cell, class CellStack >
+peano::kernel::spacetreegrid::nodes::tasks::LoadSubCells< Cell, CellStack >::LoadSubCells(
+  Cell * const                        subCells,
+  CellStack&                          cellStack,
+  const peano::utils::LoopDirection&  loopDirection
+#ifdef Debug
+, int                                 coarseFatherCellLevel
+#endif
+):
+  _subCells(subCells),
+  _cellStack(cellStack),
+  _loopDirection(loopDirection) {
+  #ifdef Debug
+  _coarseFatherCellLevel = coarseFatherCellLevel;
+  #endif
+}
+
+
+template < class Cell, class CellStack >
+void peano::kernel::spacetreegrid::nodes::tasks::LoadSubCells< Cell, CellStack >::operator()() {
+  logTraceIn( "operator()" );
+  zfor( i, 3, _loopDirection ) {
+    const int cellIndex = peano::utils::dLinearised(i,3);
+    _subCells[cellIndex] = _cellStack.pop(peano::kernel::stacks::Constants::InOutStack );
+
+    #ifdef Debug
+    assertionEquals1( _coarseFatherCellLevel+1, _subCells[cellIndex].getLevel(), _subCells[cellIndex].toString() );
+    #endif
+
+    logDebug( "operator()", "loaded " << _subCells[cellIndex] << " into subcell position " << cellIndex << " (" << i << ")" );
+  }
+  logTraceOut( "operator()" );
+}

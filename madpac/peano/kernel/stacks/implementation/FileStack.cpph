@@ -1,0 +1,260 @@
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "tarch/Assertions.h"
+
+
+
+template <class T>
+tarch::logging::Log peano::kernel::stacks::implementation::FileStack<T>::_log( "peano::kernel::stacks::implementation::FileStack" );
+
+
+template <class T>
+peano::kernel::stacks::implementation::FileStack<T>::FileStack():
+  _array(0),
+  _arraySize(0),
+  _blockSize(0),
+  _minFillFactor(0),
+  _maxFillFactor(0),
+  _swapFileCounter(0),
+  _maxSwapFileCounter(0),
+  _currentGlobalIndex(0),
+  _bottomGlobalIndex(0),
+  _maxSize(0) {
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::init(
+  int blockSize,
+  int numberOfBlocks,
+  int minFillThreshold,
+  int maxFillThreshold,
+  const std::string& tempFilePrefix
+) {
+  _blockSize          = blockSize;
+  _arraySize          = blockSize*numberOfBlocks;
+  _minFillFactor      = minFillThreshold;
+  _maxFillFactor      = maxFillThreshold;
+  _swapFileCounter    = 0;
+  _currentGlobalIndex = 0;
+  _bottomGlobalIndex  = 0;
+  _maxSwapFileCounter = 0;
+  _maxSize            = 0;
+
+  assertion( minFillThreshold > 1 );
+  assertion( maxFillThreshold     > 2 );
+  assertion( minFillThreshold < maxFillThreshold)
+  assertion( !tempFilePrefix.empty() );
+
+  _array = 0;
+  _array = new (std::nothrow) T[blockSize*numberOfBlocks ];
+  if (_array==0) {
+    logError( "configure(configuration)", "failed to alloc stack memory. Pointer returned by OS was 0" );
+    exit(-1);
+  }
+
+  std::ostringstream filePrefix;
+  filePrefix << filePrefix << "stack_" << getUniqueGlobalStackNumber() << "_";
+  _uniqueTemporaryFilePrefix = filePrefix.str();
+
+  logDebug(
+    "configure(StackConfiguration)",
+    "created file/array stack implementation: "
+            << _arraySize/_blockSize << " buffers a "
+            << blockSize << " entries, "
+            << sizeof( T ) << " byte(s) per entry. "
+            << "Swap file prefix is \"" << _uniqueTemporaryFilePrefix << "\", "
+            << sizeof( T ) * _blockSize << " byte(s) per swap file. "
+            << "Lower bound: " << _minFillFactor << " (" << (double)_minFillFactor/(double)_blockSize*100.0 << "%). "
+            << "Upper bound: " << _maxFillFactor << " (" << (double)_maxFillFactor/(double)_blockSize*100.0 << "%)"
+  );
+}
+
+
+template <class T>
+peano::kernel::stacks::implementation::FileStack<T>::~FileStack() {
+  if ( _array != 0 ) {
+    delete[] _array;
+    _array = 0;
+  }
+
+  removeSwapFiles();
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::removeSwapFiles() {
+  for (int i=0; i<_maxSwapFileCounter; i++) {
+    if( remove( getSwapFileName( i ).c_str() ) != 0 ) {
+      logError("removeSwapFiles()", "was not able to remove swap file " << getSwapFileName( i ) );
+    }
+  }
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::clear() {
+  removeSwapFiles();
+
+  _swapFileCounter    = 0;
+  _currentGlobalIndex = 0;
+  _bottomGlobalIndex  = 0;
+  _maxSwapFileCounter = 0;
+  _maxSize            = 0;
+}
+
+
+template <class T>
+std::string peano::kernel::stacks::implementation::FileStack<T>::getSwapFileName( int i ) const {
+  std::ostringstream fileName;
+  fileName << _uniqueTemporaryFilePrefix << i << ".swp~";
+  return fileName.str();
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::loadSwapFile() {
+  assertion( _swapFileCounter>=1 );
+
+  _swapFileCounter--;
+  _bottomGlobalIndex-=_blockSize;
+
+  std::string fileName = getSwapFileName(_swapFileCounter);
+
+  #ifdef Debug
+  std::ostringstream message;
+  message << "load swap partition from file " << fileName
+          << " to index " << _bottomGlobalIndex%_arraySize;
+  _log.debug( "loadSwapFile()", message.str() );
+  #endif
+
+  std::ifstream swapFile(fileName.c_str(), std::ofstream::in | std::ofstream::binary);
+  if ( !swapFile || !swapFile.is_open() ) {
+    _log.error( "loadSwapFile()", "was not able to open existing swap file "+ fileName );
+  }
+  swapFile.read( (char*)(_array+_bottomGlobalIndex%_arraySize), sizeof(T)*_blockSize );
+  if ( !swapFile || !swapFile.is_open() ) {
+    _log.error( "loadSwapFile()", "reading from swap file " + fileName + " failed" );
+  }
+  swapFile.close();
+
+  if( remove( fileName.c_str() ) != 0 ) {
+    _log.error("loadSwapFile()", "was not able to remove swap file " + fileName + " immediatly after read access" );
+  }
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::storeSwapFile() {
+  assertion( _swapFileCounter>=0 );
+  std::string fileName = getSwapFileName(_swapFileCounter);
+
+  #ifdef Debug
+  std::ostringstream message;
+  message << "swap partition from index " << _bottomGlobalIndex%_arraySize
+          << " to index " <<  (_bottomGlobalIndex+_blockSize-1)%_arraySize
+          << " into file " << fileName;
+  _log.debug( "loadSwapFile()", message.str() );
+  #endif
+
+  std::ofstream swapFile(fileName.c_str(), std::ofstream::out | std::ofstream::binary);
+  if ( !swapFile || !swapFile.is_open() ) {
+    _log.error( "storeSwapFile()", "was not able to create swap file " + fileName + ". Shut down application" );
+    removeSwapFiles();
+    return;
+  }
+  swapFile.write ( (char*)(_array+_bottomGlobalIndex%_arraySize), sizeof(T)*_blockSize );
+  if ( !swapFile || !swapFile.is_open() ) {
+    _log.error( "storeSwapFile()", "was not able to write to swap file " + fileName + ". Shut down application" );
+    removeSwapFiles();
+    return;
+  }
+  swapFile.close();
+
+  if ( _swapFileCounter>_maxSwapFileCounter ) {
+    _maxSwapFileCounter = _swapFileCounter;
+  }
+
+  _bottomGlobalIndex+=_blockSize;
+  _swapFileCounter++;
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::incCounter() {
+  bool belowMaximalFillFactor = _currentGlobalIndex%_blockSize <= _maxFillFactor;
+  _currentGlobalIndex++;
+
+  _maxSize = _maxSize < _currentGlobalIndex ? _currentGlobalIndex: _maxSize;
+
+  bool beyondMaximalFillFactor = _currentGlobalIndex%_blockSize > _maxFillFactor;
+
+  if (
+    belowMaximalFillFactor &&
+    beyondMaximalFillFactor &&
+    (_currentGlobalIndex-_bottomGlobalIndex) > _arraySize/2
+  ) {
+    storeSwapFile();
+  }
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::decCounter() {
+  bool beyondMinimalFillFactor = _currentGlobalIndex%_blockSize >= _minFillFactor;
+  _currentGlobalIndex--;
+  bool belowMinimalFillFactor = _currentGlobalIndex%_blockSize < _minFillFactor;
+  if (
+    beyondMinimalFillFactor &&
+    belowMinimalFillFactor &&
+    (_currentGlobalIndex-_bottomGlobalIndex) < _arraySize/2 &&
+    _swapFileCounter != 0
+  ) {
+    loadSwapFile();
+  }
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::push( const T& element ) {
+  assertion( _array != 0 );
+  *(_array+_currentGlobalIndex%_arraySize) = element;
+  incCounter();
+}
+
+
+template <class T>
+T peano::kernel::stacks::implementation::FileStack<T>::pop() {
+  assertion( _array != 0 );
+  decCounter();
+  return *(_array+_currentGlobalIndex%_arraySize);
+}
+
+
+template <class T>
+long int peano::kernel::stacks::implementation::FileStack<T>::getMaxSize() const {
+  return _maxSize;
+}
+
+
+template <class T>
+void peano::kernel::stacks::implementation::FileStack<T>::clearMaxSize() {
+  _maxSize = 0;
+
+}
+
+
+template <class T>
+long int peano::kernel::stacks::implementation::FileStack<T>::size() const {
+  return _currentGlobalIndex;
+}
+
+
+template <class T>
+bool peano::kernel::stacks::implementation::FileStack<T>::isEmpty() const {
+  return _currentGlobalIndex == 0;
+}

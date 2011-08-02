@@ -1,0 +1,47 @@
+template < class Vertex, class Cell, class State, class EventHandle>
+tarch::logging::Log peano::kernel::spacetreegrid::nodes::tasks::InvokeEnterCell< Vertex, Cell, State, EventHandle >::_log( "peano::kernel::spacetreegrid::nodes::tasks::InvokeEnterCell" );
+
+
+template < class Vertex, class Cell, class State, class EventHandle>
+peano::kernel::spacetreegrid::nodes::tasks::InvokeEnterCell< Vertex, Cell, State, EventHandle >::InvokeEnterCell(
+  State&                                                      state,
+  Cell&                                                       fineGridCell,
+  Vertex* const                                               fineGridVertices,
+  const peano::kernel::spacetreegrid::SingleLevelEnumerator&  fineGridVerticesEnumerator,
+  Cell&                                                       coarseGridCell,
+  Vertex*const                                                coarseGridVertices,
+  const peano::kernel::spacetreegrid::SingleLevelEnumerator&  coarseGridVerticesEnumerator,
+  const tarch::la::Vector<DIMENSIONS,int>&                    fineGridPositionOfCell,
+  EventHandle&                                                eventHandle
+):
+  _state(state),
+  _fineGridCell(fineGridCell),
+  _fineGridVertices(fineGridVertices),
+  _fineGridVerticesEnumerator(fineGridVerticesEnumerator),
+  _coarseGridCell(coarseGridCell),
+  _coarseGridVertices(coarseGridVertices),
+  _coarseGridVerticesEnumerator(coarseGridVerticesEnumerator),
+  _fineGridPositionOfCell(fineGridPositionOfCell),
+  _eventHandle(eventHandle) {
+}
+
+template < class Vertex, class Cell, class State, class EventHandle>
+void peano::kernel::spacetreegrid::nodes::tasks::InvokeEnterCell< Vertex, Cell, State, EventHandle >::operator() () {
+  logTraceInWith1Argument( "operator()", _fineGridCell.isInside() );
+  if (_fineGridCell.isInside()) {
+    _state.incNumberOfInnerCells( 1.0 );
+    _eventHandle.enterCell(
+      _fineGridCell,
+      _fineGridVertices,
+      _fineGridVerticesEnumerator,
+      _coarseGridVertices,
+      _coarseGridVerticesEnumerator,
+      _coarseGridCell,
+      _fineGridPositionOfCell
+    );
+  }
+  else {
+    _state.incNumberOfOuterCells( 1.0 );
+  }
+  logTraceOut( "operator()" );
+}

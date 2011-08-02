@@ -1,0 +1,3 @@
+  tarch::la::Vector<TWO_POWER_D,double> result;
+  tarch::la::multiply(_elementWiseAssemblyMatrix, u, result); 
+  return result;

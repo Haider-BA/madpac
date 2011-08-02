@@ -1,0 +1,43 @@
+/**
+
+ @dir "Heatequation with explicit time stepping"
+
+ !!! Create data structures
+  
+ To regenerate the 
+ \code
+ java -classpath releases/tools/PeProt.jar:releases/tools/DaStGen.jar de.tum.peano.peprot.PeProt src/peano/applications/diffusionequation/explicittimestepping/forward-batch-job.peano-specification src peprot/templates src/peano/kernel all
+ \endcode
+  
+ 
+ !!! Data structures and scripts
+ 
+ The solver is based on the following DaStGen models and script:
+
+ !! Scripts 
+ 
+ \code
+   \include forward-batch-job.peano-specification
+ \endcode
+ 
+ !! Cell 
+ 
+ \code
+   \include dastgen/Cell.def
+ \endcode
+ 
+ !! State 
+ 
+ \code
+   \include dastgen/State.def
+ \endcode
+
+ !! Vertex 
+ 
+ \code
+   \include dastgen/Vertex.def
+ \endcode
+ 
+ */
+ 
+ 

@@ -1,0 +1,18 @@
+#include "peano/utils/Globals.h"
+
+Packed-Type: short int;
+
+Constant: DIMENSIONS;
+Constant: TWO_POWER_D_TIMES_TWO_POWER_D;
+
+
+/**
+ * @author Tobias Weinzierl
+ * @version $Revision: 1.3 $
+ */
+class peano::kernel::regulargrid::parallel::messages::ForkMessage {
+  parallelise persistent double domainOffset[DIMENSIONS];
+  parallelise persistent double h[DIMENSIONS];
+  parallelise persistent int    numberOfGridPoints[DIMENSIONS];
+  parallelise persistent int    neighbourRanks[TWO_POWER_D_TIMES_TWO_POWER_D];
+};

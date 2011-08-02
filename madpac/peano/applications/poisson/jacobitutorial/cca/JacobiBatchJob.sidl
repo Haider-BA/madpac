@@ -1,0 +1,52 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package applications { 
+    package poisson { 
+      package jacobitutorial {
+      package cca {
+        package ports {
+          interface JacobiBatchJob {
+            switchToSetupExperiment();
+            switchToSetupExperimentAndPlotGrid();
+            switchToSetupExperimentAndPlotStartSolution();
+            switchToJacobiStep();
+            switchToJacobiStepAndPlotSolution();
+            switchToPlotSolution();
+
+            iterate();    
+
+            /**
+             * @todo Add your own operations here
+             */
+          }
+        }
+        
+          
+        class JacobiBatchJobForRegularGrid
+          implements-all 
+            peano.applications.poisson.jacobitutorial.cca.ports.JacobiBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+        
+          
+        class JacobiBatchJobForSpacetreeGrid
+          implements-all 
+            peano.applications.poisson.jacobitutorial.cca.ports.JacobiBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+      }
+}
+}
+}
+}

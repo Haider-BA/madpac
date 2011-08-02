@@ -1,0 +1,63 @@
+component: diffusionequationWithExplicitTimeStepping
+
+configuration-tag: diffusionEquationExplicitTimeStepping
+repository: ForwardBatchJob
+namespace: peano::applications::diffusionequation::explicittimestepping
+
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  read scalar: Rhs
+  read scalar: U
+  read scalar: Residual
+  read stencil: Stencil
+  read vector: LinearSurplus
+  write vector: LinearSurplus
+  write scalar: Residual
+  
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+state:
+  name: State
+  dastgen-file: State.def
+
+event-mapping:
+  name: SetupExperiment
+
+event-mapping:
+  name: PerformExplitEulerTimeStep
+ 
+event-mapping:
+  name: PlotSolution
+ 
+event-mapping:
+  name: ApplyRefineDeleteCriterion
+ 
+adapter:
+  name: SetupExperiment
+  merge-with-user-defined-mapping: SetupExperiment
+
+adapter:
+  name: SetupExperimentAndPlot
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: PerformExplitEulerTimeStep
+  merge-with-user-defined-mapping: PerformExplitEulerTimeStep
+
+adapter:
+  name: PerformExplitEulerTimeStepAndPlot
+  merge-with-user-defined-mapping: PerformExplitEulerTimeStep
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: PlotSolution
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: ApplyRefineDeleteCriterion
+  merge-with-user-defined-mapping: ApplyRefineDeleteCriterion
+

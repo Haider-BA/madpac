@@ -1,0 +1,100 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /gridconstructionmovie.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/puregrid/dastgen/GridConstructionMovieBatchJobRepositoryState.def
+ - /peano/applications/puregrid/dastgen/RegularGridVertex.def
+ - /peano/applications/puregrid/dastgen/SpacetreeGridVertex.def
+ - /peano/applications/puregrid/dastgen/RegularGridCell.def
+ - /peano/applications/puregrid/dastgen/SpacetreeGridCell.def
+ - /peano/applications/puregrid/dastgen/RegularGridState.def
+ - /peano/applications/puregrid/dastgen/SpacetreeGridState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /SpacetreeGridVertex.h
+ - /SpacetreeGridVertex.cpp
+ - /SpacetreeGridCell.h
+ - /SpacetreeGridCell.cpp
+ - /State.h
+ - /SpacetreeGridState.h
+ - /SpacetreeGridState.cpp
+ - /mappings/SpacetreeGrid2PerformOneRefinement.h
+ - /mappings/SpacetreeGrid2PerformOneRefinement.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/GridConstructionMovieBatchJobRepository.h
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGrid.h
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridArrayStackImplementation.h
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridArrayStackImplementation.cpp
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridFileStackImplementation.h
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridFileStackImplementation.cpp
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.h
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.cpp
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridSTDStackImplementation.h
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridSTDStackImplementation.cpp
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.h
+ - /repositories/GridConstructionMovieBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.cpp
+ - /repositories/GridConstructionMovieBatchJobRepositoryFactory.h
+ - /repositories/GridConstructionMovieBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-GridConstructionMovieBatchJob-on-spacetree-grid.xml
+ - /configurations/GridConstructionMovieBatchJobConfigurationForSpacetreeGrid.h
+ - /configurations/GridConstructionMovieBatchJobConfigurationForSpacetreeGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/GridConstructionMovieBatchJobRunnerForSpacetreeGrid.h
+ - /runners/GridConstructionMovieBatchJobRunnerForSpacetreeGrid.cpp
+ - /runners/GridConstructionMovieBatchJobRunnerForSpacetreeGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/SpacetreeGrid2PerformOneRefinement.h
+ - /adapters/SpacetreeGrid2PerformOneRefinement.cpp
+ - /adapters/SpacetreeGrid2PerformOneRefinementWithoutGridSnapshot.h
+ - /adapters/SpacetreeGrid2PerformOneRefinementWithoutGridSnapshot.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/GridConstructionMovieBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/GridConstructionMovieBatchJobForSpacetreeGridImplementation.h
+ - /cca/GridConstructionMovieBatchJobForSpacetreeGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/GridConstructionMovieBatchJobTest.h
+ - /tests/GridConstructionMovieBatchJobTest.cpp
+*/

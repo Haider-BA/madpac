@@ -1,0 +1,58 @@
+template <class Vertex, class Cell, class State, class VertexStack, class CellStack, class EventHandle>
+tarch::logging::Log peano::kernel::spacetreegrid::Grid<Vertex,Cell,State,VertexStack,CellStack,EventHandle>::_log( "peano::kernel::spacetreegrid::Grid" );
+
+
+template <class Vertex, class Cell, class State, class VertexStack, class CellStack, class EventHandle>
+peano::kernel::spacetreegrid::Grid<Vertex,Cell,State,VertexStack,CellStack,EventHandle>::Grid(
+  VertexStack&                                  vertexStack,
+  CellStack&                                    cellStack,
+  peano::geometry::Geometry&                    geometry,
+  State&                                        state,
+  const tarch::la::Vector<DIMENSIONS,double>&   domainSize,
+  const tarch::la::Vector<DIMENSIONS,double>&   domainOffset
+):
+  _eventHandle(),
+  _leafNode   (vertexStack,cellStack,_eventHandle,geometry,_refinedNode),
+  _refinedNode(vertexStack,cellStack,_eventHandle,geometry,_leafNode),
+  _root       (vertexStack,cellStack,_eventHandle,geometry,_leafNode,_refinedNode) {
+  _root.restart(state,domainSize,domainOffset,1);
+}
+
+
+template <class Vertex, class Cell, class State, class VertexStack, class CellStack, class EventHandle>
+peano::kernel::spacetreegrid::Grid<Vertex,Cell,State,VertexStack,CellStack,EventHandle>::Grid(
+  VertexStack&                                  vertexStack,
+  CellStack&                                    cellStack,
+  peano::geometry::Geometry&                    geometry,
+  State&                                        state
+):
+  _eventHandle(),
+  _leafNode   (vertexStack,cellStack,_eventHandle,geometry,_refinedNode),
+  _refinedNode(vertexStack,cellStack,_eventHandle,geometry,_leafNode),
+  _root       (vertexStack,cellStack,_eventHandle,geometry,_leafNode,_refinedNode) {
+}
+
+
+template <class Vertex, class Cell, class State, class VertexStack, class CellStack, class EventHandle>
+void peano::kernel::spacetreegrid::Grid<Vertex,Cell,State,VertexStack,CellStack,EventHandle>::iterate(State& state) {
+  _eventHandle.beginIteration(state);
+  _root.traverse(state);
+  _eventHandle.endIteration(state);
+}
+
+
+template <class Vertex, class Cell, class State, class VertexStack, class CellStack, class EventHandle>
+void peano::kernel::spacetreegrid::Grid<Vertex,Cell,State,VertexStack,CellStack,EventHandle>::restart(
+  const tarch::la::Vector<THREE_POWER_D,int>&   traversalOrderOfNeighbours,
+  State&                                        state,
+  const tarch::la::Vector<DIMENSIONS,double>&   domainSize,
+  const tarch::la::Vector<DIMENSIONS,double>&   domainOffset,
+  int                                           domainLevel
+) {
+  _root.restart(state,domainSize,domainOffset,domainLevel);
+}
+
+
+template <class Vertex, class Cell, class State, class VertexStack, class CellStack, class EventHandle>
+void peano::kernel::spacetreegrid::Grid<Vertex,Cell,State,VertexStack,CellStack,EventHandle>::terminate() {
+}

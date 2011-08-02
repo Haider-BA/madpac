@@ -1,0 +1,11 @@
+/**
+
+ @dir "Multicore"
+ 
+ This directory contains some services for the shared memory parallelisation. 
+ While the memory parallelisation is controlled by the compile options 
+ $-DSharedTBB$ and $-DSharedOMP$, just remove this directory from your build, if 
+ you don't want to use the parallelisation.
+  
+ */
+ 

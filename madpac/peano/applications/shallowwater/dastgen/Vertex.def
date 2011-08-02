@@ -1,0 +1,76 @@
+Packed-Type: short int;
+
+class peano::applications::shallowwater::dastgen::Vertex {
+  /****
+   * Solver is based on cells with edges. Therefore
+   * the edges are mapped to vertices:
+   ****
+   * heightWaterAbove[0]:     edge above the vertex, left cell
+   * heightWaterAbove[1]:     edge above the vertex, right cell
+   * heightWaterRight:        edge right of the vertex, lower cell
+   *                          edge right of the vertex, upper cell == heightWaterAbove[1]
+   ****
+   * Please note:             All momentums are stored here. This will be useful if wave-limiters are implemented one day.
+   *                          At the moment there is some overhead!
+   *                          
+   * momentumXAbove[0]:       edge above the vertex, left cell
+   * momentumXAbove[1]:       edge above the vertex, right cell
+   * momentumXRight:          edge right of the vertex, lower cell
+   *                          edge right of the vertex, upper cell == momentumAbove[1]
+   ****
+   * Please note:             All momentums are stored here. This will be useful if wave-limiters are implemented one day.
+   *                          At the moment there is some overhead!
+   * momentumYAbove[0]:       edge above the vertex, left cell
+   * momentumYAbove[1]:       edge above the vertex, right cell
+   * momentumYRight:          edge right of the vertex, lower cell
+   *                          edge right of the vertex, upper cell == momentumAbove[1]
+   ****
+   * Please note:             Some optimization could be done here eventually, if we assume a none-moving bathymetry.
+   *                          In the case of the f-wave approach, for example, it would then be enough to compute the corresponding mid-values once..
+   *                          
+   * heightSeabedAbove[0]:    edge above the vertex, left cell
+   * heightSeabedAbove[1]:    edge above the vertex, right cell
+   * heightSeabedRight:       edge right of the vertex, lower cell
+   *                          edge right of the vertex, upper cell == heightSeabedAbove[1]
+   ****
+   * fluxHeightWaterAbove[0]: edge above the vertex, left cell
+   * fluxHeightWaterAbove[1]: edge above the vertex, right cell
+   * fluxHeightWaterRight[0]: edge right of the vertex, lower cell
+   * fluxHeightWaterRight[1]: edge right of the vertex, upper cell
+   ****
+   * Please note:             All momentum-fluxes are stored here. This will be useful if wave-limiters are implemented one day.
+   *                          At the moment there is some overhead!
+   * fluxMomentumXAbove[0]:   edge above the vertex, left cell
+   * fluxMomentumXAbove[1]:   edge above the vertex, right cell
+   * fluxMomentumXRight[0]:   edge right of the vertex, lower cell
+   * fluxMomentumXRight[1]:   edge right of the vertex, upper cell
+   ****
+   * Please note:             All momentum-fluxes are stored here. This will be useful if wave-limiters are implemented one day.
+   *                          At the moment there is some overhead!
+   * fluxMomentumYAbove[0]:   edge above the vertex, left cell
+   * fluxMomentumYAbove[1]:   edge above the vertex, right cell
+   * fluxMomentumYRight[0]:   edge right of the vertex, lower cell
+   * fluxMomentumYRight[1]:   edge right of the vertex, upper cell
+   ****
+   */
+
+   persistent double heightWaterAbove[2];
+   persistent double heightWaterRight;
+   
+   persistent double heightSeabedAbove[2];
+   persistent double heightSeabedRight;
+   
+   persistent double momentumXAbove[2];
+   persistent double momentumXRight;
+   
+   persistent double momentumYAbove[2];
+   persistent double momentumYRight;
+   
+   persistent double fluxHeightWaterAbove[2];
+   persistent double fluxMomentumXAbove[2];
+   persistent double fluxMomentumYAbove[2];
+   
+   persistent double fluxHeightWaterRight[2];
+   persistent double fluxMomentumXRight[2];
+   persistent double fluxMomentumYRight[2];
+};

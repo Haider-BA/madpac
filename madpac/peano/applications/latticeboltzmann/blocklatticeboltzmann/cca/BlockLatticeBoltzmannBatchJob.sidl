@@ -1,0 +1,52 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package applications { 
+    package latticeboltzmann { 
+      package blocklatticeboltzmann {
+      package cca {
+        package ports {
+          interface BlockLatticeBoltzmannBatchJob {
+            switchToRegularBlockSolverAdapter();
+            switchToInitialiseSpacetreeGridAdapter();
+            switchToBlockCCAOutputAdapter();
+            switchToDynamicRefinementForSpacetreeGridAdapter();
+            switchToBlockVTKOutputAdapter();
+            switchToRegularBlockSolverAndVTKOutputAdapter();
+
+            iterate();    
+
+            /**
+             * @todo Add your own operations here
+             */
+          }
+        }
+        
+          
+        class BlockLatticeBoltzmannBatchJobForRegularGrid
+          implements-all 
+            peano.applications.latticeboltzmann.blocklatticeboltzmann.cca.ports.BlockLatticeBoltzmannBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+        
+          
+        class BlockLatticeBoltzmannBatchJobForSpacetreeGrid
+          implements-all 
+            peano.applications.latticeboltzmann.blocklatticeboltzmann.cca.ports.BlockLatticeBoltzmannBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+      }
+}
+}
+}
+}

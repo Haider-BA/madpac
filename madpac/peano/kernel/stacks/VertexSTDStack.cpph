@@ -1,0 +1,100 @@
+template <class Vertex>
+tarch::logging::Log peano::kernel::stacks::VertexSTDStack<Vertex>::_log( "peano::kernel::stacks::VertexSTDStack" );
+
+
+template <class Vertex>
+peano::kernel::stacks::VertexSTDStack<Vertex>::VertexSTDStack():
+  _currentInputStack(0){
+}
+
+
+template <class Vertex>
+peano::kernel::stacks::VertexSTDStack<Vertex>::~VertexSTDStack() {
+}
+
+
+template <class Vertex>
+Vertex peano::kernel::stacks::VertexSTDStack<Vertex>::pop(int stackNumber) {
+  logTraceInWith1Argument( "pop(int)", stackNumber );
+  logTraceOut( "pop(int)" );
+  if (stackNumber==peano::kernel::stacks::Constants::InOutStack) {
+    assertion1(!_inputOutputStack[_currentInputStack].isEmpty(),_currentInputStack);
+    return _inputOutputStack[_currentInputStack].pop();
+  }
+  else {
+    assertion1(!_temporaryStack[stackNumber].isEmpty(),stackNumber);
+    return _temporaryStack[stackNumber].pop();
+  }
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexSTDStack<Vertex>::push( int stackNumber, const Vertex& vertex ) {
+  logTraceInWith2Arguments( "push(int,Vertex)", stackNumber, vertex );
+  if (stackNumber==peano::kernel::stacks::Constants::InOutStack) {
+    assertion1( vertex.getRefinementControl() != Vertex::Records::Refining, vertex );
+    assertion1( vertex.getRefinementControl() != Vertex::Records::Erasing, vertex );
+    _inputOutputStack[1-_currentInputStack].push(vertex.getRecords());
+  }
+  else {
+    _temporaryStack[stackNumber].push(vertex);
+  }
+  logTraceOut( "push(int,Vertex)" );
+}
+
+
+template <class Vertex>
+int peano::kernel::stacks::VertexSTDStack<Vertex>::sizeOfInputStack() const {
+  return _inputOutputStack[_currentInputStack].size();
+}
+
+
+template <class Vertex>
+int peano::kernel::stacks::VertexSTDStack<Vertex>::sizeOfOutputStack() const {
+  return _inputOutputStack[1-_currentInputStack].size();
+}
+
+
+template <class Vertex>
+bool peano::kernel::stacks::VertexSTDStack<Vertex>::isInputStackEmpty() const {
+  return _inputOutputStack[_currentInputStack].isEmpty();
+}
+
+
+template <class Vertex>
+bool peano::kernel::stacks::VertexSTDStack<Vertex>::isOutputStackEmpty() const {
+  return _inputOutputStack[1-_currentInputStack].isEmpty();
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexSTDStack<Vertex>::clear() {
+  _inputOutputStack[0].clear();
+  _inputOutputStack[1].clear();
+  for (int i=0; i<NUMBER_OF_TEMPORARY_STACKS; i++) {
+	_temporaryStack[i].clear();
+  }
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexSTDStack<Vertex>::flipInputAndOutputStack() {
+  logTraceInWith1Argument( "flipInputAndOutputStack()", sizeOfOutputStack() );
+  assertion1( isInputStackEmpty(), sizeOfInputStack() );
+  _currentInputStack = 1-_currentInputStack;
+  logTraceOut( "flipInputAndOutputStack()" );
+}
+
+
+template <class Vertex>
+template <class Cell>
+void peano::kernel::stacks::VertexSTDStack<Vertex>::writeToCheckpoint( peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) const {
+  assertionMsg( false, "not implemented yet" );
+}
+
+
+template <class Vertex>
+template <class Cell>
+void peano::kernel::stacks::VertexSTDStack<Vertex>::readFromCheckpoint( const peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) {
+  assertionMsg( false, "not implemented yet" );
+}

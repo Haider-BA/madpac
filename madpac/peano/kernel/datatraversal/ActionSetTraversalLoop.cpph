@@ -1,0 +1,145 @@
+#ifdef SharedOMP
+#include <omp.h>
+#endif
+
+template <class LoopBody>
+peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::ActionSetTraversalLoop(
+  peano::kernel::datatraversal::ActionSetTraversal traversal,
+  const LoopBody&                                  loopBody,
+  int                                              grainSize,
+  bool                                             invertTraversal
+) {
+  #if defined(SharedTBB) || defined(SharedOMP)
+  if (grainSize>0) {
+    loopParallel(traversal, loopBody, grainSize, invertTraversal);
+  }
+  else {
+    loopSequential(traversal, loopBody, invertTraversal);
+  }
+  #else
+  loopSequential(traversal, loopBody, invertTraversal);
+  #endif
+}
+
+
+
+template <class LoopBody>
+void peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::loopSequential(
+  const peano::kernel::datatraversal::ActionSetTraversal&  traversal,
+  const LoopBody&                                          loopBody,
+  bool                                                     invertTraversal
+) {
+  LoopBody localIterationLoopBody(loopBody);
+  if (invertTraversal) {
+    for (int currentStepInPath=traversal.getMaximumPath()-1; currentStepInPath>=0; currentStepInPath--) {
+      for (int j=0; j<traversal.getActionSet(currentStepInPath).getNumberOfParallelActions(); j++) {
+        localIterationLoopBody(traversal.getActionSet(currentStepInPath).getAction(j));
+      }
+    }
+  }
+  else {
+    for (int currentStepInPath=0; currentStepInPath<traversal.getMaximumPath(); currentStepInPath++ ) {
+      for (int j=0; j<traversal.getActionSet(currentStepInPath).getNumberOfParallelActions(); j++) {
+        localIterationLoopBody(traversal.getActionSet(currentStepInPath).getAction(j));
+      }
+    }
+  }
+  localIterationLoopBody.updateGlobalValues();
+}
+
+
+
+
+template <class LoopBody>
+void peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::loopParallel(
+  const peano::kernel::datatraversal::ActionSetTraversal&  traversal,
+  const LoopBody&                                          loopBody,
+  int                                                      grainSize,
+  bool                                                     invertTraversal
+) {
+  if (invertTraversal) {
+    for (int currentStepInPath=traversal.getMaximumPath()-1; currentStepInPath>=0; currentStepInPath-- ) {
+      #ifdef SharedTBB
+      ActionSetTraversalLoopInstance loopInstance(loopBody,traversal.getActionSet(currentStepInPath));
+      tbb::parallel_for(
+        tbb::blocked_range<int>(0,traversal.getActionSet(currentStepInPath).getNumberOfParallelActions(),grainSize),
+        loopInstance
+      );
+      #elif SharedOMP
+      #pragma omp parallel
+        {
+        LoopBody localIterationLoopBody(loopBody);
+        #pragma omp for schedule(dynamic, grainSize)
+	
+        for (int j = 0; j < traversal.getActionSet(currentStepInPath).getNumberOfParallelActions(); j++) {
+          localIterationLoopBody(traversal.getActionSet(currentStepInPath).getAction(j));
+          }
+        #pragma omp critical(updateGlobalValues)
+	      localIterationLoopBody.updateGlobalValues();
+	    }
+      #else
+      assertion(false);
+      #endif
+    }
+  }
+  else {
+    for (int currentStepInPath=0; currentStepInPath<traversal.getMaximumPath(); currentStepInPath++ ) {
+      #ifdef SharedTBB
+      ActionSetTraversalLoopInstance loopInstance(loopBody,traversal.getActionSet(currentStepInPath));
+      tbb::parallel_for(
+        tbb::blocked_range<int>(0,traversal.getActionSet(currentStepInPath).getNumberOfParallelActions(),grainSize),
+        loopInstance
+      );
+      #elif SharedOMP
+      #pragma omp parallel
+      {
+       LoopBody localIterationLoopBody(loopBody);
+       #pragma omp for schedule(dynamic, grainSize)
+	
+         for (int j = 0; j < traversal.getActionSet(currentStepInPath).getNumberOfParallelActions(); j++) {
+           localIterationLoopBody(traversal.getActionSet(currentStepInPath).getAction(j));
+         }
+       #pragma omp critical(updateGlobalValues)
+	     localIterationLoopBody.updateGlobalValues();
+	  }
+      #else
+      assertion(false);
+      #endif
+    }
+  }
+}
+
+
+
+
+#ifdef SharedTBB
+template <class LoopBody>
+tbb::spin_mutex peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::_mutex;
+
+
+template <class LoopBody>
+peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::ActionSetTraversalLoopInstance::ActionSetTraversalLoopInstance(
+  const LoopBody&                             loopBody,
+  const peano::kernel::datatraversal::ActionSet&  actionSet
+):
+  _loopBody(loopBody),
+  _actionSet(actionSet) {
+}
+
+
+
+template <class LoopBody>
+void peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::ActionSetTraversalLoopInstance::operator() (const tbb::blocked_range<int>& range) const {
+  LoopBody localLoopBody( _loopBody );
+
+  assertion( range.begin() >= 0 );
+  assertion( range.end() <= _actionSet.getNumberOfParallelActions() );
+
+  for (int i=range.begin(); i!=range.end(); i++) {
+    localLoopBody(_actionSet.getAction(i));
+  }
+
+  tbb::spin_mutex::scoped_lock lock(_mutex);
+  localLoopBody.updateGlobalValues();
+}
+#endif

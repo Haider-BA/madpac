@@ -1,0 +1,195 @@
+/**
+
+ @dir "CCA - Common Component Architecture"
+
+ !!! Remark: This whole text is completely out-of-date
+ 
+ This page discusses how to integrate Peano into sciCoDE. Whenever you write a 
+ sciCoDE component, your component specified by a SIDL file has incoming 
+ (provides) and outgoing (uses) ports. The following text discusses these three 
+ cca ingredients: the component itself and the two types of ports.
+ If you don't use CCA, i.e. if you don't compile with $-DCCA$, just remove the 
+ cca directories from your build path. Please note that there might be many of 
+ them: the general one here, and most of the PDEs also have one. Also, remove 
+ the main.h and main.cpp from your linker call.
+
+ !!! 1. File Organisation
+ 
+ These are our best practices: Each application that supports sciCoDE provides 
+ a directory $cca$. Within this directory, you find 
+ 
+ - the sidl-files describing the component, 
+ - the PDE-specific sidl files describing the PDE-specific ports (sometimes both 
+   of them are contained in one file),
+ - the C++ implementation of the component, and 
+ - an xml file file describing the overall component.
+ 
+ Furthermore, there might be additional ressources (such as icons and default 
+ configuration files), a shared library containing the component, and 
+ subdirectories.
+
+ !!! 2.) Naming Conventions
+ 
+ Peano's sciCoDE integration suggests a couple of naming conventions which 
+ proved of great value. In additon to these convention, Peano added its own 
+ naming convention plugin to sciCoDE. To use it, you have to add the statement
+ $--naming de.tum.scicode.sidl.naming.Peano$ to each compiler invocation.
+ 
+ !! 2.1.) Ports
+ 
+ - All ports (CCA interfaces in the sidl files) belong to the namespace peano.integration.cca.ports.
+ - peano.integration.cca.ports has a subnamespace application which holds all the ports 
+   belonging to the Peano plugins. Within application, the subnamespaces mirror 
+   Peano's directory 
+   structure, i.e. there is for example a namespace peano.integration.cca.ports.applications.puregrid 
+   or peano.integration.cca.ports.applications.poisson.jacobi.
+ - The interfaces belonging to the Peano kernel and the technical architecture 
+   can be found parallel to applications, i.e. there is for example 
+   peano.integration.cca.ports.logging. Typically, you don't add namespaces/interfaces on 
+   this level.
+ - There's no cca namespace below peano.integration.cca.ports, as this would be duplicate.
+   That means peano.integration.cca.ports.applications.poisson is o.k. 
+   but peano.integration.cca.ports.applications.poisson.cca ain't necessary even though the 
+   sidl files might be stored in such a directory and namespaces typically 
+   equal the directory pathes.
+ 
+ !! 2.2.) Components
+ 
+ - Each sciCoDE component has a unique namespace of its own. There's no two 
+   sciCoDE components sharing exactly the same full-qualified namespace.
+ - Each sciCoDE component's namespace equals exactly the Peano directory 
+   structure, but there's an additional cca after the PDE namespace. So, the 
+   puregrid CCA component might be found at peano.applications.puregrid.cca.
+ - If there are several sciCoDE components per PDE, their CCA namespace differs
+   only after the cca qualifier. Consequently, there might be 
+   peano.applications.puregrid.cca.component1 and peano.applications.puregrid.cca.component2
+   for the pure grid.
+ - The namespace also defines the directory structure, i.e. all data of 
+   peano.applications.puregrid.cca.component1 can be found at Peano's
+   src/peano/applications/puregrid/cca/component1 directory. If 
+   puregrid.cca.component1 and puregrid.cca.component2 shared data (such as 
+   sidl files), this data can be found at puregrid.cca.
+
+ !!! 3.) Generate the Ports
+
+ Before we start to implement some Peano sciCoDE components, we have to generate 
+ the ports. For this, we use sciCoDE's SIDL compiler. The resulting port data 
+ will be placed within src/integration/cca/ports, as all ports belong to the namespace
+ peano.integration.cca.ports (see Section 2.1). The compiler invocation then reads as 
+\code
+java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.naming.Peano \
+  -L jni-ports -o ./src mycomponent.s.sidl.file
+\endcode
+ if you change into your workspace directory holding Peano's src directory.
+ 
+ Often, your sidl files depend on other/standard Peano sidl files. In this case, 
+ you have to add corresponding includes to the compiler invocation. Typically,
+ this is $-I src/peano/integration/cca/tarch.ports.sidl$. The call then reads similar to 
+\code
+java -jar releases/tools/scicode-compiler.jar -L jni-ports -o src \
+  -I src/peano/integration/cca/tarch.ports.sidl --naming de.tum.scicode.sidl.naming.Peano \
+  src/peano/applications/puregrid/cca/example/sphereexample.sidl
+\endcode
+ 
+ !!! 4.) Prepare Your sciCoDE Component
+
+ Again, we have to use sciCoDE's SIDL compiler and perfrom a couple of steps. 
+ And, again, we perform all calls within Peano's workspace directory also 
+ holding the src subdirectory. 
+ - First, we generate an xml file called description.xml that describes the 
+   whole component. For this, we invoke the compiler with the language option
+   xml-cxx. If we already know how we will call the shared library that we will 
+   generate from all our C++ sources later on, we can pass the compiler this 
+   information, too, due to the command line option $-l$. If we don't know yet, 
+   we can add this information later on. The invocation then reads similar to 
+\code
+java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.naming.Peano \
+  -L xml-cxx -l mylibname -o ./src mycomponent.s.sidl.file
+\endcode
+   As I mentioned before, this mylibname is optional. If you specify it, it has 
+   to be the complete name, i.e. typically with the prefix lib and the extension 
+   so.  
+   We end up with a file description.xml within our application's cca directory. 
+   For the puregrid, e.g., it is the directory 
+   src/peano/applications/puregrid/cca/example. 
+ - Second, we generate the proxys for sciCoDE. This can be done with exactly the 
+   same compiler invocation if the target language is replaced by jni-proxy: 
+\code
+java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.naming.Peano \
+  -L jni-proxy  -o ./src mycomponent.s.sidl.file
+\endcode
+   You'll end up with a couple of new C++ files. However, they are not stored 
+   directly within your PDE directory but within another subdirectory scicode. 
+   I did this for a separation of concerns, i.e. all the files within the 
+   subdirectory are generated and you don't have to be worried that the compiler 
+   will overwrite your implemetnations later on if you rerun it.
+ - Third, invoke the compiler once again for the target language jni-plain: 
+\code
+java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.naming.Peano \
+  -L jni-plain  -o ./src mycomponent.s.sidl.file
+\endcode
+    Now you find an implementation file within your PDE component that you are 
+    supposed to fill. Best practices for this are discussed in Section 5. For 
+    the time being, I discuss how to deliver your component to sciCoDE.
+  - Fourth, compile a shared library of Peano. The makefile RaPeP gives you if 
+    you setup your component already contains all the compile flags if you are 
+    using g++ on Linux. For other systems, the exact settings might be 
+    different. 
+  - Fifth, create one zip file. This zip file has to contain the following 
+    files:
+    - Your description.xml file. This one has to be stored on the zip file's 
+      root. Before you add it to the archive, open it and assure that all the 
+      paths within the xml file point to the right files relative to the zip
+      file's root (see next steps).
+    - Your shared library holding all the implementation stuff.
+    - All the sidl files you used. They might be in subdirectories relative to 
+      the zip file's root, but the xml file has to point to the right 
+      destinations. 
+  - Sixth, take the whole zip file and replace the zip extension by 
+    scicode-component. Within sciCoDE, you can now directly use this component.
+
+ !!! 5.) How to Implement 
+ 
+ The simplest example for a PDE 'solver' running within sciCoDE can be found in 
+ the puregrid component. This example might also be a good starting point to 
+ learn about Peano's sciCoDE components. The following text comprises some 
+ additional (background) information, implementation patterns, rationale, and 
+ so forth. In the end, it comes down to the question how to implement incoming 
+ calls (provide ports) and outgoing calls (uses ports).
+ 
+ !! 5.1.) Provide Ports
+ 
+ Open the implementation's cpp file. There should be one operation for each 
+ incoming call. This whole class is something very similar to a runner, so 
+ either add all the runner stuff there or try to reuse your runner what might 
+ make more sense. No matter which alternative you follow, a provide ports just 
+ implies an operation you have to implement, and there's no magic at all.
+ 
+ !! 5.2.) Uses Ports - Trivial Implementation
+ 
+ A uses port means that your application invokes operations on another 
+ component. If you need information to implement an incoming port (see above), 
+ then this is very simple: Just invoke the operation from your component 
+ implementation. Things becomes more trickier, if you wanna write data from your 
+ mappings.
+ 
+ Again, there's a very trivial implementation pattern mirroring the behaviour 
+ from above. You do your calls on the repository resulting in some iterations. 
+ Before your component's operation terminates, you extract data from your PDE's 
+ state and forward this data to a uses port.
+ 
+ !! 5.3.) Uses Ports - Complicated Implementation
+
+ In one case, the pattern from above does not fit to your requirements: When 
+ you have to write data directly from your mappings to the ports. An example for 
+ this is a mapping that visualises the grid. Here, it is not sufficient to take 
+ one piece of data from the state and forward it to a uses port. Instead, you 
+ have to access the port over and over again. The sophisticated solution for 
+ this issue is to write a service that internally forwards all the calls to a 
+ port. See the discussion on services on the page philisophy in the tutorials 
+ for an elaborated description of this issue. Alternatively, you can study the 
+ CCALogger in the tarch for a description. It implements - together with the 
+ class tarch::logging::Log exactly this pattern.
+ 
+ */
+ 

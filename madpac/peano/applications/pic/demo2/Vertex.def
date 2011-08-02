@@ -1,0 +1,14 @@
+#include "peano/utils/Globals.h"
+
+Packed-Type: short int;
+
+/**
+Constant: DIMENSIONS;
+Constant: THREE_POWER_D;
+Constant: FIVE_POWER_D;
+Constant: TWO_POWER_D;
+ */
+ 
+ 
+class peano::applications::pic::demo2::dastgen::Vertex {
+};

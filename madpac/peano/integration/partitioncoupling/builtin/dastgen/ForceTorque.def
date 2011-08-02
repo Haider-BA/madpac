@@ -1,0 +1,7 @@
+
+Packed-Type: short int;
+
+class peano::integration::partitioncoupling::builtin::records::ForceTorque {
+  persistent parallelise double _translationalForce[3];
+  persistent parallelise double _torque[3];
+};

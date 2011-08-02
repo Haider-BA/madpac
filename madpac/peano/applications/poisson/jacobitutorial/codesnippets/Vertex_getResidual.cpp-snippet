@@ -1,0 +1,1 @@
+  return _vertexData.getRhs() - _vertexData.getResidual();

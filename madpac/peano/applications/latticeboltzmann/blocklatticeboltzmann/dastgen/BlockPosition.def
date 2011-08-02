@@ -1,0 +1,8 @@
+#include "peano/utils/Globals.h"
+
+Packed-Type: short int;
+Constant: DIMENSIONS;
+
+class peano::applications::latticeboltzmann::blocklatticeboltzmann::forcerecords::BlockPosition {
+  persistent parallelise double _blockPosition[DIMENSIONS];
+};

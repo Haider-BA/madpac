@@ -1,0 +1,41 @@
+/**
+
+ @dir "datatraversal (and support for Multicore architectures)"
+ 
+ This directory holds Peano's data traversal features. Peano's data traversal 
+ algorithms and data structures are deployed to a directory of its own, as this
+ is the plugin point for the multicore parallelisation. 
+ 
+ To switch the multicore support on, include the corresponding tarch directory 
+ into your build and add either $-DSharedOMP$ 
+ or $-DSharedTBB$ to your build path. Depending on which type of multicore 
+ support you wanna use (either OpenMP or the TBB), you might also include the 
+ subdirectories omp or tbb, respectively.
+  
+ The shared memory parallelisation basically means to make the for-loops on 
+ cells and vertices run in parallel. We abstract from steps of the iteration and call them 
+ 'action'. An action is a for-loop step acting on a cell. Actions that can run 
+ in parallel are collected in action sets. A cell traversal, e.g., consequently  
+ consists of a sequence of action sets while each set requires all data up to a 
+ certain level to be loaded. The parallel traversals then read as 
+ follows:
+ 
+ - The traversing algorithm constructs a cell traversal.
+ - It implements one big for loop. Its length equals the cell traversal's 
+   maximum path.
+ - In each iteration
+   - the algorithm has to check whether all the data for the current maximum 
+     level is loaded, and, then,
+   - invokes a parallel for all elements of the current action set. 
+ 
+ t.b.d. Noch Erklaerung wie das mit in und out ist und wie man da die 
+ load-Operationen mit reinverschraenkt (kann man evtl. auch pessimistisches
+ Loading reincodieren, d.h. schon immer so vorladen?) 
+ 
+ !!! OpenMP
+ 
+ !!! Intel Threading Building Blocks
+ 
+  
+ */
+ 

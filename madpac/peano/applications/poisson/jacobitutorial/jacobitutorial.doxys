@@ -1,0 +1,47 @@
+/**
+
+ @dir "Jacobi Tutorial"
+
+ @image html jacobi.jpg
+  
+ <h1>Matrix-free Jacobi Solver</h1>
+ 
+ This is the documentation of the PDE component Jacobi. It is a very simple 
+ matrix free solver for 
+ 
+ <center>
+   @f$ - \Delta u = f @f$ with @f$ f = d \pi ^d \sum _d sin (\pi x) @f$ 
+ </center>
+   
+ and homogeneous Dirichlet boundary conditions. The whole software layout is 
+ based upon the RaPeP script which is invoked with
+ \code
+ peano/src/peano/applications/poisson/jacobi-tutorial/jacobi-tutorial.peano-specification peano/src/peano/applications/ rapep/templates /peano/src/peano/kernel
+ \endcode
+ This page is something like a cookbook or Jacobi diary, i.e. it documents the 
+ different steps one has to do to implement this Jacobi solver. That means that,  
+ on the one hand, it is kind of an additional documentation for the existing 
+ source in the Peano repository that give more insight into the underlying 
+ paradigms, rationale, and ideas. On the other hand, it is something like a 
+ cookbook if you wanna implement a solver yourself.
+ 
+ The latter fact implies that this whole Peano plugin is kind of a snapshot. A 
+ real solver would be significantly more complex and powerful. The source code 
+ here is kind of frozen, and I give a short outlook in the end how one now 
+ typically proceeds.
+ 
+ The whole tutorial is split up into individual steps:
+ 
+ - Step 1: Set up the application, create all the glue code, and implement a 
+   first solver for the regular grid. 
+ - Step 2: Do all the workarounds, i.e. configure the output of the code, add 
+   multicore support, implement the stuff for different grid sizes and 
+   geometries. (not yet written)
+ - Step 3: Implement more complicated scenarios that are implemented due to 
+   Peano's service idea. (not yet written)
+ - Step 4: Run the whole solver on an adaptive grid that changes in time. (not 
+   yet written)
+ 
+*/
+ 
+ 

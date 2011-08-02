@@ -1,0 +1,31 @@
+#include "peano/kernel/spacetreegrid/aspects/VertexStateAnalysis.h"
+
+
+template <class Vertex>
+bool peano::kernel::spacetreegrid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag(
+  Vertex                                       fineGridVertices[FOUR_POWER_D],
+  const peano::kernel::gridinterface::VertexEnumerator&                 fineGridVerticesEnumerator,
+  typename Vertex::Records::RefinementControl  whichFlag
+) {
+  bool result = false;
+  dfor2(k)
+    result |=
+      fineGridVertices[fineGridVerticesEnumerator(k)].getRefinementControl()==whichFlag;
+  enddforx
+  return result;
+}
+
+
+template <class Vertex>
+bool peano::kernel::spacetreegrid::aspects::VertexStateAnalysis::doesNoVertexCarryRefinementFlag(
+  Vertex                                       fineGridVertices[FOUR_POWER_D],
+  const peano::kernel::gridinterface::VertexEnumerator&                 fineGridVerticesEnumerator,
+  typename Vertex::Records::RefinementControl  whichFlag
+) {
+  bool result = true;
+  dfor2(k)
+    result &=
+      fineGridVertices[fineGridVerticesEnumerator(k)].getRefinementControl()!=whichFlag;
+  enddforx
+  return result;
+}

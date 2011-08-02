@@ -1,0 +1,8 @@
+Packed-Type: short int;
+
+class peano::applications::poisson::multigrid::dastgen::State {
+  /**
+   * Relaxation factor.
+   */
+  persistent parallelise double omega;
+};

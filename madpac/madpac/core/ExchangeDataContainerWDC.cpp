@@ -84,14 +84,14 @@ ExchangeDataContainerWDC::addPminLBrho(
             {
               if ((j + 1 / 2) * _cellSize
                   >= BBMin[Y] && (j + 1 / 2)
-                  * _cellSize < BBMin[Y])
+                  * _cellSize < BBMax[Y])
                 {
                   for (int k = 0; k < _size[Z]; k++)
                     {
-                      if ((k + 1 / 2) * _cellSize
+                      if (((k + 1 / 2) * _cellSize
                           >= BBMin[Z] && (k + 1
                           / 2) * _cellSize
-                          < BBMin[Z])
+                          < BBMax[Z]))
                         {
                           ipos[X] = i;
                           ipos[Y] = j;
@@ -179,6 +179,7 @@ ExchangeDataContainerWDC::addP(
       minX[2] = BBMin[Z];
       maxX[2] = BBMax[Z];
     }
+
   bool add = usher->addP(minX, maxX, vtmp);
   int index = calcIndexX(minPos[X], minPos[Y], minPos[Z]);
 

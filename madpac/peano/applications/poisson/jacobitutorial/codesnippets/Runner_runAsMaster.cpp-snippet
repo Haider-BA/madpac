@@ -1,0 +1,7 @@
+  repository.switchToSetupExperimentAndPlotStartSolution(); repository.iterate();
+  repository.switchToJacobiStep();
+  for (int i=0; i<100; i++) {
+    repository.iterate();
+  }
+  repository.switchToPlotSolution();
+  repository.iterate();

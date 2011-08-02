@@ -1,0 +1,44 @@
+component: GridConstructionMovie
+
+configuration-tag: gridConstructionMovie
+repository: GridConstructionMovieBatchJob
+namespace: peano::applications::puregrid
+
+/**
+ * Same as puregrid
+ */
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  
+  
+/**
+ * Same as puregrid
+ */
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+  
+/**
+ * Same as puregrid
+ */
+state:
+  name: State
+  dastgen-file: State.def
+
+
+event-mapping:
+  name: PerformOneRefinement
+ 
+
+adapter:
+  name: PerformOneRefinement
+  merge-with-user-defined-mapping: PerformOneRefinement
+  merge-with-predefined-mapping: VTKGridVisualiser
+
+  
+adapter:
+  name: PerformOneRefinementWithoutGridSnapshot
+  merge-with-user-defined-mapping: PerformOneRefinement
+  

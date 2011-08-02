@@ -1,0 +1,64 @@
+#include "peano/utils/Globals.h"
+
+Constant: DIMENSIONS;
+Constant: TWO_POWER_D;
+
+/**
+ * The packed type should be defined by the application's dof. I recommend short
+ * int, i.e. using the following statement:
+ *
+ * Packed-Type: short int;
+ */
+
+class peano::kernel::grid::dastgen::SpacetreeVertex {
+  enum InsideOutsideDomain {
+    Inside, Boundary, Outside
+  };
+
+  enum RefinementControl {
+    Unrefined,Refined,RefinementTriggered,
+    Refining,EraseTriggered,Erasing
+  };
+
+  persistent parallelise packed bool               isHangingNode;
+  persistent parallelise packed RefinementControl  refinementControl;
+
+  /**
+   * This field contains two related types of information:
+   * 
+   *   - If it is non-negative it holds the maximum height of the adjacent 
+   *     subtrees.
+   *   - If it has a value of -1 it indicates that the adjacent subtrees are 
+   *     transient or cut by a subdomain boundary.  
+   */
+  persistent int  maximumSubtreeHeight from 0 to 64;
+
+  /**
+   * @todo Should be TWO_POWER_D as upper limit, but doesn't matter here as it
+   * is a non-persistent field anyway.
+   */  
+  discard int numberOfAdjacentRefinedCells;
+
+  /**
+   * A vertex is outside, if all @f$ 2^d @f$ adjacent cells are outside. In this
+   * case, no events are called for it. 
+   */
+  #ifdef Asserts
+  persistent packed parallelise InsideOutsideDomain insideOutsideDomain;
+  #endif
+
+  #ifndef Asserts
+  persistent packed InsideOutsideDomain insideOutsideDomain;
+  #endif
+
+  #ifdef Debug
+  persistent parallelise double x[DIMENSIONS];
+  persistent parallelise int    level;
+  #endif
+  
+  #ifdef Parallel
+  persistent parallelise bool   belongsToSubdomainBoundary;
+  persistent parallelise int    adjacentRanks[TWO_POWER_D];
+  persistent parallelise int    adjacentRanksOnSublevel[TWO_POWER_D];
+  #endif
+};

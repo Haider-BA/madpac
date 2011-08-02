@@ -1,0 +1,396 @@
+/**
+
+ @page "Step 1"
+
+ @image html jacobi.jpg
+  
+ <h1>Matrix-free Jacobi Solver - Step 1</h1>
+ 
+ This is the documentation of the PDE component Jacobi. It is a very simple 
+ matrix free solver for 
+ 
+ <center>
+   @f$ - \Delta u = f @f$ with @f$ f = d \pi ^d \sum _d sin (\pi x) @f$ 
+ </center>
+   
+ and homogeneous Dirichlet boundary conditions. 
+ 
+ <hr />
+
+ Writing a new Peano application plugin typically consists of several steps. We 
+ all know that the strict waterfall model does not apply, but basically these 
+ steps repeat over and over again:
+ - First, you model the data structures you'll gonna need, i.e. the data 
+   associated with the grid.
+ - Second, you write down which algorithmic steps your overall simulation 
+   consists of.
+ - Third, you implement the individual steps. This implies that you implement 
+   your PDE operations and you add modifiers to your data structures.
+ - Finally, you plug together your solver using the individual algorithmic 
+   steps.
+ 
+ This page's structure follows these four steps. Step one and two can be done on 
+ a fairly high level as you just write down a Peano specification into several 
+ files. These files then are processed by RaPeP and DaStGen (two tools developed 
+ throughout the coding of Peano) and give you some code snippets. In step three, 
+ we then fill the generated codes with life, before we plug them finally 
+ together.    
+ 
+ !!! 1.) Data structures
+ 
+ The data structures we need are stored directly in $peano/application/jacobi$ 
+ and their file names are $State.def$, $Vertex.def$, and $Cell.def$. I included 
+ snapshots of these files into this page. However, they are displayed here 
+ without any documentation. If you wanna study the data structures in more 
+ detail, I recommend to go the menu to your left and jump directly to the file 
+ documentation. 
+ 
+ !! 1.1.) Cell 
+ 
+ For the simple Poisson equation, the cells have no state and no properties at 
+ all as Peano neglects all the cells outside the domain anyway. The picture 
+ below illustrates this. We have outer, boundary, and inner vertices, and outer 
+ and inner cells. Both outer cells and vertices will be neglected later on, and, 
+ consequently, there's no properties defined on the cell.
+ 
+ @image html jacobi-inside-outside-convention.png
+ 
+ \code
+   \include Cell.def
+ \endcode
+ 
+ The packed type here is $long int$. Packed type identify into which raw C++ 
+ type Peano shall embed all the attributes of the cell. It has to be a real 
+ C++ type. We are working to remove this flag from DaStGen, but for the time being,
+ please use the long integer for cells and another appropriate data type for the
+ vertices and the state. 
+ 
+ !! 1.2.) Vertex 
+ 
+ The vertex comprises - by Peano's defaults - already a flag for 
+ inner/outer/boundary. Besides this flag, we need three values per vertex:
+
+ \code
+   \include Vertex.def
+ \endcode
+
+ Again, all the data fits into a $short int$. Our doubles are not pressed into
+ this data type but are stored explicitly as they are not marked as packed 
+ attributes.  
+
+ !! 1.3.) State 
+ 
+ The state represents the global properties of the whole solver. It comprises 
+ the relaxation factor omega, the global residual in different norms, and a 
+ counter for the output files. All of them have to be be the same on all 
+ nodes of a parallel computer.
+ 
+ \code
+   \include State.def
+ \endcode
+
+
+ !!! 2.) Algorithmic steps
+
+ @image html jacobi.png
+ 
+ One PeProt (Peano Prototyping) script describes all the data and algorithmic steps we'll gonna use. 
+ As Peano is pure C++ code, PeProt takes our high-level specification and 
+ translates it into several C++ classes, creates makefiles, creates some 
+ documentation, etc. Thus, it is something like a problem-specific precompiler 
+ that saves us from writing lots of technical code. 
+
+ Basically, the following script describes our application:
+ \code
+ component: jacobitutorial
+
+configuration-tag: jacobitutorial
+repository: JacobiBatchJob
+namespace: peano::applications::poisson::jacobitutorial
+
+/**
+ * There's only one type of vertex in the whole component and I call it Vertex. 
+ * It's definition is contained in the file Vertex.def. As RaPeP expects the def 
+ * files relative to the dastgen subdirectory, there's no need to add a path to 
+ * this description.
+ *
+ * For the evaluation of the matrix-vector product @f$ Au @f$ on each element, 
+ * we need to be able read the u value which is a scalar value. While we could 
+ * write the setters and getters manually, this is the simpler way to do so. 
+ * To accumulate the residual, we need both residual get and set operations.
+ * These requirements are reflected by the read and write annotations. read and
+ * write are only available for vertices.
+ *
+ * There's a stupid realisation trick: The first versions of RaPeP do not care 
+ * about a consistent uppercase/lowercase writing. So even if your DaStGen file 
+ * defines the attributes as lower-case, be sure that the first letter of the 
+ * read and write identifiers is an uppercase letter. Another remark: This 
+ * conversion methods work solely for doubles, i.e. if you invoke them for 
+ * integers or booleans, RaPeP's behaviour ain't documented.
+ */
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  read scalar: Residual
+  read scalar: U
+  write scalar: Residual
+  
+  
+/**
+ * Cell used for the solver.
+ */
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+  
+/**
+ * There is only one state for the solver and it is called State.
+ */
+state:
+  name: State
+  dastgen-file: State.def
+ \endcode
+  
+ Before we continue, we have to invoke the precompiler for this script:
+ \code
+ java -classpath releases/tools/DaStGen.jar:releases/tools/PeProt.jar de.tum.peano.peprot.PeProt src/peano/applications/poisson/jacobitutorial/jacobitutorial.peano-specification src peprot/templates src/peano/kernel regulargrid
+ \endcode
+ 
+ 
+ A typical simulation then reads as follows:
+ 
+ - Create a geometry. We take the sphere.
+ - Traverse the grid once to setup the start solution.
+ - Traverse the grid and perform solver iterations until the residual underruns 
+   a given threshold.
+ - Plot the grid
+ 
+ In Peano, there is no 'active' traversal such as a for-loop over all elements. 
+ Instead, we implement a couple of routines (such as 'what you should do if you
+ run through a cell') and then tell Peano to traverse the grid. Peano then calls 
+ us back for each cell, i.e. it invokes our routine for each cell. This is the 
+ 'don't call us, we call you' paradigm of Peano.
+ 
+ Whenever Peano calls back, this is called an event. The number of different 
+ calls is limited. A set of call-back routines that maps each event that could 
+ occur to a routine (that might be empty) is called a mapping. For the Jacobi 
+ solver, there are three different mappings: SetupExperiment, JacobiStep, and 
+ PlotSolution. So, we extend our specification file into
+ 
+ \code
+   \include jacobitutorial.peano-specification
+ \endcode
+ 
+  
+ Which call-backs are to be invoked is determined by an adapter. An adapter 
+ combines a set of mappings and forwards the events to the mappings, i.e. we can 
+ write a mapping to setup the grid and one mapping to visualise the current 
+ solution. Later, we combine the two in one adapter and this adapter will then,  
+ whenever Peano runs through a vertex, for example first set the vertex's 
+ initial value and, then, plot it.
+ 
+ O.K. simpler example: There's a predefined mapping called VTKGridVisualiser and 
+ our adapter SetupExperimentAndPlotGrid uses this one. In our runner 
+ (routine peano::applications::poisson::jacobi::runners::JacobiBatchJobRunnerForRegularGrid::runAsMaster()),
+ we can add only the following two lines,
+ \code
+ repository.switchToSetupExperimentAndPlotGrid(); 
+ repository.iterate();
+ \endcode
+ compile the code, and run it. It gives us a file with the following picture:
+ 
+ \image html jacobi-grid.png 
+ 
+ What happened? Well, Peano created the grid, ran over it, and for each 
+ cell and vertex called a routine handleCell() or touchVertexFirstTime() 
+ respectively. The predefined mapping plugged into these operations and wrote a 
+ vtk file from this data. 
+ 
+ To implement a solver of our own, we have to implement our own mappings. We 
+ then wrap them into an adapter (maybe combine several different mappings in it) 
+ and call iterate() on the grid/repository as long as we are satisfied. All in 
+ all, there's the following adapters available from our source script:
+  
+|| Adapter name | Semantics | User-defined mapping which are used 
+| SetupExperiment | Sets initial values and boundary conditions | SetupExperiment
+| SetupExperimentAndPlotGrid | Same as the SetupExperiment adapter, but this time the grid is plotted, too. | SetupExperiment
+| SetupExperimentAndPlotStartSolution | Same as the SetupExperiment adapter, but this time our own visualiser mapping is used, too. | SetupExperiment, PlotSolution
+| JacobiStep | Performs one Jacobi step. | JacobiStep
+| JacobiStepAndPlotSolution | Performs one Jacobi step and, immediately afterwards, plots solution. Thus, we get one plot per solver step. | JacobiStep, PlotSolution
+| PlotSolution | Plots only the solution but does no calculation. | PlotSolution
+ 
+ If you study the concrete implementation, it is consequently sufficient to 
+ study the user-defined mappings. For the Jacobi solver this is only three 
+ mappings, and the solution plotter is pretty technical. So we skip it here, but 
+ I added some remarks in the source code everywhere I had to add something 
+ manually. See the two source code files of peano::applications::poisson::jacobi::mappings::RegularGrid2PlotSolution. 
+ 
+ !!! 3.) Mappings 
+ 
+ In the third step, we have to add behaviour to our solver, i.e. we have to realise 
+ what happens if we run through the grid. 
+
+ !! 3.1.) Mappings - Initialisation
+ 
+ The initialisation is a two-fold process. First, I write a new method
+ peano::applications::poisson::jacobi::RegularGridVertex::init():
+ 
+ \code
+ void peano::applications::poisson::jacobi::RegularGridVertex::init(
+   double initialValue, 
+   double rhs, 
+   const tarch::la_new::Vector<DIMENSIONS,double>& h
+ ) {
+   \include codesnippets/Vertex_init.cpp-snippet
+ }
+ \endcode
+ 
+ Second, I plug into the two events createInnerVertex() and 
+ createBoundaryVertex() of the mapping class RegularGrid2SetupExperiment. Here, 
+ I use the vertex's new init() method to set the initial values. All the other 
+ operations of the mapping remain empty. The resulting grid then looks like
+ 
+ \image html jacobi-initial-solution-on-circle.png
+ 
+ if we type in the following lines in the runner's runAsMaster() operation:
+ \code 
+   repository.switchToSetupExperimentAndPlotStartSolution(); 
+   repository.iterate();
+ \endcode
+ 
+ !!! 3.2.) Mappings - JacobiStep
+
+ The element-wise matrix-free Jacobi basically consists of three steps:
+ 
+ Whenever a vertex is read for the first time throughout the traversal, we 
+ set its residual to zero. For this, we implement a clearResidual() operation 
+ within the vertex:
+ \code
+ void peano::applications::poisson::jacobi::RegularGridVertex::clearResidual() {
+   \include codesnippets/Vertex_clearResidual.cpp-snippet
+ }
+ \endcode
+ Then, we open RegularGrid2JacobiStep and add a 
+ clearResidual() call within the method touchVertexFirstTime().
+   
+ @image html jacobi-matrix-free-assembly-0.png
+   
+ Whenever we enter a cell, we apply the element matrix, i.e. a subpart of the 
+ global stiffness matrix. As this operation logically belongs to a cell, we 
+ add the cell two new operation that use the cell's new static attribute 
+ stencil which is defined as
+ \code
+   static tarch::la_new::Matrix<NUMBER_OF_VERTICES_PER_ELEMENT,NUMBER_OF_VERTICES_PER_ELEMENT, double> _elementWiseAssemblyMatrix;
+ \endcode
+ in the header file. I invoke the corresponding initialisation in the Jacobi 
+ mapping's beginIteration() operation which might not be the best place. 
+ However, this way it is save that the initialisation is done before we actually 
+ use the stencil.
+ \code
+  void peano::applications::poisson::jacobi::RegularGridCell::initStencil() {
+    \include codesnippets/Cell_initStencil.cpp-snippet
+  }
+ 
+  tarch::la_new::Vector<TWO_POWER_D,double>
+  peano::applications::poisson::jacobi::RegularGridCell::applyStencil(const tarch::la_new::Vector<TWO_POWER_D,double>& u) {
+    \include codesnippets/Cell_applyStencil.cpp-snippet
+  }
+ \endcode
+ This operation accepts the @f$ 2^d @f$ values of the vertices that are adjacent 
+ to the cell. It then computes the @f$ 2^d @f$ values that are to be added to 
+ the residuals of the vertices and returns these values. Handwritten element 
+ matrices are kind of cumbersome, if you have to provide them for several 
+ dimensions. The implementation above thus uses some factory mechanisms Peano 
+ provides to construct stiffness matrices resulting from stencils.
+ 
+ The applyStencil() operation then has to be invoked by the handleCell() 
+ operation of the solver's mapping. Here, we can use two type of operations 
+ generated by RaPeP due to the $read scalar$ and $write scalar$ instructions: 
+ These operation convert sets of vertices into vectors that hold only one 
+ particular vertex value or vice versa:
+ \code
+void peano::applications::poisson::jacobi::mappings::RegularGrid2JacobiStep::handleCell(
+  peano::applications::poisson::jacobi::RegularGridVertex* const vertices,
+  peano::applications::poisson::jacobi::RegularGridCell&  cell,
+  const peano::kernel::gridinterface::VertexEnumerator&  enumerator
+) {
+  tarch::la_new::Vector<TWO_POWER_D,double> residual = RegularGridVertex::readResidual( enumerator, vertices );
+  tarch::la_new::Vector<TWO_POWER_D,double> u        = RegularGridVertex::readU( enumerator, vertices );
+  residual += cell.applyStencil(u);
+  RegularGridVertex::writeResidual( enumerator, vertices, residual );
+}
+ \endcode  
+
+ @image html jacobi-matrix-free-assembly-1.png
+
+ Whenever we know that we've handled all the adjacent cells of a vertex, the 
+ matrix-vector part of the residual is computed and we can update the residual.
+ For this, we add a update() operation to the vertex and invoke this operation 
+ within the mapping's touchVertexLastTime() implementation. Please note that 
+ this operation is implemented inside a code-snippet such that it
+ does something only on the inner vertices (though touchVertexLastTime() is naturally
+ triggered on ALL vertices). All the other 
+ vertices, i.e. boundary and outer ones, remain unaltered. As 
+ inner/outer/boundary is a standard attribute of every vertex of Peano, there's 
+ already a getter to identify inner vertices defines within the vertex's super 
+ class. We use this getter.
+ 
+ \code
+ void peano::applications::poisson::jacobi::RegularGridVertex::update( double relaxationFactor ) {
+   \include codesnippets/Vertex_update.cpp-snippet
+ }
+ \endcode
+ 
+ Remark: In my implementation, we use the 9-point stencil instead of the 
+ five-point stencil that is used in the illustration. Consequently, the 
+ implementation differes from the illustrations. Furthermore, I moved the 
+ computation of @f$ res \mapsto rhs - res @f$ to the vertex's getResidual() 
+ method, as the plotter uses the getResidual() method to plot the residual. If 
+ the getResidual() operation returned the plain residual without the 
+ right-hand side, the plotter would have to reconstruct the residual 
+ comptutation to write the correct residual into the output files:
+ 
+ \code
+ double peano::applications::poisson::jacobi::RegularGridVertex::getResidual() const {
+   \include codesnippets/Vertex_getResidual.cpp-snippet
+ }
+ \endcode   
+ 
+ @image html jacobi-matrix-free-assembly-2.png
+ 
+ 
+ !!! 3.3.) Mappings - Plotting
+
+ Besides the two mappings implementing the experiment setup and the solver, 
+ we also need a visualisation mapping. This visualisation is straightforward 
+ and follows the autogenerated grid visualisation adapter. Just study the type
+ peano::applications::poisson::jacobitutorial::mappings::RegularGrid2PlotSolution
+ for a concrete example what a visualisation mapping could look like.
+  
+  
+ !!! 4.) Algorithm Control
+
+ The unique starting point to control the application's behaviour is the runner 
+ belonging to the project. In the first step of the tutorial, this is 
+ JacobiBatchJobRunnerForRegularGrid. The runner comes along with two 
+ implementation files. However, the parallel worker is automatically generated 
+ and it should never be necessary to modify it.
+ 
+ Open the other implementation file and jump into runAsMaster(). Here, we insert
+
+ \code
+ ...
+   \include codesnippets/Runner_runAsMaster.cpp-snippet
+ ...
+ \endcode   
+ 
+ that makes our Jacobi solver set up the grid, run several iterations of the 
+ solver, and finally plot the solution. 
+ 
+ Finally, we start our solver with
+ \code
+ ./peano ../src/peano/applications/poisson/jacobitutorial/run-JacobiBatchJob-on-regular-grid.xml
+ \endcode
+ 
+ */

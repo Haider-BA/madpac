@@ -1,0 +1,91 @@
+#include "peano/kernel/datatraversal/ActionSetTraversalLoop.h"
+
+
+template <class LoopBody>
+peano::kernel::datatraversal::SingleLevelCellLoop<LoopBody>::SingleLevelCellLoop(
+  const tarch::la::Vector<DIMENSIONS,int>&  range,
+  const LoopBody&                           loopBody,
+  int                                       grainSize,
+  bool                                      runImmediately
+):
+  _cellTraversal(0) {
+  assertion( tarch::la::volume(range)!=0 );
+
+  #if defined(SharedTBB) || defined(SharedOMP)
+  if (grainSize>0) {
+    _cellTraversal = peano::kernel::datatraversal::ActionSetTraversal::getParallelCartesianGridTraversal(range);
+  }
+  else {
+    _cellTraversal = peano::kernel::datatraversal::ActionSetTraversal::getSequentialCartesianGridTraversal(range);
+  }
+  #else
+  _cellTraversal = peano::kernel::datatraversal::ActionSetTraversal::getSequentialCartesianGridTraversal(range);
+  #endif
+
+  if (runImmediately) {
+    run(loopBody,grainSize);
+  }
+}
+
+
+template <class LoopBody>
+peano::kernel::datatraversal::SingleLevelCellLoop<LoopBody>::SingleLevelCellLoop():
+  _cellTraversal(0) {
+}
+
+
+template <class LoopBody>
+void peano::kernel::datatraversal::SingleLevelCellLoop<LoopBody>::init(
+  const tarch::la::Vector<DIMENSIONS,int>&  range
+) {
+  assertion( tarch::la::volume(range)!=0 );
+
+  #if defined(SharedTBB) || defined(SharedOMP)
+  _cellTraversal = peano::kernel::datatraversal::ActionSetTraversal::getParallelCartesianGridTraversal(range);
+  #else
+  _cellTraversal = peano::kernel::datatraversal::ActionSetTraversal::getSequentialCartesianGridTraversal(range);
+  #endif
+
+  assertion( _cellTraversal.getMaximumPath()>0 );
+}
+
+
+
+template <class LoopBody>
+bool peano::kernel::datatraversal::SingleLevelCellLoop<LoopBody>::isInitialised() const {
+  return _cellTraversal.getMaximumPath()>0;
+}
+
+
+
+template <class LoopBody>
+void peano::kernel::datatraversal::SingleLevelCellLoop<LoopBody>::run(
+  const LoopBody& loopBody,
+  int             grainSize
+) {
+  #if defined(SharedTBB) || defined(SharedOMP)
+  if (grainSize>0) {
+    ActionSetTraversalLoop<LoopBody>(
+      _cellTraversal,
+      loopBody,
+      grainSize,
+      false
+    );
+  }
+  else {
+    ActionSetTraversalLoop<LoopBody>(
+      _cellTraversal,
+      loopBody,
+      0,
+      false
+    );
+  }
+  #else
+  ActionSetTraversalLoop<LoopBody>(
+    _cellTraversal,
+    loopBody,
+    0,
+    false
+  );
+  #endif
+}

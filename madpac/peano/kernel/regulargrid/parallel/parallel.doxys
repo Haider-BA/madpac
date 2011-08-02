@@ -1,0 +1,41 @@
+/**
+
+ @dir "Parallel Regular Grid"
+ 
+ This directory holds all the classes that are needed to run the regular grid 
+ in parallel. The parallelisation scheme follows some very simple ideas. First, 
+ all the subdomains are hyperhexahedrons, i.e.
+ 
+ @image html parallel-well-suited-domains.png
+ 
+ the left partitioning is o.k., but the right one is not supported. At program 
+ startup, the grid decomposes the domain into a k<number-of-nodes subdomains. 
+ This partitioning follows a greedy algorithm. The important thing is that this 
+ initial partitioning is regular, i.e. each face of a partition has exactly one 
+ neighbour.
+ 
+ @image html parallel-initial-decomposition.png
+   
+ With an initial decomposition at hand, all the nodes are started up. The 
+ initial decomposition algorithm is encoded within SetupPartitioner. For a 
+ detailed description of the data exchange, see @todo.  
+ 
+ @image html parallel-load-balancing.png
+
+ The regular grid load balancing is simple: Whenever a node identifies that it 
+ would have less work if it joins with a neighbour than the maximum node dann 
+ funktioniert es auch mit dem Nachbarn.
+ 
+ @todo Das muss ich noch schoen beschreiben.
+ 
+ !!! Creating the DaStGen Messages
+ 
+ Like any parallelisation, the parallel regular grid relies on a couple of 
+ dastgen messages to communicate with its neighbours. To (re-)generate these 
+ messages, change into the directory containing the $src$ directory and type in 
+ \code
+ java -jar releases/tools/DaStGen.jar --plugin PeanoSnippetGenerator --naming PeanoNameTranslator src/peano/kernel/regulargrid/parallel/dastgen/ForkMessage.def src/peano/kernel/regulargrid/parallel/messages 
+ \endcode
+    
+ */
+ 

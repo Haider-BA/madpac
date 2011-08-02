@@ -1,0 +1,163 @@
+#include "peano/utils/Globals.h"
+#include "peano/kernel/stacks/Stacks.h"
+
+
+template <class Cell>
+const peano::kernel::datatraversal::ActionSetTraversal& peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::getWriteVertexSequence( const Cell& cell, const bool& isTraversalInverted ) {
+  static CellLocalPeanoCurve singleton;
+
+  #if defined(SharedTBB) || defined(SharedOMP)
+  singleton._actionTraversal = createParallelWriteVertexSequence(cell,isTraversalInverted);
+  #else
+  singleton._actionTraversal = createSequentialWriteVertexSequence(cell,isTraversalInverted);
+  #endif
+
+  return singleton._actionTraversal;
+}
+
+
+template <class Cell>
+const peano::kernel::datatraversal::ActionSetTraversal& peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::getReadVertexSequence( const Cell& cell, const bool& isTraversalInverted ) {
+  static CellLocalPeanoCurve singleton;
+
+  #if defined(SharedTBB) || defined(SharedOMP)
+  singleton._actionTraversal = createParallelReadVertexSequence(cell,isTraversalInverted);
+  #else
+  singleton._actionTraversal = createSequentialReadVertexSequence(cell,isTraversalInverted);
+  #endif
+
+  return singleton._actionTraversal;
+}
+
+
+template <class Cell>
+peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::Coordinates
+peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::getFirstVertexIndex( const Cell& cell, const bool& isTraversalInverted ) {
+  Coordinates result;
+  Coordinates currentMask;
+
+  for (int i=0; i<DIMENSIONS; i++) {
+    if ( cell._cellData.getEvenFlags(i) ) {
+      currentMask[i] = true;
+      currentMask.flip();
+
+      result ^= currentMask;
+
+      currentMask.flip();
+      currentMask[i] = false;
+    }
+  }
+
+  if (isTraversalInverted) {
+	result.flip();
+  }
+
+  return result;
+}
+
+
+template <class Cell>
+int peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::getReadStackIdentifier( const Cell& cell, const Coordinates& coordinates, const bool& isTraversalInverted ) {
+  int smallestValue = -2*DIMENSIONS-1;
+  int result        = peano::kernel::stacks::Constants::InOutStack;
+  int direction     = -1;
+  const int scaleAccessNumber = isTraversalInverted ? -1 : 1;
+
+  for (int d=0; d<DIMENSIONS; d++) {
+	  const int face = coordinates[d]==0 ? d : d+DIMENSIONS;
+    const int faceAccessNumber = cell._cellData.getAccessNumber(face) * scaleAccessNumber;
+    if (faceAccessNumber<0 && faceAccessNumber>smallestValue) {
+      result        = face;
+      smallestValue = faceAccessNumber;
+      direction     = d;
+    }
+  }
+
+  if ( result!=peano::kernel::stacks::Constants::InOutStack && cell._cellData.getEvenFlags(direction) ) {
+    result = result<DIMENSIONS ? result+DIMENSIONS : result-DIMENSIONS;
+  }
+
+  return result;
+}
+
+
+template <class Cell>
+int peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::getWriteStackIdentifier( const Cell& cell, const Coordinates& coordinates, const bool& isTraversalInverted ) {
+  int biggestValue = 2*DIMENSIONS+1;
+  int result       = peano::kernel::stacks::Constants::InOutStack;
+  int direction    = -1;
+  const int scaleAccessNumber = isTraversalInverted ? -1 : 1;
+
+  for (int d=0; d<DIMENSIONS; d++) {
+	  const int face = coordinates[d]==0 ? d : d+DIMENSIONS;
+    const int faceAccessNumber = cell._cellData.getAccessNumber(face) * scaleAccessNumber;
+    if (faceAccessNumber>0 && faceAccessNumber<biggestValue) {
+      result       = face;
+      biggestValue = faceAccessNumber;
+      direction    = d;
+    }
+  }
+
+  if ( result!=peano::kernel::stacks::Constants::InOutStack && cell._cellData.getEvenFlags(direction) ) {
+    result = result<DIMENSIONS ? result+DIMENSIONS : result-DIMENSIONS;
+  }
+
+  return result;
+}
+
+
+template <class Cell>
+peano::kernel::datatraversal::ActionSetTraversal
+peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::createParallelReadVertexSequence( const Cell& cell, const bool& isTraversalInverted) {
+  peano::kernel::datatraversal::ActionSetTraversal result =
+    createSequentialReadVertexSequence(cell,isTraversalInverted);
+
+  return peano::kernel::datatraversal::ActionSetTraversal::sortIntoIdBins( result );
+}
+
+
+template <class Cell>
+peano::kernel::datatraversal::ActionSetTraversal
+peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::createParallelWriteVertexSequence( const Cell& cell, const bool& isTraversalInverted) {
+  peano::kernel::datatraversal::ActionSetTraversal result =
+    createSequentialWriteVertexSequence(cell,isTraversalInverted);
+
+  return peano::kernel::datatraversal::ActionSetTraversal::sortIntoIdBins( result );
+}
+
+
+template <class Cell>
+peano::kernel::datatraversal::ActionSetTraversal
+peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::createSequentialReadVertexSequence( const Cell& cell, const bool& isTraversalInverted) {
+  peano::kernel::datatraversal::ActionSetTraversal result(NUMBER_OF_VERTICES_PER_ELEMENT);
+
+  int coordinates = getFirstVertexIndex(cell,isTraversalInverted).to_ulong();
+  for (int i=0; i<NUMBER_OF_VERTICES_PER_ELEMENT; i++) {
+    Coordinates currentLocalVertexIndex( coordinates ^ i );
+
+    int  stackIdentifier = getReadStackIdentifier(cell,currentLocalVertexIndex,isTraversalInverted);
+    assertion(result.getActionSet(i).getNumberOfParallelActions()==0);
+    result.getActionSet(i).addAction(peano::kernel::datatraversal::Action(toIntVector(currentLocalVertexIndex),stackIdentifier));
+  }
+
+  return result;
+}
+
+
+template <class Cell>
+peano::kernel::datatraversal::ActionSetTraversal
+peano::kernel::spacetreegrid::aspects::CellLocalPeanoCurve::createSequentialWriteVertexSequence( const Cell& cell, const bool& isTraversalInverted) {
+  peano::kernel::datatraversal::ActionSetTraversal result(NUMBER_OF_VERTICES_PER_ELEMENT);
+
+  int coordinates = getFirstVertexIndex(cell,isTraversalInverted).to_ulong();
+  for (int i=0; i<NUMBER_OF_VERTICES_PER_ELEMENT; i++) {
+    Coordinates currentLocalVertexIndex( coordinates ^ i );
+
+    int  stackIdentifier = getWriteStackIdentifier(cell,currentLocalVertexIndex,isTraversalInverted);
+    assertion(result.getActionSet(i).getNumberOfParallelActions()==0);
+    result.getActionSet(i).addAction(peano::kernel::datatraversal::Action(toIntVector(currentLocalVertexIndex),stackIdentifier));
+  }
+
+  return result;
+}
+

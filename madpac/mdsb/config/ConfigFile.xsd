@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- translate with /Downloads/xsd-3.3.0.b1-x86_64-linux-gnu/bin/xsd cxx-tree ConfigFile.xsd -->
+
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:simpleType name="boundaryType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="periodic"/>
+			<xs:enumeration value="outflow"/>
+			<xs:enumeration value="heating"/>
+			<xs:enumeration value="reflecting"/>
+			<xs:enumeration value="force"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="coordinate">
+  		<xs:restriction base="xs:string">
+    		<xs:enumeration value="x"/>
+    		<xs:enumeration value="y"/>
+    		<xs:enumeration value="z"/>
+  		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="dimension">
+  		<xs:restriction base="xs:int">
+    		<xs:enumeration value="2"/>
+    		<xs:enumeration value="3"/>
+  		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="thermostatType">
+		<xs:sequence>
+		<xs:element name="change" minOccurs="0">
+			<xs:complexType>
+			<xs:attribute name="target" type="xs:double" use="required"/>
+			<xs:attribute name="stepping" type="xs:double" use="required"/>
+			<xs:attribute name="steppingFrequency" type="xs:unsignedInt" use="required"/>
+			</xs:complexType>
+		</xs:element>
+		</xs:sequence>
+		<xs:attribute name="initialTemperature" type="xs:double" use="required"/>
+		<xs:attribute name="frequency" type="xs:unsignedInt" use="required"/>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="materialType">
+		<xs:attribute name="epsilon" type="xs:double" use="required"/>
+		<xs:attribute name="sigma" type="xs:double" use="required"/>
+		<xs:attribute name="mass" type="xs:double" use="required"/>
+	</xs:complexType>
+	
+		
+	<xs:complexType name="cuboidType">
+		<xs:sequence>
+			<xs:element name="material" type="materialType" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="x0" use="required"  type="xs:double"/>
+		<xs:attribute name="x1" use="required"  type="xs:double"/>
+		<xs:attribute name="x2" use="required"  type="xs:double"/>
+
+		<xs:attribute name="v0" use="required"  type="xs:double"/>
+		<xs:attribute name="v1" use="required"  type="xs:double"/>
+		<xs:attribute name="v2" use="required"  type="xs:double"/>
+		
+		<xs:attribute name="n0" use="required"  type="xs:unsignedInt"/>
+		<xs:attribute name="n1" use="required"  type="xs:unsignedInt"/>
+		<xs:attribute name="n2" use="required"  type="xs:unsignedInt"/>
+		
+		<xs:attribute name="h" use="required"  type="xs:double"/>
+	</xs:complexType>
+
+	<xs:element name="config">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="gravity" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:attribute name="factor" type="xs:double" use="required"/>
+						<xs:attribute name="axis" type="coordinate" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="container">
+					<xs:complexType>
+						<xs:attribute name="type" type="xs:string" use="required"/>
+						<xs:attribute name="cutoff" type="xs:double" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="domain">
+					<xs:complexType>
+						<xs:attribute name="size-x" type="xs:double" use="required"/>
+						<xs:attribute name="size-y" type="xs:double" use="required"/>
+						<xs:attribute name="size-z" type="xs:double" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="timedata">
+					<xs:complexType>
+						<xs:attribute name="delta" type="xs:double" use="required"/>
+						<xs:attribute name="end" type="xs:double" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="thermostat" type="thermostatType" minOccurs="0"/>
+				<xs:element name="output">
+					<xs:complexType>
+						<xs:attribute name="filebase" use="required" type="xs:string"/>
+						<xs:attribute name="frequency" use="required" type="xs:unsignedInt"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="inputfile" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="name" use="required" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="inputcuboid" type="cuboidType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="inputfcc" type="cuboidType"  minOccurs="0" maxOccurs="unbounded"/>
+				
+				<xs:element name="inputsphere" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="material" type="materialType" minOccurs="1" maxOccurs="1"/>
+		            	</xs:sequence>
+						<xs:attribute name="x0" use="required"  type="xs:double"/>
+						<xs:attribute name="x1" use="required"  type="xs:double"/>
+						<xs:attribute name="x2" use="required"  type="xs:double"/>
+
+						<xs:attribute name="v0" use="required"  type="xs:double"/>
+						<xs:attribute name="v1" use="required"  type="xs:double"/>
+						<xs:attribute name="v2" use="required"  type="xs:double"/>
+						
+						<xs:attribute name="n" use="required"  type="xs:unsignedInt"/>
+						<xs:attribute name="h" use="required"  type="xs:double"/>
+					</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="boundary" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="axis" use="required"  type="coordinate"/>
+						<xs:attribute name="position_up" use="required" type="xs:boolean"/>
+						<xs:attribute name="type" use="required" type="boundaryType"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		<xs:attribute name="dim" use="required"  type="dimension"/>
+		<xs:attribute name="statistics" use="required" type="xs:boolean"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

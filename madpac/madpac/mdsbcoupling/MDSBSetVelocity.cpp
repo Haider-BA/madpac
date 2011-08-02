@@ -38,6 +38,7 @@ namespace madpac
     void
     MDSBSetVelocity::setV()
     {
+       _dataContainer->setMDBorderZero();
       _container.traverseParticles(*this);
     }
 
@@ -45,7 +46,7 @@ namespace madpac
     MDSBSetVelocity::handleParticle(Particle& p)
     {
 
-      _dataContainer->setMDBorderZero();
+
 
       double pos[3];
       double data[DataContainer::_dataSize];

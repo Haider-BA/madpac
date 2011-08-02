@@ -1,0 +1,242 @@
+#include <limits>
+
+
+template <class StateData>
+peano::kernel::spacetreegrid::State<StateData>::State():
+  _stateData() {
+  _stateData.setIsTraversalInverted(false);
+}
+
+
+template <class StateData>
+peano::kernel::spacetreegrid::State<StateData>::State(const PersistentState& argument):
+  _stateData( (typename StateData::Packed(argument)).convert() ) {
+}
+
+
+template <class StateData>
+peano::kernel::spacetreegrid::State<StateData>::~State() {
+}
+
+
+template <class StateData>
+std::string peano::kernel::spacetreegrid::State<StateData>::toString() const {
+  return _stateData.toString();
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::toString(std::ostream& out) const {
+  _stateData.toString(out);
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::invertTraversal() {
+  _stateData.setIsTraversalInverted(!_stateData.getIsTraversalInverted());
+}
+
+
+template <class StateData>
+std::ostream& operator<<(std::ostream& out, const peano::kernel::spacetreegrid::State<StateData>& arg) {
+  arg.toString(out);
+  return out;
+}
+
+
+template <class StateData>
+double peano::kernel::spacetreegrid::State<StateData>::getNumberOfInnerVertices() const {
+  return _stateData.getNumberOfInnerVertices();
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::changedCellState() {
+  _stateData.setHasChangedVertexOrCellState( true );
+}
+
+
+template <class StateData>
+bool peano::kernel::spacetreegrid::State<StateData>::isGridStationary() const {
+  return !_stateData.getHasChangedVertexOrCellState()
+      && !_stateData.getHasRefined()
+      && !_stateData.getHasErased()
+      && !_stateData.getHasTriggeredRefinementForNextIteration()
+      && !_stateData.getHasTriggeredEraseForNextIteration();
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::updateRefinementHistoryBeforeStore( bool hasTriggeredRefinementForNextIteration, bool hasTriggeredEraseForNextIteration ) {
+  _stateData.setHasTriggeredRefinementForNextIteration( _stateData.getHasTriggeredRefinementForNextIteration() || hasTriggeredRefinementForNextIteration );
+  _stateData.setHasTriggeredEraseForNextIteration( _stateData.getHasTriggeredEraseForNextIteration() || hasTriggeredEraseForNextIteration );
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::updateRefinementHistoryAfterLoad( bool hasRefinened, bool hasErased, bool hasChangedVertexState ) {
+  _stateData.setHasRefined( _stateData.getHasRefined() || hasRefinened );
+  _stateData.setHasErased( _stateData.getHasErased() || hasErased );
+  _stateData.setHasChangedVertexOrCellState( _stateData.getHasChangedVertexOrCellState() || hasChangedVertexState );
+}
+
+
+template <class StateData>
+double peano::kernel::spacetreegrid::State<StateData>::getNumberOfBoundaryVertices() const {
+  return _stateData.getNumberOfBoundaryVertices();
+}
+
+
+template <class StateData>
+double peano::kernel::spacetreegrid::State<StateData>::getNumberOfOuterVertices() const {
+  return _stateData.getNumberOfOuterVertices();
+}
+
+
+template <class StateData>
+double peano::kernel::spacetreegrid::State<StateData>::getNumberOfInnerCells() const {
+  return _stateData.getNumberOfInnerCells();
+}
+
+
+template <class StateData>
+bool peano::kernel::spacetreegrid::State<StateData>::isTraversalInverted() const {
+  return _stateData.getIsTraversalInverted();
+}
+
+
+template <class StateData>
+double peano::kernel::spacetreegrid::State<StateData>::getNumberOfOuterCells() const {
+  return _stateData.getNumberOfOuterCells();
+}
+
+
+template <class StateData>
+tarch::la::Vector<DIMENSIONS,double> peano::kernel::spacetreegrid::State<StateData>::getMaximumMeshWidth() const {
+  return _stateData.getMaxMeshWidth();
+}
+
+
+template <class StateData>
+tarch::la::Vector<DIMENSIONS,double> peano::kernel::spacetreegrid::State<StateData>::getMinimumMeshWidth() const {
+  return _stateData.getMinMeshWidth();
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::resetStateAtBeginOfIteration() {
+  _stateData.setHasChangedVertexOrCellState(false);
+  _stateData.setHasErased(false);
+  _stateData.setHasRefined(false);
+  _stateData.setHasTriggeredEraseForNextIteration(false);
+  _stateData.setHasTriggeredRefinementForNextIteration(false);
+
+  _stateData.setMaxLevel(0);
+  _stateData.setMaxMeshWidth(tarch::la::Vector<DIMENSIONS,double>(0.0));
+  _stateData.setMinMeshWidth(tarch::la::Vector<DIMENSIONS,double>(std::numeric_limits<double>::max()));
+
+  _stateData.setNumberOfInnerVertices(0.0);
+  _stateData.setNumberOfBoundaryVertices(0.0);
+  _stateData.setNumberOfOuterVertices(0.0);
+  _stateData.setNumberOfInnerCells(0.0);
+  _stateData.setNumberOfOuterCells(0.0);
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::updateInLeaf( int level, const tarch::la::Vector<DIMENSIONS,double>& h ) {
+  _stateData.setMaxLevel(
+    _stateData.getMaxLevel()>level ? _stateData.getMaxLevel() : level
+  );
+  for (int d=0; d<DIMENSIONS; d++) {
+    _stateData.setMaxMeshWidth(d,
+      _stateData.getMaxMeshWidth(d)<h(d) ? h(d) : _stateData.getMaxMeshWidth(d)
+	);
+    _stateData.setMinMeshWidth(d,
+      _stateData.getMinMeshWidth(d)>h(d) ? h(d) : _stateData.getMinMeshWidth(d)
+	);
+  }
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::incNumberOfInnerVertices( double increment ) {
+  _stateData.setNumberOfInnerVertices(_stateData.getNumberOfInnerVertices()+increment);
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::incNumberOfBoundaryVertices( double increment ) {
+  _stateData.setNumberOfBoundaryVertices(_stateData.getNumberOfBoundaryVertices()+increment);
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::incNumberOfOuterVertices( double increment ) {
+  _stateData.setNumberOfOuterVertices(_stateData.getNumberOfOuterVertices()+increment);
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::incNumberOfInnerCells( double increment ) {
+  _stateData.setNumberOfInnerCells(_stateData.getNumberOfInnerCells()+increment);
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::incNumberOfOuterCells( double increment ) {
+  _stateData.setNumberOfOuterCells(_stateData.getNumberOfOuterCells()+increment);
+}
+
+
+#ifdef Parallel
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::mergeWithWorkerState(const peano::kernel::spacetreegrid::State<StateData>& workerState) {
+  incNumberOfInnerVertices(workerState._stateData.getNumberOfInnerVertices());
+  incNumberOfBoundaryVertices(workerState._stateData.getNumberOfBoundaryVertices());
+  incNumberOfOuterVertices(workerState._stateData.getNumberOfOuterVertices());
+  incNumberOfInnerCells(workerState._stateData.getNumberOfInnerCells());
+  incNumberOfOuterCells(workerState._stateData.getNumberOfOuterCells());
+
+  //TODO notifyAboutGridChange(workerState._stateData.getGridIsStationary());
+  //TODO merge min mesh width
+  //TODO merge max mesh width
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::initDatatype() {
+  if (MPIDatatypeContainer::Datatype==0) {
+    MPIDatatypeContainer::initDatatype();
+  }
+
+  assertion(MPIDatatypeContainer::Datatype!=0);
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::send(int destination, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  _stateData.convert().send(destination,tag);
+  #else
+  _stateData.send(destination,tag);
+  #endif
+}
+
+
+template <class StateData>
+void peano::kernel::spacetreegrid::State<StateData>::receive(int source, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  MPIDatatypeContainer receivedMessage;
+  receivedMessage.receive(source,tag);
+  _stateData = receivedMessage.convert();
+  #else
+  _stateData.receive(source,tag);
+  #endif
+}
+#endif
+

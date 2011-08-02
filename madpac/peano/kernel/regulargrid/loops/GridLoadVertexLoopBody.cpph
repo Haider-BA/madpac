@@ -1,0 +1,134 @@
+template <class Vertex, class Cell, class State, class EventHandle>
+tarch::logging::Log peano::kernel::regulargrid::loops::GridLoadVertexLoopBody<Vertex,Cell,State,EventHandle>::_log( "peano::kernel::regulargrid::loops::GridLoadVertexLoopBody" );
+
+#ifdef CCA
+template <class Vertex, class Cell, class State, class EventHandle>
+int peano::kernel::regulargrid::loops::GridLoadVertexLoopBody<Vertex,Cell,State,EventHandle>::_iterationCounter = 0;
+#endif
+
+#ifdef Parallel
+#include <set>
+
+#include "peano/kernel/parallel/SendReceiveBufferPool.h"
+#endif
+
+
+template <class Vertex, class Cell, class State, class EventHandle>
+peano::kernel::regulargrid::loops::GridLoadVertexLoopBody<Vertex,Cell,State,EventHandle>::GridLoadVertexLoopBody(
+  peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>& grid,
+  Vertex * const vertices
+):
+  _grid(grid),
+  _vertices(vertices),
+  _enumerator(
+    _grid._dataContainer.getNumberOfGridVertices(),
+    tarch::la::Vector<DIMENSIONS,int>(0),
+    _grid.getH(),
+    _grid._domainOffset
+  ),
+  _numberOfInnerVertices(0.0),
+  _numberOfBoundaryVertices(0.0),
+  _numberOfOuterVertices(0.0),
+  _changedVertexState(false) {
+
+  //Dirty (!) workaround for performance problems in DiParTS
+  #ifdef CCA
+  if(_iterationCounter < 2){
+    _iterationCounter++;
+  }
+  #endif
+}
+
+
+template <class Vertex, class Cell, class State, class EventHandle>
+void peano::kernel::regulargrid::loops::GridLoadVertexLoopBody<Vertex,Cell,State,EventHandle>::updateGlobalValues() {
+  _grid._state.incNumberOfInnerVertices( _numberOfInnerVertices );
+  _grid._state.incNumberOfBoundaryVertices( _numberOfBoundaryVertices );
+  _grid._state.incNumberOfOuterVertices( _numberOfOuterVertices );
+
+  _grid._state.notifyAboutGridChange( _changedVertexState );
+}
+
+
+template <class Vertex, class Cell, class State, class EventHandle>
+void peano::kernel::regulargrid::loops::GridLoadVertexLoopBody<Vertex,Cell,State,EventHandle>::operator() (const tarch::la::Vector<DIMENSIONS,int>& i) {
+  logTraceInWith1Argument( "operator()", i);
+
+  _enumerator.setOffset(i);
+  _vertices[ _enumerator(0) ] = Vertex(_grid._dataContainer.getVertex(i));
+
+  #ifdef Parallel
+  if (_vertices[ _enumerator(0) ].belongsToParallelBoundary()) {
+    std::set<int> ranks = _vertices[ _enumerator(0) ].getAdjacentRemoteRanks();
+    for (
+      std::set<int>::const_iterator p = ranks.begin();
+      p != ranks.end();
+      p++
+    ) {
+      _grid._eventHandle.mergeWithNeighbour(
+        _vertices[ _enumerator(0) ],
+        peano::kernel::parallel::SendReceiveBufferPool::getInstance().getVertex<Vertex>(*p),
+        *p
+      );
+    }
+  }
+  #endif
+
+  peano::geometry::GeometryHelper::CurrentVertexState vertexState;
+  if (_vertices[ _enumerator(0) ].isOutside()) vertexState = peano::geometry::GeometryHelper::Outside;
+  else if (_vertices[ _enumerator(0) ].isInside()) vertexState = peano::geometry::GeometryHelper::Inside;
+  else if (_vertices[ _enumerator(0) ].isBoundary()) vertexState = peano::geometry::GeometryHelper::Boundary;
+
+  switch (
+    peano::geometry::GeometryHelper::getVertexCommand(
+      _grid._geometry.isCompletelyInside(_enumerator.getVertexPosition(),_enumerator.getCellSize()),
+      _grid._geometry.isCompletelyOutside(_enumerator.getVertexPosition(),_enumerator.getCellSize()),
+      _grid._geometry.isOutsideClosedDomain(_enumerator.getVertexPosition()),
+      vertexState
+    )
+  ) {
+    case peano::geometry::GeometryHelper::LeaveVertexUnaltered:
+      break;
+    case peano::geometry::GeometryHelper::EraseOutsideVertex:
+      assertion1( _vertices[ _enumerator(0) ].isOutside(),_vertices[ _enumerator(0) ] );
+      break;
+    case peano::geometry::GeometryHelper::CreateInnerVertex:
+      _grid._eventHandle.createInnerVertex(_enumerator.getVertexPosition(),_enumerator.getCellSize(),_vertices[ _enumerator(0) ]);
+      _vertices[ _enumerator(0) ].switchToInside();
+      _changedVertexState = true;
+      logDebug( "load_vertices()", "switch vertex to inside. vertex=" << _vertices[ _enumerator(0) ] << ",i=" << i << ",enumerator=" << _enumerator(0) );
+      break;
+    case peano::geometry::GeometryHelper::CreateBoundaryVertex:
+      _grid._eventHandle.createBoundaryVertex(_enumerator.getVertexPosition(),_enumerator.getCellSize(),_vertices[ _enumerator(0) ]);
+      _vertices[ _enumerator(0) ].switchToBoundary();
+      _changedVertexState = true;
+      logDebug( "load_vertices()", "switch vertex to boundary. vertex=" << _vertices[ _enumerator(0) ] << ",i=" << i << ",enumerator=" << _enumerator(0) );
+      break;
+    case peano::geometry::GeometryHelper::DestroyVertexAndSwitchToOutside:
+    case peano::geometry::GeometryHelper::DestroyVertexAndEraseItAndSwitchToOutside:
+      _grid._eventHandle.destroyVertex(_enumerator.getVertexPosition(),_enumerator.getCellSize(),_vertices[ _enumerator(0) ]);
+      _vertices[ _enumerator(0) ].switchToOutside();
+      _changedVertexState = true;
+      logDebug( "load_vertices()", "switch vertex to outside. vertex=" << _vertices[ _enumerator(0) ] << ",i=" << i << ",enumerator=" << _enumerator(0) );
+      break;
+  }
+
+  if (!_vertices[ _enumerator(0) ].isOutside()) {
+    #ifdef Debug
+    assertionEquals3( _vertices[ _enumerator(0) ].getX(), _enumerator.getVertexPosition(), _vertices[ _enumerator(0) ], _enumerator(0), i );
+    #endif
+
+    if (_vertices[ _enumerator(0) ].isBoundary()) {
+      _numberOfBoundaryVertices += 1.0;
+    }
+    else {
+      _numberOfInnerVertices += 1.0;
+    }
+    _grid._eventHandle.touchVertexFirstTime( _vertices[ _enumerator(0) ], _enumerator.getVertexPosition() );
+  }
+  else {
+    _numberOfOuterVertices += 1.0;
+  }
+
+  logTraceOutWith1Argument( "operator()", i );
+}

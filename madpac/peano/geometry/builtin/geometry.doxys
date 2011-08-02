@@ -1,0 +1,77 @@
+/**
+
+  \dir builtin "Geometry"
+
+  Peano distinguishes carefully between a geometry and a scenario. A detailed
+  description of this concepts can be found in the description of the component
+  scenario.
+  
+  Right now, this component offers a number of predefined primitives (e.g. a 
+  hexahedron, a sphere and a cube) as well as the interfaces to the PeGSI 
+  geometry component. Basically one adds a geometry within the xml configuration
+  file as follows:
+  
+  \pre
+   <geometry name="a primitive name" geometry-base-number="4" invert="false">
+     <minimal-meshsize h0="1.0/9" h1="1.0/9.0" />
+     <maximal-meshsize h0="0.25" h1="0.25" />
+     <bounding-box h0="1.0" h1="0.4" />
+     <offset x0=0.0 x1=0.0 />
+   </geometry>
+  \endpre
+  
+  The mandatory attribute name specifies a primitve, whereas the optional
+  attributes invert tells the geometry to invert the complete domain, i.e. if
+  the sphere specifies a sphere domain, an inverted sphere becomes an obstacle
+  for the fluid. The invert attribute is not supported for all primitives. The
+  other optional attribute is geometry-base-number: Every primitive defines a
+  number of geometric elements and assigns every element a geometry number 
+  starting with geometry-base-number. E.g. if the channel has a wall (index 0),
+  a left boundary (index 1) and a right boundary (index 2) and the geometry
+  is instantiated with geometry-base-number="4", wall has index 4, left has
+  index 5 and right has index 6.
+  
+  The minimal and the maximal meshsize are mandatory attributes and specify
+  @f$ h_{max} @f$ and @f$ h_{min} @f$ of the computational domain. Please note
+  that @f$ h_{max} @f$ is a global value specifying the global minimal 
+  refinement depth, whereas @f$ h_{min} @f$ defines the (local) geometry 
+  resolution to be obtained.
+  
+  There are two opportunities to specify the mesh width tag's values: Either one
+  defines a double value, or specifies the mesh width using a fraction. Both
+  opportunities might be combined, i.e. one might write x0="0.1" x1="1.0/9.0".
+  Anyway, for every tag all the d attributes have to be specified if d is the
+  dimension of the application.
+  
+  The tag bounding-box is optional. It specifies the size of the geometry object
+  and its semantics differ from primitive to primitive. Please see the 
+  documentation of the primitives you want to use. If bounding-box is not given,
+  the application uses default parameters. Again, this parameters depend on the
+  primitive.
+  
+  If you want to build up a complex simulation setting, you might combine 
+  different geometries.
+
+  \pre
+   <geometry name="primitive #1" geometry-base-number="0">
+     ...
+   </geometry>
+   <geometry name="primitive #2" geometry-base-number="4">
+     ...
+   </geometry>
+   <geometry name="primitive #3" geometry-base-number="5">
+     ...
+   </geometry>
+  \endpre
+  
+  In this case, the intersection of different geometries is used: A position in 
+  space is outside of the domain, if it is outside of any of the geometries
+  specified. A position is inside, if it is inside of all geometries used. 
+  Another issue is the global maximal mesh width @f$ h_{max} @f$ that is 
+  determined by @f$ h_{max} = \min \{ maximal-meshsize_i \} @f$, i.e. all the
+  refinement queries addressing the different geometries are combined using a 
+  logical or. This means, the smalles maximal-meshsize specifies the global 
+  grid resolution, whereas the minimal mesh sizes defines indepentently for 
+  every geometric primitive, how fine the resolution has to be.
+  
+ */

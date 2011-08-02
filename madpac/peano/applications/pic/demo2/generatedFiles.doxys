@@ -1,0 +1,127 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /picdemo.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/pic/demo2/dastgen/PICBatchJobRepositoryState.def
+ - /peano/applications/pic/demo2/dastgen/RegularGridVertex.def
+ - /peano/applications/pic/demo2/dastgen/SpacetreeGridVertex.def
+ - /peano/applications/pic/demo2/dastgen/RegularGridCell.def
+ - /peano/applications/pic/demo2/dastgen/SpacetreeGridCell.def
+ - /peano/applications/pic/demo2/dastgen/RegularGridState.def
+ - /peano/applications/pic/demo2/dastgen/SpacetreeGridState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /RegularGridVertex.h
+ - /RegularGridVertex.cpp
+ - /SpacetreeGridVertex.h
+ - /SpacetreeGridVertex.cpp
+ - /RegularGridCell.h
+ - /RegularGridCell.cpp
+ - /SpacetreeGridCell.h
+ - /SpacetreeGridCell.cpp
+ - /State.h
+ - /RegularGridState.h
+ - /RegularGridState.cpp
+ - /SpacetreeGridState.h
+ - /SpacetreeGridState.cpp
+ - /mappings/RegularGrid2SetupExperiment.h
+ - /mappings/RegularGrid2SetupExperiment.cpp
+ - /mappings/SpacetreeGrid2SetupExperiment.h
+ - /mappings/SpacetreeGrid2SetupExperiment.cpp
+ - /mappings/RegularGrid2PlotSolution.h
+ - /mappings/RegularGrid2PlotSolution.cpp
+ - /mappings/SpacetreeGrid2PlotSolution.h
+ - /mappings/SpacetreeGrid2PlotSolution.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/PICBatchJobRepository.h
+ - /repositories/PICBatchJobRepositoryForRegularGrid.h
+ - /repositories/PICBatchJobRepositoryForRegularGridStandardImplementation.h
+ - /repositories/PICBatchJobRepositoryForRegularGridStandardImplementation.cpp
+ - /repositories/PICBatchJobRepositoryForSpacetreeGrid.h
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridArrayStackImplementation.h
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridArrayStackImplementation.cpp
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridFileStackImplementation.h
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridFileStackImplementation.cpp
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.h
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.cpp
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridSTDStackImplementation.h
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridSTDStackImplementation.cpp
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.h
+ - /repositories/PICBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.cpp
+ - /repositories/PICBatchJobRepositoryFactory.h
+ - /repositories/PICBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-PICBatchJob-on-regular-grid.xml
+ - /configurations/PICBatchJobConfigurationForRegularGrid.h
+ - /configurations/PICBatchJobConfigurationForRegularGrid.cpp
+ - /run-PICBatchJob-on-spacetree-grid.xml
+ - /configurations/PICBatchJobConfigurationForSpacetreeGrid.h
+ - /configurations/PICBatchJobConfigurationForSpacetreeGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/PICBatchJobRunnerForRegularGrid.h
+ - /runners/PICBatchJobRunnerForRegularGrid.cpp
+ - /runners/PICBatchJobRunnerForRegularGridParallelWorker.cpp
+ - /runners/PICBatchJobRunnerForSpacetreeGrid.h
+ - /runners/PICBatchJobRunnerForSpacetreeGrid.cpp
+ - /runners/PICBatchJobRunnerForSpacetreeGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/RegularGrid2SetupExperiment.h
+ - /adapters/RegularGrid2SetupExperiment.cpp
+ - /adapters/SpacetreeGrid2SetupExperiment.h
+ - /adapters/SpacetreeGrid2SetupExperiment.cpp
+ - /adapters/RegularGrid2SetupExperimentAndPlot.h
+ - /adapters/RegularGrid2SetupExperimentAndPlot.cpp
+ - /adapters/SpacetreeGrid2SetupExperimentAndPlot.h
+ - /adapters/SpacetreeGrid2SetupExperimentAndPlot.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/PICBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/PICBatchJobForRegularGridImplementation.h
+ - /cca/PICBatchJobForRegularGridImplementation.cpp
+ - /cca/PICBatchJobForSpacetreeGridImplementation.h
+ - /cca/PICBatchJobForSpacetreeGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/PICBatchJobTest.h
+ - /tests/PICBatchJobTest.cpp
+*/

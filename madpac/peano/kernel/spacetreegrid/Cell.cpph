@@ -1,0 +1,179 @@
+template <class CellData>
+peano::kernel::spacetreegrid::Cell<CellData>::Cell():
+  _cellData() {
+  _cellData.setIsInside(false);
+  _cellData.setState( CellData::Leaf );
+}
+
+
+template <class CellData>
+peano::kernel::spacetreegrid::Cell<CellData>::Cell(const PersistentCell& argument):
+  _cellData( (typename CellData::Packed(argument)).convert() ) {
+}
+
+
+template <class CellData>
+peano::kernel::spacetreegrid::Cell<CellData>::~Cell() {
+}
+
+
+template <class CellData>
+bool peano::kernel::spacetreegrid::Cell<CellData>::isOutside() const {
+  return !_cellData.getIsInside();
+}
+
+
+template <class CellData>
+bool peano::kernel::spacetreegrid::Cell<CellData>::isInside() const {
+  return _cellData.getIsInside();
+}
+
+
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::switchToInside() {
+  assertion1( isOutside(), *this );
+  _cellData.setIsInside(true);
+}
+
+
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::switchToOutside() {
+  _cellData.setIsInside(false);
+}
+
+
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::switchToRoot() {
+  assertion1( isLeaf(), *this );
+  _cellData.setState( CellData::Root );
+  #ifdef Debug
+  _cellData.setLevel(0);
+  #endif
+}
+
+
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::switchToLeaf() {
+  assertion1( isRefined(), *this );
+  _cellData.setState( CellData::Leaf );
+}
+
+
+template <class CellData>
+bool peano::kernel::spacetreegrid::Cell<CellData>::isRefined() const {
+  return _cellData.getState() == Records::Refined;
+}
+
+
+template <class CellData>
+bool peano::kernel::spacetreegrid::Cell<CellData>::isLeaf() const {
+  return _cellData.getState() == Records::Leaf;
+}
+
+
+template <class CellData>
+bool peano::kernel::spacetreegrid::Cell<CellData>::isRoot() const {
+  return _cellData.getState() == Records::Root;
+}
+
+
+template <class CellData>
+typename peano::kernel::spacetreegrid::Cell<CellData>::PersistentCell peano::kernel::spacetreegrid::Cell<CellData>::getRecords() const {
+  #if defined(StoreOnlyPersistentAttributes) && defined(PackedRecords)
+  return _cellData.convert().getPersistentRecords();
+  #endif
+  #if !defined(StoreOnlyPersistentAttributes) && defined(PackedRecords)
+  return _cellData.convert();
+  #endif
+  #if defined(StoreOnlyPersistentAttributes) && !defined(PackedRecords)
+  return _cellData.getPersistentRecords();
+  #endif
+  #if !defined(StoreOnlyPersistentAttributes) && !defined(PackedRecords)
+  return _cellData;
+  #endif
+}
+
+
+template <class CellData>
+std::string peano::kernel::spacetreegrid::Cell<CellData>::toString() const {
+  return _cellData.toString();
+}
+
+
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::toString(std::ostream& out) const {
+  _cellData.toString(out);
+}
+
+
+#ifdef Debug
+template <class CellData>
+int peano::kernel::spacetreegrid::Cell<CellData>::getLevel() const {
+  return _cellData.getLevel();
+}
+
+
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::incLevel() {
+  _cellData.setLevel(_cellData.getLevel()+1);
+}
+#endif
+
+
+template <class CellData>
+std::ostream& operator<<(std::ostream& out, const peano::kernel::spacetreegrid::Cell<CellData>& arg) {
+  arg.toString(out);
+  return out;
+}
+
+
+#ifdef Parallel
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::initDatatype() {
+  if (MPIDatatypeContainer::Datatype==0) {
+    MPIDatatypeContainer::initDatatype();
+  }
+
+  assertion(MPIDatatypeContainer::Datatype!=0);
+}
+
+
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::send(int destination, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  _cellData.convert().send(destination,tag);
+  #else
+  _cellData.send(destination,tag);
+  #endif
+}
+
+
+template <class CellData>
+void peano::kernel::spacetreegrid::Cell<CellData>::receive(int source, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  MPIDatatypeContainer receivedMessage;
+  receivedMessage.receive(source,tag);
+  _cellData = receivedMessage.convert();
+  #else
+  _cellData.receive(source,tag);
+  #endif
+}
+
+
+template <class CellData>
+int peano::kernel::spacetreegrid::Cell<CellData>::getDelta() const {
+  assertionMsg( false, "not implemented yet" );
+  return -1;
+}
+
+
+template <class CellData>
+int peano::kernel::spacetreegrid::Cell<CellData>::getWeight() const {
+  assertionMsg( false, "not implemented yet" );
+  return -1;
+}
+#endif

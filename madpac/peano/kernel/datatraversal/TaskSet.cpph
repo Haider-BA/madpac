@@ -1,0 +1,53 @@
+template <class Functor0, class Functor1>
+peano::kernel::datatraversal::TaskSet::TaskSet(
+  Functor0&  task0,
+  Functor1&  task1,
+  int        parallelise
+) {
+  assertion1( parallelise>=0 && parallelise<=1, parallelise );
+  #if defined(SharedTBB)
+  if (parallelise>0) {
+    typedef GenericTask<Functor0> Task0;
+    typedef GenericTask<Functor1> Task1;
+
+    tbb::task_list tbbTaskList;
+
+    Task0& tbbTask0 = *new(tbb::task::allocate_root()) Task0(task0);
+    Task1& tbbTask1 = *new(tbb::task::allocate_root()) Task1(task1);
+
+    tbbTaskList.push_back(tbbTask0);
+    tbbTaskList.push_back(tbbTask1);
+
+    tbb::task::spawn_root_and_wait(tbbTaskList);
+  }
+  else {
+    task0();
+    task1();
+  }
+  #elif defined(SharedOMP)
+  if (parallelise>0) {
+    assertionMsg( false, "not implemented yet");
+  }
+  else {
+    task0();
+    task1();
+  }
+  #else
+  task0();
+  task1();
+  #endif
+}
+
+#ifdef SharedTBB
+template <class Functor>
+peano::kernel::datatraversal::TaskSet::GenericTask<Functor>::GenericTask(Functor& functor):
+  _functor(functor)  {
+}
+
+
+template <class Functor>
+tbb::task* peano::kernel::datatraversal::TaskSet::GenericTask<Functor>::execute() {
+  _functor();
+  return 0;
+}
+#endif

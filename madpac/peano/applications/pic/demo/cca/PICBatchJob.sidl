@@ -1,0 +1,48 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package applications { 
+    package pic { 
+      package demo {
+      package cca {
+        package ports {
+          interface PICBatchJob {
+            switchToSetupExperiment();
+            switchToSetupExperimentAndPlot();
+
+            iterate();    
+
+            /**
+             * @todo Add your own operations here
+             */
+          }
+        }
+        
+          
+        class PICBatchJobForRegularGrid
+          implements-all 
+            peano.applications.pic.demo.cca.ports.PICBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+        
+          
+        class PICBatchJobForSpacetreeGrid
+          implements-all 
+            peano.applications.pic.demo.cca.ports.PICBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+      }
+}
+}
+}
+}

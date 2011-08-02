@@ -1,0 +1,72 @@
+component: shallowwater
+
+configuration-tag: shallowwater
+repository: ShallowWaterBatchJob
+namespace: peano::applications::shallowwater
+
+/**
+ * Vertex used for the solver.
+ */
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  
+  
+/**
+ * Cell used for the solver.
+ */
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+  
+/**
+ * There is only one state for the solver and it is called State.
+ */
+state:
+  name: State
+  dastgen-file: State.def
+
+
+/**
+ * Event-Mappings.
+ */
+
+event-mapping:
+  name: SetupExperiment
+  
+event-mapping:
+  name: GodunovMethod
+ 
+/**
+ * Plot the solution to a vtk file.
+ */
+event-mapping:
+  name: PlotSolution
+ 
+adapter:
+  name: SetupExperiment
+  merge-with-user-defined-mapping: SetupExperiment
+
+adapter:
+  name: SetupExperimentAndPlotGrid
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-predefined-mapping: VTKGridVisualiser
+
+adapter:
+  name: SetupExperimentAndPlotStartSolution
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: GodunovMethod
+  merge-with-user-defined-mapping: GodunovMethod
+
+adapter:
+  name: GodunovMethodAndPlotSolution
+  merge-with-user-defined-mapping: GodunovMethod
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: PlotSolution
+  merge-with-user-defined-mapping: PlotSolution
+  

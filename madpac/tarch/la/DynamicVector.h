@@ -1,0 +1,144 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+#ifndef _TARCH_LA_DYNAMICVECTOR_H_
+#define _TARCH_LA_DYNAMICVECTOR_H_
+
+#include <vector>
+#include "tarch/la/traits/IsVector.h"
+#include "tarch/la/VectorAssign.h"
+#include "tarch/la/VectorAssignList.h"
+#include "tarch/la/VectorOperations.h"
+#include "tarch/la/VectorVectorOperations.h"
+#include "tarch/utils/EnableIf.h"
+
+namespace tarch {
+  namespace la {
+    template<typename Scalar> class DynamicVector;
+  }
+}
+
+/**
+ * Dynamic (i.e. runtime) sized vector type, based on heap memory allocation.
+ */
+template<typename Scalar>
+class tarch::la::DynamicVector
+{
+private:
+
+  /**
+   * Implementational basis holding values.
+   */
+  Scalar* _values;
+
+  /**
+   * Number of elements.
+   */
+  int _size;
+
+public:
+
+  /**
+   * Default constructor for empty vector.
+   */
+  DynamicVector();
+
+  /**
+   * Constructs vector with size components, not initialized.
+   */
+  explicit DynamicVector (int size);
+
+  /**
+   * Constructs vector with size components initialized to given value.
+   */
+  DynamicVector (int size, const Scalar& initialValue);
+
+  /**
+   * Copy constructor.
+   */
+  DynamicVector (const DynamicVector<Scalar>& toCopy);
+
+  /**
+   * Copy constructor to copy from any vector type.
+   *
+   * The only way to accomplish this with enable-if is to specify a second
+   * dummy argument with default value, which is (hopefully) optimized away.
+   */
+  template<typename VECTOR>
+  DynamicVector (
+    const VECTOR& toCopy,
+    typename utils::EnableIf< IsVector<VECTOR>::value,void*>::Type = NULL );
+
+  /**
+   * Destructor, frees resources.
+   */
+  ~DynamicVector();
+
+  /**
+   * Assignment of vector of same type.
+   */
+  DynamicVector<Scalar>& operator= (const DynamicVector<Scalar>& toAssign);
+
+  /**
+   * Assignment of vector of different type.
+   */
+  template<typename VECTOR>
+    typename utils::EnableIf< IsVector<VECTOR>::value,
+    DynamicVector<Scalar>&
+  >::Type operator= (const VECTOR& toAssign);
+
+  /**
+   * Returns the number of components of the vector.
+   */
+  int size() const;
+
+  /**
+   * Appends the given vector to this vector.
+   */
+  template<typename Vector>
+    typename utils::EnableIf<IsVector<Vector>::value/* && EqualScalars<Vector,DynamicVector<Scalar> >::value*/,
+    void
+  >::Type append (const Vector& toAppend);
+
+  /**
+   * Appends another element to this vector.
+   */
+  void append (const Scalar& toAppend);
+
+  /**
+   * Appends size times element toAppend.
+   */
+  void append (int size, const Scalar& toAppend);
+
+  /**
+   * Removes all elements from the vector.
+   */
+  void clear();
+
+  /**
+   * Returns const component at index.
+   */
+  const Scalar& operator[] (int index) const;
+
+  /**
+   * Returns component at index.
+   */
+  Scalar& operator[] (int index);
+
+  /**
+   * Returns const component at index.
+   */
+  const Scalar& operator() (int index) const;
+
+  /**
+   * Returns component at index.
+   */
+  Scalar& operator() (int index);
+
+
+  // No more methods here? They are all generic free methods now!
+};
+
+#include "DynamicVector.cpph"
+
+#endif /* _TARCH_LA_DYNAMICVECTOR_H_ */

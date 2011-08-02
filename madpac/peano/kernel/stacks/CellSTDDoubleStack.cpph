@@ -1,0 +1,79 @@
+template <class Cell>
+peano::kernel::stacks::CellSTDDoubleStack<Cell>::CellSTDDoubleStack(
+  int initialSize
+):
+  _inputStackNumber(0) {
+  _stack.init(initialSize);
+}
+
+
+template <class Cell>
+peano::kernel::stacks::CellSTDDoubleStack<Cell>::~CellSTDDoubleStack() {
+}
+
+
+template <class Cell>
+Cell peano::kernel::stacks::CellSTDDoubleStack<Cell>::pop(int stackNumber) {
+  assertionEquals(stackNumber, peano::kernel::stacks::Constants::InOutStack);
+  assertion(!_stack.isEmpty(_inputStackNumber));
+  return _stack.pop(_inputStackNumber);
+}
+
+
+template <class Cell>
+void peano::kernel::stacks::CellSTDDoubleStack<Cell>::push( int stackNumber, const Cell& cell ) {
+  assertionEquals(stackNumber, peano::kernel::stacks::Constants::InOutStack);
+  _stack.push(1-_inputStackNumber,cell.getRecords());
+}
+
+
+template <class Cell>
+int peano::kernel::stacks::CellSTDDoubleStack<Cell>::sizeOfInputStack() const {
+  return _stack.size(_inputStackNumber);
+}
+
+
+template <class Cell>
+int peano::kernel::stacks::CellSTDDoubleStack<Cell>::sizeOfOutputStack() const {
+  return _stack.size(1-_inputStackNumber);
+}
+
+
+template <class Cell>
+bool peano::kernel::stacks::CellSTDDoubleStack<Cell>::isInputStackEmpty() const {
+  return _stack.isEmpty(_inputStackNumber);
+}
+
+
+template <class Cell>
+bool peano::kernel::stacks::CellSTDDoubleStack<Cell>::isOutputStackEmpty() const {
+  return _stack.isEmpty(1-_inputStackNumber);
+}
+
+
+template <class Cell>
+void peano::kernel::stacks::CellSTDDoubleStack<Cell>::clear() {
+  _stack.clear();
+}
+
+
+template <class Cell>
+void peano::kernel::stacks::CellSTDDoubleStack<Cell>::flipInputAndOutputStack() {
+  assertion( isInputStackEmpty() );
+  _inputStackNumber = 1-_inputStackNumber;
+}
+
+
+template <class Cell>
+template <class Vertex>
+void peano::kernel::stacks::CellSTDDoubleStack<Cell>::writeToCheckpoint( peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) const {
+  assertionMsg( false, "not implemented yet" );
+}
+
+
+
+template <class Cell>
+template <class Vertex>
+void peano::kernel::stacks::CellSTDDoubleStack<Cell>::readFromCheckpoint( const peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) {
+  assertionMsg( false, "not implemented yet" );
+}

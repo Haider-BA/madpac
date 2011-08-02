@@ -72,6 +72,7 @@ namespace madpac
             std::cout << lbdata[DataContainer::velocityX] << " "
                 << data[DataContainer::velocityX] << " " << vx * _md2ms << " "
                 << vy * _md2ms << " " << vz * _md2ms << std::endl;
+         // std::cout << vx <<" " << lbdata[DataContainer::velocityX] << " " << data[DataContainer::velocityX] << std::endl;
           p.vadd(vx, vy, vz);
 
         }

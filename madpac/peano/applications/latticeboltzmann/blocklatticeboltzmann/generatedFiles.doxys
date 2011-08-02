@@ -1,0 +1,155 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /blocklatticeboltzmann.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/latticeboltzmann/blocklatticeboltzmann/dastgen/BlockLatticeBoltzmannBatchJobRepositoryState.def
+ - /peano/applications/latticeboltzmann/blocklatticeboltzmann/dastgen/RegularGridBlockVertex.def
+ - /peano/applications/latticeboltzmann/blocklatticeboltzmann/dastgen/SpacetreeGridBlockVertex.def
+ - /peano/applications/latticeboltzmann/blocklatticeboltzmann/dastgen/RegularGridBlockCell.def
+ - /peano/applications/latticeboltzmann/blocklatticeboltzmann/dastgen/SpacetreeGridBlockCell.def
+ - /peano/applications/latticeboltzmann/blocklatticeboltzmann/dastgen/RegularGridBlockState.def
+ - /peano/applications/latticeboltzmann/blocklatticeboltzmann/dastgen/SpacetreeGridBlockState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /RegularGridBlockVertex.h
+ - /RegularGridBlockVertex.cpp
+ - /SpacetreeGridBlockVertex.h
+ - /SpacetreeGridBlockVertex.cpp
+ - /RegularGridBlockCell.h
+ - /RegularGridBlockCell.cpp
+ - /SpacetreeGridBlockCell.h
+ - /SpacetreeGridBlockCell.cpp
+ - /BlockState.h
+ - /RegularGridBlockState.h
+ - /RegularGridBlockState.cpp
+ - /SpacetreeGridBlockState.h
+ - /SpacetreeGridBlockState.cpp
+ - /mappings/RegularGrid2RegularBlockSolver.h
+ - /mappings/RegularGrid2RegularBlockSolver.cpp
+ - /mappings/SpacetreeGrid2RegularBlockSolver.h
+ - /mappings/SpacetreeGrid2RegularBlockSolver.cpp
+ - /mappings/RegularGrid2BlockVTKOutput.h
+ - /mappings/RegularGrid2BlockVTKOutput.cpp
+ - /mappings/SpacetreeGrid2BlockVTKOutput.h
+ - /mappings/SpacetreeGrid2BlockVTKOutput.cpp
+ - /mappings/RegularGrid2BlockCCAOutput.h
+ - /mappings/RegularGrid2BlockCCAOutput.cpp
+ - /mappings/SpacetreeGrid2BlockCCAOutput.h
+ - /mappings/SpacetreeGrid2BlockCCAOutput.cpp
+ - /mappings/RegularGrid2InitialiseSpacetreeGrid.h
+ - /mappings/RegularGrid2InitialiseSpacetreeGrid.cpp
+ - /mappings/SpacetreeGrid2InitialiseSpacetreeGrid.h
+ - /mappings/SpacetreeGrid2InitialiseSpacetreeGrid.cpp
+ - /mappings/RegularGrid2DynamicRefinementForSpacetreeGrid.h
+ - /mappings/RegularGrid2DynamicRefinementForSpacetreeGrid.cpp
+ - /mappings/SpacetreeGrid2DynamicRefinementForSpacetreeGrid.h
+ - /mappings/SpacetreeGrid2DynamicRefinementForSpacetreeGrid.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/BlockLatticeBoltzmannBatchJobRepository.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForRegularGrid.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForRegularGridStandardImplementation.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForRegularGridStandardImplementation.cpp
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGrid.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridArrayStackImplementation.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridArrayStackImplementation.cpp
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridFileStackImplementation.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridFileStackImplementation.cpp
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.cpp
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridSTDStackImplementation.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridSTDStackImplementation.cpp
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.cpp
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryFactory.h
+ - /repositories/BlockLatticeBoltzmannBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-BlockLatticeBoltzmannBatchJob-on-regular-grid.xml
+ - /configurations/BlockLatticeBoltzmannBatchJobConfigurationForRegularGrid.h
+ - /configurations/BlockLatticeBoltzmannBatchJobConfigurationForRegularGrid.cpp
+ - /run-BlockLatticeBoltzmannBatchJob-on-spacetree-grid.xml
+ - /configurations/BlockLatticeBoltzmannBatchJobConfigurationForSpacetreeGrid.h
+ - /configurations/BlockLatticeBoltzmannBatchJobConfigurationForSpacetreeGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/BlockLatticeBoltzmannBatchJobRunnerForRegularGrid.h
+ - /runners/BlockLatticeBoltzmannBatchJobRunnerForRegularGrid.cpp
+ - /runners/BlockLatticeBoltzmannBatchJobRunnerForRegularGridParallelWorker.cpp
+ - /runners/BlockLatticeBoltzmannBatchJobRunnerForSpacetreeGrid.h
+ - /runners/BlockLatticeBoltzmannBatchJobRunnerForSpacetreeGrid.cpp
+ - /runners/BlockLatticeBoltzmannBatchJobRunnerForSpacetreeGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/RegularGrid2RegularBlockSolverAdapter.h
+ - /adapters/RegularGrid2RegularBlockSolverAdapter.cpp
+ - /adapters/SpacetreeGrid2RegularBlockSolverAdapter.h
+ - /adapters/SpacetreeGrid2RegularBlockSolverAdapter.cpp
+ - /adapters/RegularGrid2InitialiseSpacetreeGridAdapter.h
+ - /adapters/RegularGrid2InitialiseSpacetreeGridAdapter.cpp
+ - /adapters/SpacetreeGrid2InitialiseSpacetreeGridAdapter.h
+ - /adapters/SpacetreeGrid2InitialiseSpacetreeGridAdapter.cpp
+ - /adapters/RegularGrid2BlockCCAOutputAdapter.h
+ - /adapters/RegularGrid2BlockCCAOutputAdapter.cpp
+ - /adapters/SpacetreeGrid2BlockCCAOutputAdapter.h
+ - /adapters/SpacetreeGrid2BlockCCAOutputAdapter.cpp
+ - /adapters/RegularGrid2DynamicRefinementForSpacetreeGridAdapter.h
+ - /adapters/RegularGrid2DynamicRefinementForSpacetreeGridAdapter.cpp
+ - /adapters/SpacetreeGrid2DynamicRefinementForSpacetreeGridAdapter.h
+ - /adapters/SpacetreeGrid2DynamicRefinementForSpacetreeGridAdapter.cpp
+ - /adapters/RegularGrid2BlockVTKOutputAdapter.h
+ - /adapters/RegularGrid2BlockVTKOutputAdapter.cpp
+ - /adapters/SpacetreeGrid2BlockVTKOutputAdapter.h
+ - /adapters/SpacetreeGrid2BlockVTKOutputAdapter.cpp
+ - /adapters/RegularGrid2RegularBlockSolverAndVTKOutputAdapter.h
+ - /adapters/RegularGrid2RegularBlockSolverAndVTKOutputAdapter.cpp
+ - /adapters/SpacetreeGrid2RegularBlockSolverAndVTKOutputAdapter.h
+ - /adapters/SpacetreeGrid2RegularBlockSolverAndVTKOutputAdapter.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/BlockLatticeBoltzmannBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/BlockLatticeBoltzmannBatchJobForRegularGridImplementation.h
+ - /cca/BlockLatticeBoltzmannBatchJobForRegularGridImplementation.cpp
+ - /cca/BlockLatticeBoltzmannBatchJobForSpacetreeGridImplementation.h
+ - /cca/BlockLatticeBoltzmannBatchJobForSpacetreeGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/BlockLatticeBoltzmannBatchJobTest.h
+ - /tests/BlockLatticeBoltzmannBatchJobTest.cpp
+*/

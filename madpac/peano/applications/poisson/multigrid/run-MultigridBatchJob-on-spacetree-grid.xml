@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-poissonmultigrid-on-spacetree-grid>
+    <log-filter target="debug" component="peano"  switch="off" />
+    <log-filter target="debug" component="peano::applications::poisson::multigrid::mappings::SpacetreeGrid2ComputeGalerkinCoarseGridOperator::touchVertexFirstTime"  switch="on" />
+    <log-filter target="debug" component="peano::applications::poisson::multigrid::mappings::SpacetreeGrid2ComputeGalerkinCoarseGridOperator::touchVertexLastTime"   switch="on" />
+    <log-filter target="debug" component="peano::applications::poisson::multigrid::mappings::SpacetreeGrid2ComputeGalerkinCoarseGridOperator::enterCell"   switch="on" />
+    <log-filter target="debug" component="peano::applications::poisson::multigrid::mappings::SpacetreeGrid2ComputeGalerkinCoarseGridOperator::validateCoarseGridVertex"   switch="on" />
+    <log-filter target="debug" component="peano::applications::poisson::multigrid::mappings::SpacetreeGrid2SetupExperiment::createInnerVertex"   switch="off" />   
+    <log-filter target="debug" component="peano::toolbox::solver::PetrovGalerkin"   switch="on" />
+    <log-filter target="debug" component="tarch"  switch="off" />
+    <log-filter target="debug" component="peano::kernel"  switch="off" />
+    <log-filter target="info" component="peano"  switch="off" />
+    <log-filter target="info" component="peano::applications::poisson::multigrid"  switch="off" />
+    <log-filter target="info" component="tarch"  switch="off" />
+    <log-filter target="info" component="peano::kernel"  switch="off" />
+ </run-poissonmultigrid-on-spacetree-grid>
+</peano-configuration>

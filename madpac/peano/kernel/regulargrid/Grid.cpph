@@ -1,0 +1,243 @@
+#include "peano/geometry/GeometryHelper.h"
+
+#include "tarch/Assertions.h"
+
+#include "peano/kernel/datatraversal/dForLoop.h"
+#include "peano/kernel/datatraversal/autotuning/Oracle.h"
+
+#include "peano/kernel/regulargrid/loops/GridLoadVertexLoopBody.h"
+#include "peano/kernel/regulargrid/loops/GridStoreVertexLoopBody.h"
+#include "peano/kernel/regulargrid/loops/GridHandleCellsLoopBody.h"
+
+#ifdef Parallel
+#include "peano/kernel/parallel/SendReceiveBufferPool.h"
+#include "tarch/parallel/NodePool.h"
+#endif
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+tarch::logging::Log peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::_log("peano::kernel::regulargrid::Grid");
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::Grid(
+  const tarch::la::Vector<DIMENSIONS,double>&  domainSize,
+  const tarch::la::Vector<DIMENSIONS,double>&  computationalDomainOffset,
+  GridContainer<Vertex,Cell>&                  dataContainer,
+  peano::geometry::Geometry&                   geometry,
+  State&                                       state
+):
+  _handleCellsLoop(),
+  _state(state),
+  _domainSize(domainSize),
+  _domainOffset(computationalDomainOffset),
+  _dataContainer(dataContainer),
+  _geometry(geometry),
+  _eventHandle() {
+  logTraceInWith2Arguments( "Grid(...)", domainSize, computationalDomainOffset );
+  logTraceOut( "Grid(...)" );
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::Grid(
+  GridContainer<Vertex,Cell>&                  dataContainer,
+  peano::geometry::Geometry&                   geometry,
+  State&                                       state
+):
+  _handleCellsLoop(),
+  _state(state),
+  _domainSize(tarch::la::Vector<DIMENSIONS,double>(0.0)),
+  _domainOffset(tarch::la::Vector<DIMENSIONS,double>(0.0)),
+  _dataContainer(dataContainer),
+  _geometry(geometry),
+  _eventHandle() {
+  logTraceIn( "Grid(...)" );
+  logTraceOut( "Grid(...)" );
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::~Grid() {
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::restart(
+  const tarch::la::Vector<DIMENSIONS,double>&  domainSize,
+  const tarch::la::Vector<DIMENSIONS,double>&  computationalDomainOffset
+) {
+  assertionEquals((tarch::la::Vector<DIMENSIONS,double>(0.0)), _domainSize);
+  assertionEquals((tarch::la::Vector<DIMENSIONS,double>(0.0)), _domainOffset);
+
+  logTraceInWith2Arguments( "restart(...)", domainSize, computationalDomainOffset );
+
+  _domainSize   = domainSize;
+  _domainOffset = computationalDomainOffset;
+
+  _handleCellsLoop = peano::kernel::datatraversal::SingleLevelCellLoop<HandleCellsLoopBody>();
+
+  logTraceOut( "restart(...)" );
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::terminate() {
+  logTraceIn( "terminate()" );
+  _domainSize   = tarch::la::Vector<DIMENSIONS,double>(0.0);
+  _domainOffset = tarch::la::Vector<DIMENSIONS,double>(0.0);
+  logTraceOut( "terminate()" );
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::loadVertices( Vertex * const vertices ) {
+  logTraceInWith1Argument( "loadVertices(Vertex*)", _dataContainer.getNumberOfGridVertices());
+
+  LoadVerticesLoopBody loopBody(*this,vertices);
+
+  #if defined(Parallel)
+  const bool handleBoundaryOfDomainSequential = true;
+  #else
+  const bool handleBoundaryOfDomainSequential = false;
+   #endif
+
+  const int sharedMemoryGrainSizes = peano::kernel::datatraversal::autotuning::Oracle::getInstance().parallelise(tarch::la::volume(_dataContainer.getNumberOfGridVertices()),peano::kernel::datatraversal::autotuning::RegularGridLoadVertices);
+  peano::kernel::datatraversal::dForLoop<LoadVerticesLoopBody>( _dataContainer.getNumberOfGridVertices(), loopBody, sharedMemoryGrainSizes, handleBoundaryOfDomainSequential );
+  peano::kernel::datatraversal::autotuning::Oracle::getInstance().parallelSectionHasTerminated(peano::kernel::datatraversal::autotuning::RegularGridLoadVertices);
+
+  logTraceOut( "loadVertices(Vertex*)" );
+}
+
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::storeVertices( Vertex * const vertices ) {
+  logTraceIn( "storeVertices(Vertex*)" );
+
+  StoreVerticesLoopBody loopBody(*this,vertices);
+
+  #if defined(Parallel)
+  const bool handleBoundaryOfDomainSequential = true;
+  #else
+  const bool handleBoundaryOfDomainSequential = false;
+  #endif
+
+  const int sharedMemoryGrainSizes = peano::kernel::datatraversal::autotuning::Oracle::getInstance().parallelise(tarch::la::volume(_dataContainer.getNumberOfGridVertices()),peano::kernel::datatraversal::autotuning::RegularGridStoreVertices);
+  peano::kernel::datatraversal::dForLoop<StoreVerticesLoopBody>( _dataContainer.getNumberOfGridVertices(), loopBody, sharedMemoryGrainSizes, handleBoundaryOfDomainSequential );
+  peano::kernel::datatraversal::autotuning::Oracle::getInstance().parallelSectionHasTerminated(peano::kernel::datatraversal::autotuning::RegularGridStoreVertices);
+
+  logTraceOut( "storeVertices(Vertex*)" );
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::handleCells( Vertex * const vertices ) {
+  logTraceIn( "handleCells(Vertex*)" );
+
+  if (!_handleCellsLoop.isInitialised()) {
+    _handleCellsLoop.init(_dataContainer.getNumberOfGridCells());
+  }
+
+  assertion( _handleCellsLoop.isInitialised() );
+
+  HandleCellsLoopBody loopBody(*this,vertices);
+  const int dataChunk = tarch::la::volume(_dataContainer.getNumberOfGridCells());
+  _handleCellsLoop.run(loopBody,peano::kernel::datatraversal::autotuning::Oracle::getInstance().parallelise(dataChunk,peano::kernel::datatraversal::autotuning::RegularGridHandleCells));
+//  peano::kernel::datatraversal::SingleLevelCellLoop<HandleCellsLoopBody>(
+//    _dataContainer.getNumberOfGridCells(), loopBody,
+//    peano::kernel::datatraversal::autotuning::Oracle::getInstance().parallelise(dataChunk,peano::kernel::datatraversal::autotuning::RegularGridHandleCells)
+//  );
+  peano::kernel::datatraversal::autotuning::Oracle::getInstance().parallelSectionHasTerminated(peano::kernel::datatraversal::autotuning::RegularGridHandleCells);
+
+  logTraceOut( "handleCells(Vertex*)" );
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+tarch::la::Vector<DIMENSIONS,double> peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::getH() const {
+  return peano::kernel::regulargrid::getH(_domainSize,_dataContainer.getNumberOfGridVertices());
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::releaseMessages() {
+  #ifdef Parallel
+  logTraceIn( "releaseMessages()" );
+
+  peano::kernel::parallel::SendReceiveBufferPool::getInstance().releaseMessages();
+
+  logTraceOut( "releaseMessages()" );
+  #endif
+}
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::reduceParallelState() {
+  #ifdef Parallel
+  logTraceIn( "reduceParallelState()" );
+
+  if (tarch::parallel::Node::getInstance().isMasterProcess()) {
+    logDebug( "reduceParallelStateAndReleaseMessages()", "receive state data from " << tarch::parallel::NodePool::getInstance().getNumberOfWorkingNodes() << " node(s)");
+    for (int i=0; i<tarch::parallel::NodePool::getInstance().getNumberOfWorkingNodes(); i++) {
+      State workerState;
+      workerState.receive(MPI_ANY_SOURCE, peano::kernel::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag());
+      _state.mergeWithWorkerState(workerState);
+    }
+  }
+  else {
+    _state.send(tarch::parallel::Node::getMasterProcessRank(),peano::kernel::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag());
+  }
+
+  logTraceOut( "reduceParallelState()" );
+  #endif
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::distributeParallelState() {
+  #ifdef Parallel
+  logTraceIn( "distributeParallelState()");
+
+  if (tarch::parallel::Node::getInstance().isMasterProcess()) {
+    logDebug( "distributeParallelState()", "distribute object " << _state );
+    tarch::parallel::NodePool::getInstance().broadcastToWorkingNodes(
+      _state,
+      peano::kernel::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag()
+    );
+  }
+  else {
+    _state.receive(tarch::parallel::Node::getMasterProcessRank(),peano::kernel::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag());
+  }
+
+  logTraceOut( "distributeParallelState()");
+  #endif
+}
+
+
+template <class Vertex,class Cell,class State,class EventHandle>
+void peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>::iterate( bool reduceState ) {
+  logTraceIn( "iterate()");
+
+  Vertex* vertices = _dataContainer.getArrayForUnpackedVertices();
+
+  _state.resetStateAtBeginOfIteration(getH());
+
+  distributeParallelState();
+
+  _eventHandle.beginIteration(_state);
+
+  loadVertices(vertices);
+
+  handleCells(vertices);
+
+  storeVertices(vertices);
+
+  _eventHandle.endIteration(_state);
+
+  if( reduceState ) {
+    reduceParallelState();
+  }
+  releaseMessages();
+
+  logTraceOut( "iterate()");
+}

@@ -1,0 +1,156 @@
+#include "peano/applications/navierstokes/prototype1/NSEGlobals.h"
+
+
+Packed-Type: short int;
+
+Constant: DIMENSIONS;
+
+class peano::applications::navierstokes::prototype1::dastgen::FluidState {
+
+  enum DebugElementType{
+    DebugDLinear,
+    DebugDivFree,
+    DebugEnhancedDivFree
+  };
+
+  /**
+   * The used element type.
+   */
+  persistent parallelise DebugElementType elementType;
+  
+  /*****************************************************************************
+   * Linear solver stuff
+   */
+  /**
+   * Holds the maximum number of iterations for the linear solver.
+   */
+  persistent parallelise int LGSMaxIterations;
+  
+  /**
+   * Current global residual of linear solver.
+   */
+  persistent parallelise double LGSResidual;
+  
+  /**
+   * Tolerances?
+   */
+  
+  
+  /*****************************************************************************
+   * ode stuff
+   */
+  /**
+   * Current time step number.
+   */
+  persistent parallelise int odeTimestepnumber; 
+  
+  /**
+   * Current time. 
+   */
+  persistent parallelise double odeTime;
+   
+  /**
+   * Time step size.
+   */
+  persistent parallelise double odeTau; 
+   
+  /**
+   * holds the number of vertices per Dimension for the regular grid plotting
+   */
+  persistent parallelise int numberOfVertices[DIMENSIONS];
+  
+  /**
+   * holds the  offset of the domain for the regular grid plotting
+   */
+  persistent parallelise double offset[DIMENSIONS];
+  
+  /**
+   * holds the domain size for the regular grid plotting
+   */
+  persistent parallelise double size[DIMENSIONS]; 
+  /*****************************************************************************
+   * plotter stuff
+   */
+   
+  /**
+   * File name with time step number information. No Strings!!!!
+   */
+    
+  /**
+   *
+   */
+  persistent parallelise bool plotterPlotDebugInfo;
+  
+  /**
+   *
+   */
+  persistent parallelise bool plotVTKFiles;  
+  
+  /*****************************************************************************
+   * Scenario stuff
+   */
+  /**
+   * Stores the value of the Reynolds number.
+   */
+  persistent parallelise double scenarioRe;
+
+  /**
+   * Stores the value of the kinematic viscosity @f$ \eta @f$.
+   */
+  persistent parallelise double scenarioEta;
+
+  /**
+   * Stores the value of the density @f$ \rho @f$.
+   */
+  persistent parallelise double scenarioRho;
+
+  /**
+   * Stores the characteristic length.
+   */
+  persistent parallelise double scenarioCharacteristicLength;
+  
+  
+  /**
+   * L2h norm of p. 
+   */
+  persistent parallelise double pL2h;
+  /**
+   * Maximum norm of p. 
+   */
+  persistent parallelise double pMax;
+  /**
+   * Current improvement of p in L2h norm (@f$ \| p_{old} - p_{new}\|_{L2h} @f$).
+   */
+  persistent parallelise double pImprovementL2h;
+  /**
+   * Current improvement of p in maximum norm (@f$ max| p_{old} - p_{new}| @f$).
+   */
+  persistent parallelise double pImprovementMax;
+  
+  
+  /**
+   * L2h norm of velocities. 
+   */
+  persistent parallelise double uL2h;
+  /**
+   * Maximum norm of velocities. 
+   */
+  persistent parallelise double uMax;
+  /**
+   * Current improvement of velocities in L2h norm 
+   * (@f$ \| u_{old} - u_{new}\|_{L2h} @f$).
+   */
+  persistent parallelise double uImprovementL2h;
+  /**
+   * Current improvement of velocities in maximum norm 
+   * (@f$ max| u_{old} - u_{new}| @f$).
+   */
+  persistent parallelise double uImprovementMax;
+  /**
+   * Maximum absolute value of velocities in each dimension. Used for variable
+   * time step criterion.
+   */
+  persistent parallelise double uMaxPerDimension[DIMENSIONS];
+  
+  
+};

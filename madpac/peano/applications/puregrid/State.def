@@ -1,0 +1,5 @@
+Packed-Type: short int;
+
+class peano::applications::puregrid::dastgen::State {
+  parallelise persistent int maxRefinementsPerIteration;
+};

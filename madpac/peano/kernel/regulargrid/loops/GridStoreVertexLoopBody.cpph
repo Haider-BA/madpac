@@ -1,0 +1,63 @@
+template <class Vertex, class Cell, class State, class EventHandle>
+tarch::logging::Log peano::kernel::regulargrid::loops::GridStoreVertexLoopBody<Vertex,Cell,State,EventHandle>::_log( "peano::kernel::regulargrid::loops::GridStoreVertexLoopBody" );
+
+
+#ifdef Parallel
+#include <set>
+
+#include "peano/kernel/parallel/SendReceiveBufferPool.h"
+#endif
+
+
+template <class Vertex, class Cell, class State, class EventHandle>
+peano::kernel::regulargrid::loops::GridStoreVertexLoopBody<Vertex,Cell,State,EventHandle>::GridStoreVertexLoopBody(
+  peano::kernel::regulargrid::Grid<Vertex,Cell,State,EventHandle>& grid,
+  Vertex * const vertices
+):
+  _grid(grid),
+  _vertices(vertices),
+  _enumerator(
+    _grid._dataContainer.getNumberOfGridVertices(),
+    tarch::la::Vector<DIMENSIONS,int>(0),
+    _grid.getH(),
+    _grid._domainOffset
+  ) {
+}
+
+
+template <class Vertex, class Cell, class State, class EventHandle>
+void peano::kernel::regulargrid::loops::GridStoreVertexLoopBody<Vertex,Cell,State,EventHandle>::updateGlobalValues() {
+}
+
+
+template <class Vertex, class Cell, class State, class EventHandle>
+void peano::kernel::regulargrid::loops::GridStoreVertexLoopBody<Vertex,Cell,State,EventHandle>::operator() (const tarch::la::Vector<DIMENSIONS,int>& i) {
+  logTraceInWith1Argument( "operator()", i);
+
+  _enumerator.setOffset(i);
+  if ( !_vertices[ _enumerator(0) ].isOutside() ) {
+    #ifdef Debug
+    assertionEquals2(_vertices[ _enumerator(0) ].getX(), _enumerator.getVertexPosition(), _vertices[ _enumerator(0) ], _enumerator(0) );
+    #endif
+    _grid._eventHandle.touchVertexLastTime( _vertices[ _enumerator(0) ], _enumerator.getVertexPosition() );
+  }
+
+  #ifdef Parallel
+  if (_vertices[ _enumerator(0) ].belongsToParallelBoundary()) {
+    std::set<int> ranks = _vertices[ _enumerator(0) ].getAdjacentRemoteRanks();
+    for (
+      std::set<int>::const_iterator p = ranks.begin();
+      p != ranks.end();
+      p++
+    ) {
+      Vertex copy = _vertices[ _enumerator(0) ];
+      _grid._eventHandle.prepareSendToNeighbour(copy);
+      peano::kernel::parallel::SendReceiveBufferPool::getInstance().sendVertex(copy,*p,peano::kernel::parallel::SendReceiveBufferPool::FIFO);
+    }
+  }
+  #endif
+
+  _grid._dataContainer.setVertex( i,_vertices[ _enumerator(0) ].getRecords() );
+
+  logTraceOutWith1Argument( "operator()", i );
+}

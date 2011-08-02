@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-vhhjacobi-on-regular-grid>
+  
+    <log-filter target="debug" switch="on"  component="" />
+    <log-filter target="debug" switch="off" component="tarch" />
+    <log-filter target="debug" switch="off" component="peano::kernel" />
+    <log-filter target="debug" switch="off" component="peano::geometry" />
+    <log-filter target="debug" switch="off" component="peano::applications::poisson::vhhjacobi" />
+    <log-filter target="debug" switch="off" component="scenario" />
+  
+  </run-vhhjacobi-on-regular-grid>
+</peano-configuration>

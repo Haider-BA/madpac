@@ -1,0 +1,74 @@
+#include "peano/applications/latticeboltzmann/LatticeBoltzmannDefinitions.h"
+#include "peano/applications/latticeboltzmann/blocklatticeboltzmann/BlockDefinitions.h"
+#include "peano/utils/Globals.h"
+
+Packed-Type: short int;
+/**
+ * Lattice Boltzmann component related constants
+ */
+Constant: LB_BLOCK_NUMBER_OF_CELLS_ON_BLOCKBOUNDARY;
+Constant: LB_PDFS_ON_BLOCKBOUNDARY;
+
+class peano::applications::faxen::lbf::dastgen::BlockVertexRecord {
+
+  /**
+   * Vertex's data for the Faxen component
+   */
+  /**
+   *  Averages of pressure from neighborhood cells
+   */
+  persistent double P0;
+  persistent double P1;
+
+  /**
+   * Averages of F and G from neighborhood cells
+   */
+  persistent double F0;
+  persistent double F1;
+  
+  persistent double G0;
+  persistent double G1;
+  
+   /**
+   * Second order derivatives on the edges
+   */
+  persistent double D2UDX2;
+  persistent double D2UDY2;
+  
+  persistent double D2VDX2;
+  persistent double D2VDY2;  
+  
+  /**
+  * Averages of U and V from neighborhood cells
+  */
+  persistent double U0;
+  persistent double U1;
+  persistent double U2;
+  
+  persistent double V0;
+  persistent double V1;
+  persistent double V2;
+  
+  /**
+   * cell type flag to distinguish different boundaries 
+   */
+  persistent int flag;
+  
+  /**
+   * Vertex's data for the Lattice Boltzmann component
+   */
+  
+#ifdef Parallel
+  persistent parallelise double _lbPdfDiff[LB_PDFS_ON_BLOCKBOUNDARY];
+  persistent parallelise double _lbDensityOnBoundary[LB_BLOCK_NUMBER_OF_CELLS_ON_BLOCKBOUNDARY];
+#endif
+
+  persistent parallelise int _vertexNumber;
+  
+  
+  // ------ TODO ONLY NEEDED FOR THE SPACETREE GRID VERTEX!!!! -----
+  enum DynamicRefinementState{LB_REFINEMENT_DEFAULT,LB_REFINEMENT_IS_NEW_PERSISTENT_VERTEX,LB_REFINEMENT_HAS_NEW_PERSISTENT_SUBVERTICES,LB_REFINEMENT_IS_COARSED};
+  persistent parallelise DynamicRefinementState _lbRefinementState;
+  
+};
+

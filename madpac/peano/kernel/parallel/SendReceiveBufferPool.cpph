@@ -1,0 +1,48 @@
+#include "tarch/Assertions.h"
+#include "tarch/parallel/Node.h"
+#include "peano/kernel/parallel/SendReceiceBufferAbstractImplementation.h"
+#include "peano/kernel/parallel/SendReceiveBufferLIFO.h"
+#include "peano/kernel/parallel/SendReceiveBufferFIFO.h"
+
+
+
+template <class Vertex>
+Vertex peano::kernel::parallel::SendReceiveBufferPool::getVertex(int fromRank ) {
+  logTraceInWith1Argument( "getVertex(int)", fromRank );
+  assertion2( _map.count(fromRank) == 1, fromRank, tarch::parallel::Node::getInstance().getRank() );
+
+  typedef SendReceiceBufferAbstractImplementation<Vertex> MySendReceiveBuffer;
+  std::map<int,SendReceiveBuffer*>::iterator bufferPointer = _map.find(fromRank);
+  assertion2( bufferPointer != _map.end(), fromRank, tarch::parallel::Node::getInstance().getRank() );
+  MySendReceiveBuffer* buffer = static_cast<MySendReceiveBuffer*>(bufferPointer->second);
+  Vertex result = buffer->getVertex();
+  logTraceOutWith1Argument( "getVertex(int)", result.toString() );
+  return result;
+}
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiveBufferPool::sendVertex(const Vertex& vertex, int toRank, const BufferAccessType& bufferAccessType ) {
+  assertion1( toRank >= 0, tarch::parallel::Node::getInstance().getRank() );
+  assertion1( toRank != tarch::parallel::Node::getInstance().getRank(), tarch::parallel::Node::getInstance().getRank() );
+
+  typedef SendReceiceBufferAbstractImplementation<Vertex> MySendReceiveBuffer;
+  if (_map.count(toRank)==0) {
+    SendReceiveBuffer* newBuffer;
+    if (bufferAccessType == FIFO ) {
+      newBuffer = new SendReceiveBufferFIFO<Vertex>( toRank, _bufferSize );
+    }
+    else {
+      newBuffer = new SendReceiveBufferLIFO<Vertex>( toRank, _bufferSize );
+    }
+    _map.insert(
+      std::pair<int,SendReceiveBuffer*>( toRank,newBuffer )
+    );
+  }
+
+  std::map<int,SendReceiveBuffer*>::iterator bufferPointer = _map.find(toRank);
+  assertion2( bufferPointer != _map.end(), toRank, tarch::parallel::Node::getInstance().getRank() );
+  MySendReceiveBuffer* buffer = static_cast<MySendReceiveBuffer*>(bufferPointer->second);
+  buffer->sendVertex(vertex);
+}
+

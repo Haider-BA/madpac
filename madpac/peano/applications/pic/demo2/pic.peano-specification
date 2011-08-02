@@ -1,0 +1,43 @@
+component: picdemo
+
+/**
+
+ To regenerate the code, just type in
+  
+ java -classpath releases/tools/PeProt.jar:releases/tools/DaStGen.jar de.tum.peano.peprot.PeProt src/peano/applications/pic/demo/pic.peano-specification src peprot/templates src/peano/kernel spacetreegrid
+ 
+ on the command line.
+
+ */
+configuration-tag: picdemo2
+repository: PICBatchJob
+namespace: peano::applications::pic::demo2
+
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+state:
+  name: State
+  dastgen-file: State.def
+
+event-mapping:
+  name: SetupExperiment
+
+event-mapping:
+  name: PlotSolution
+  
+adapter:
+  name: SetupExperiment
+  merge-with-user-defined-mapping: SetupExperiment
+
+adapter:
+  name: SetupExperimentAndPlot
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-user-defined-mapping: PlotSolution
+  merge-with-predefined-mapping: VTKGridVisualiser
+  

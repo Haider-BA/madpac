@@ -1,0 +1,152 @@
+/*! \page "Mardyn Input Files"
+
+@TODO write or complete the page...
+
+Basically, there seem to be 2 kinds of input files: 
+- a configuration file which contains determines technical stuff like io, 
+  things related to parallelization and so on
+- a phase space specification file, which contains application specific thing 
+  like the specification of the molecule types being simulated and the positions
+  of the indivudual molecules.
+
+
+!!! Config file
+
+@TODO Sketch general.
+
+MDProjectConfig
+
+!! timestepLength 
+!! cutoffRadius
+!! phaseSpaceFile 
+
+! OldStyle 
+Specifies a phase space specifiation file of the old input file (whatever the "old" input style is!?).
+
+! 1CLJGen
+
+<b>Note This particle generator doesn't produce input which is physically correct
+      in any way. It's intended to be used just to test technical stuff!</b>
+
+Generates 1-Center-Lennard-Jones molecules as input. There are two 
+modes, "Homogeneous" or "Cluster". Independent of the mode, the generator needs 
+two more parameters, the number of molecules and the temperature.
+
+In any case, the size of the simulation box is calculated automatically.
+
+- "Homogeneous"
+Creates a homogeneous distribution of a gas. The molecules are distributet randomly
+within the domain. The generator takes one more parameter, the density of the gas.
+
+A line could look like
+\verbatim
+#                      mode        N     T  rho
+phaseSpaceFile 1CLJGen Homogeneous 20000 10 0.08
+\endverbatim
+
+- "Cluster"
+Create a inhomogeneous distribution, i.e. a scenario where molecules are clustered
+as drops in a gas phase. Apart from N and T, the generator takes the following 
+additional parameters:
+	- the density of the gas
+	- the density of the fluid (i.e. in the drops)
+	- the percentage of volume covered by the drops (in percent)
+	- the volume of the largest drops (in percent of the total volume)
+	- the number of sphere-classes. The drops of a class have a radius 0.9 * radius
+	  of the drops of the larger class.
+
+A line could look like
+\verbatim
+#                      mode    N     T   rho_gas  rho_fluid  fluidVolume  maxSphereVolume  numSphereSizes
+phaseSpaceFile 1CLJGen Cluster 2000  10  0.1      0.4        10           30               5   4
+\endverbatim
+
+!! parallelization DomainDecomposition
+!! datastructure LinkedCells
+!! cellsInCutoffRadius
+
+!! Output Writer
+
+- VTKWriter: For the specification of the VTKWriter to visualize the output with Paraview, see "Visualisation with Paraview"
+- StatisticsWriter:
+Add the line 
+\verbatim
+output StatisticsWriter n filename
+\endverbatim
+to the config file. See "StatisticsWriter".
+
+!!! Component Specification
+
+!!! Phase Specification File
+
+The phase specification file consists of two parts: 
+- a header containing information about the parameters of the simulation, e.g. 
+  size of the simulation box, the specification of the molecule types, and so on.
+- the body, containing information about the individual molecules, i.e. their 
+  positions, velocities, type, ...
+  
+!! Header
+
+An example header looks like:
+
+\verbatim
+MDProject trunk 20090731
+currentTime     0
+Temperature     0.7
+Length  97.     97.     97.
+NumberOfComponents      1
+1 0 0 0 0
+0. 0. 0.       10000.  1. 1. 5.0 0.0
+0. 0. 0.
+1.0e+10
+
+\endverbatim
+
+- MDProject trunk xxx: denotes the version of Mardyn for which this file actually 
+  was written. I guess this entry causes more troubles than it helps and actually
+  one should think about an extensible, backwards-compatible file format.
+  
+- currentTime: the time of the simulation (i guess that's only important if the
+  phase space is written at the end of an simulation)
+  
+- Temperature: the (current? / target ? / initial ? ) temperature ???
+
+- Length: the size of the simulation box
+
+- NumberOfComponents: the number of different molecule types which are described
+  in the header. For each component there is a line with 5 integer values denoting
+  the number of centers for
+  \verbatim
+  #lennard-jones   #charge   #dipole   #quadrupole   #tersoff
+  \endverbatim
+  
+  for each of the centers there has to be a line of integers describing the center
+  (e.g. if the line with 5 integers looks like "2 0 1 0 0" there have to be two 
+  lines describing the lennard-jones centers and one line describing the dipole).
+  
+  Following the values for the centers there have to be three double values which
+  probably should be just set to 0.0.
+  
+  For several components there need to be 
+  
+  1.0e10 is some value.
+  
+! Lennard-Jones 
+is described by 8 values:
+\verbatim
+x-   y-   z-coordinates   mass   epsilon   sigma   cutoff   doshift
+\endverbatim
+
+! Charge
+
+! Dipole
+
+! Quadrupole
+
+! Tersoff
+  
+!! Body  
+
+!!! XML File Format
+
+*/

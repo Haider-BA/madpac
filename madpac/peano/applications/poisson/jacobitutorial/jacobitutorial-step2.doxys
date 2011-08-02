@@ -1,0 +1,19 @@
+/**
+
+ @page "Step 2"
+
+ @image html jacobi.jpg
+  
+ <h1>Matrix-free Jacobi Solver - Step 2</h1>
+ 
+ Well, feel free to add some sections on 
+ - Logging filter einbauen
+ - Logging format auswaehlen
+ - Multicore unterstuetzen
+ - Different grid sizes
+ - Other geometries
+
+ 
+ */
+ 
+ 

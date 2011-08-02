@@ -1,0 +1,7 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+class peano::applications::faxen::repositories::FaxenBatchJobRepositoryState { 
+  enum Action { WriteCheckpoint, ReadCheckpoint, Terminate,UseAdapterInitialize,UseAdapterInitializeAndSetBoundary,UseAdapterPlotGrid,UseAdapterControlTimeStep,UseAdapterSetVelocitiesBoundary,UseAdapterSetScenarioBoundary,UseAdapterComputeVelocitiesDerivatives,UseAdapterComputeRightHandSide,UseAdapterSetZeroPressureBoundary,UseAdapterSetPressureBoundary,UseAdapterSORStep,UseAdapterComputeResidualNorm,UseAdapterComputeVelocities,UseAdapterPlotSolution};
+  persistent parallelise Action action;
+};

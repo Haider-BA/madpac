@@ -1,0 +1,41 @@
+#include "peano/applications/navierstokes/prototype1/NSEGlobals.h"
+
+Packed-Type: short int;
+
+class peano::applications::navierstokes::prototype1::dastgen::FluidCell {
+  enum FluidCellType {
+    /**
+     * Inner cells of fluid domain. This includes cells with one or more
+     * Dirichlet or Neumann boundary nodes. Only outer nodes are forbidden
+     * for this cell type.
+     */
+    INNER,
+    /**
+     * Outer cells (should not used in peano grid but may be used in
+     * trivialgrid).
+     */
+    NOT_INNER
+  };
+
+  /**
+   * Type of an instance of a cell (node).
+   */
+  persistent packed FluidCellType fluidCellType;
+
+  /**
+   * Variable for the pressure allocated at the center of a cell.
+   */
+  persistent packed double p;
+
+  /**
+   * Variable for right hand side b of the pressure poisson equation (PPE).
+   *
+   * _rhsPPE holds the value of the component of b that corresponds to the current cell.
+   */
+  persistent packed double rhsPPE;
+
+  /**
+   * Residuum for direct SOR or Gauss-Seidel computations.
+   */
+  persistent packed double residuum;
+};

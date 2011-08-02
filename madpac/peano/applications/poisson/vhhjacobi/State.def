@@ -1,0 +1,9 @@
+Packed-Type: short int;
+
+class peano::applications::poisson::jacobi::dastgen::State {
+  /**
+   * If we plot multiple files, the solver enumerates them one by one so no old
+   * data is overwritten. This counter is holds by fileNumber.
+   */
+  persistent parallelise int fileNumber;
+};

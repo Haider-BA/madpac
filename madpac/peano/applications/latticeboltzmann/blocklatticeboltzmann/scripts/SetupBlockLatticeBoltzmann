@@ -1,0 +1,60 @@
+component: blocklatticeboltzmann
+
+configuration-tag: blocklatticeboltzmann
+repository: BlockLatticeBoltzmannBatchJob
+namespace: peano::applications::latticeboltzmann::blocklatticeboltzmann
+
+vertex:
+  name: BlockVertex
+  dastgen-file: BlockVertex.def
+  
+  
+cell:
+  name: BlockCell
+  dastgen-file: BlockCell.def
+
+  
+state:
+  name: BlockState
+  dastgen-file: BlockState.def
+ 
+event-mapping:
+  name: RegularBlockSolver
+ 
+event-mapping:
+  name: BlockVTKOutput
+  
+event-mapping:
+  name: BlockCCAOutput 
+  
+event-mapping:
+  name: InitialiseSpacetreeGrid
+  
+event-mapping:
+  name: DynamicRefinementForSpacetreeGrid
+
+adapter:
+  name: RegularBlockSolverAdapter
+  merge-with-user-defined-mapping: RegularBlockSolver
+  
+adapter:
+  name: InitialiseSpacetreeGridAdapter
+  merge-with-user-defined-mapping: InitialiseSpacetreeGrid
+
+adapter:
+  name: BlockCCAOutputAdapter
+  merge-with-user-defined-mapping: BlockCCAOutput
+
+adapter:
+  name: DynamicRefinementForSpacetreeGridAdapter
+  merge-with-user-defined-mapping: DynamicRefinementForSpacetreeGrid
+
+adapter:
+  name: BlockVTKOutputAdapter
+  merge-with-user-defined-mapping: BlockVTKOutput
+
+adapter:
+  name: RegularBlockSolverAndVTKOutputAdapter
+  merge-with-user-defined-mapping: BlockVTKOutput
+  merge-with-user-defined-mapping: RegularBlockSolver
+  merge-with-user-defined-mapping: BlockCCAOutput

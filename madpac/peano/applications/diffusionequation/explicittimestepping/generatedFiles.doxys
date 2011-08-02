@@ -1,0 +1,106 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /diffusionequationwithexplicittimestepping.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/diffusionequation/explicittimestepping/dastgen/ForwardBatchJobRepositoryState.def
+ - /peano/applications/diffusionequation/explicittimestepping/dastgen/RegularGridVertex.def
+ - /peano/applications/diffusionequation/explicittimestepping/dastgen/SpacetreeGridVertex.def
+ - /peano/applications/diffusionequation/explicittimestepping/dastgen/RegularGridCell.def
+ - /peano/applications/diffusionequation/explicittimestepping/dastgen/SpacetreeGridCell.def
+ - /peano/applications/diffusionequation/explicittimestepping/dastgen/RegularGridState.def
+ - /peano/applications/diffusionequation/explicittimestepping/dastgen/SpacetreeGridState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /RegularGridVertex.h
+ - /RegularGridVertex.cpp
+ - /RegularGridCell.h
+ - /RegularGridCell.cpp
+ - /State.h
+ - /RegularGridState.h
+ - /RegularGridState.cpp
+ - /mappings/RegularGrid2SetupExperiment.h
+ - /mappings/RegularGrid2SetupExperiment.cpp
+ - /mappings/RegularGrid2PerformExplitEulerTimeStep.h
+ - /mappings/RegularGrid2PerformExplitEulerTimeStep.cpp
+ - /mappings/RegularGrid2PlotSolution.h
+ - /mappings/RegularGrid2PlotSolution.cpp
+ - /mappings/RegularGrid2ApplyRefineDeleteCriterion.h
+ - /mappings/RegularGrid2ApplyRefineDeleteCriterion.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/ForwardBatchJobRepository.h
+ - /repositories/ForwardBatchJobRepositoryForRegularGrid.h
+ - /repositories/ForwardBatchJobRepositoryForRegularGridStandardImplementation.h
+ - /repositories/ForwardBatchJobRepositoryForRegularGridStandardImplementation.cpp
+ - /repositories/ForwardBatchJobRepositoryFactory.h
+ - /repositories/ForwardBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-ForwardBatchJob-on-regular-grid.xml
+ - /configurations/ForwardBatchJobConfigurationForRegularGrid.h
+ - /configurations/ForwardBatchJobConfigurationForRegularGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/ForwardBatchJobRunnerForRegularGrid.h
+ - /runners/ForwardBatchJobRunnerForRegularGrid.cpp
+ - /runners/ForwardBatchJobRunnerForRegularGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/RegularGrid2SetupExperiment.h
+ - /adapters/RegularGrid2SetupExperiment.cpp
+ - /adapters/RegularGrid2SetupExperimentAndPlot.h
+ - /adapters/RegularGrid2SetupExperimentAndPlot.cpp
+ - /adapters/RegularGrid2PerformExplitEulerTimeStep.h
+ - /adapters/RegularGrid2PerformExplitEulerTimeStep.cpp
+ - /adapters/RegularGrid2PerformExplitEulerTimeStepAndPlot.h
+ - /adapters/RegularGrid2PerformExplitEulerTimeStepAndPlot.cpp
+ - /adapters/RegularGrid2PlotSolution.h
+ - /adapters/RegularGrid2PlotSolution.cpp
+ - /adapters/RegularGrid2ApplyRefineDeleteCriterion.h
+ - /adapters/RegularGrid2ApplyRefineDeleteCriterion.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/ForwardBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/ForwardBatchJobForRegularGridImplementation.h
+ - /cca/ForwardBatchJobForRegularGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/ForwardBatchJobTest.h
+ - /tests/ForwardBatchJobTest.cpp
+*/

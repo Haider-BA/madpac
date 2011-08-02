@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-navierstokes-on-regular-grid>
+  </run-navierstokes-on-regular-grid>
+</peano-configuration>

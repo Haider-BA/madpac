@@ -1,0 +1,9 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+class peano::applications::faxen::lbf::repositories::LBFBatchJobRepositoryState { 
+  enum Action { WriteCheckpoint, ReadCheckpoint, Terminate,UseAdapterInitialize,UseAdapterInitializeAndSetBoundary,UseAdapterPlotGrid,UseAdapterControlTimeStep,UseAdapterSetVelocitiesBoundary,UseAdapterSetScenarioBoundary,UseAdapterComputeVelocitiesDerivatives,UseAdapterComputeRightHandSide,UseAdapterSetZeroPressureBoundary,UseAdapterSetPressureBoundary,UseAdapterSORStep,UseAdapterComputeResidualNorm,UseAdapterComputeVelocities,UseAdapterPlotSolution,UseAdapterMoveParticles,UseAdapterSwitchFromLB2NSE,UseAdapterExtractDataNSE2LB,UseAdapterCorrectDensityAndComputeEqPDF4LB,UseAdapterRegularBlockSolverAdapter,UseAdapterInitialiseSpacetreeGridAdapter,UseAdapterBlockCCAOutputAdapter,UseAdapterDynamicRefinementForSpacetreeGridAdapter,UseAdapterBlockVTKOutputAdapter,UseAdapterRegularBlockSolverAndVTKOutputAdapter,UseAdapterTraceNSEData,UseAdapterTraceLBData};
+  persistent parallelise Action action;
+
+  persistent parallelise bool reduceState;
+};

@@ -1,0 +1,50 @@
+#include "peano/utils/Globals.h"
+
+Packed-Type: short int;
+
+Constant: DIMENSIONS;
+Constant: THREE_POWER_D;
+Constant: FIVE_POWER_D;
+Constant: TWO_POWER_D;
+
+class peano::applications::poisson::multigrid::dastgen::Vertex {
+  #ifdef Asserts
+  persistent parallelise double  rhs;
+  persistent parallelise double  oldU;
+  persistent parallelise double  u;
+  #endif
+  
+  #ifndef Asserts
+  persistent double  rhs;
+  persistent double  oldU;
+  persistent double  u;
+  #endif
+
+  
+  
+  /**
+   * I make the residual persistent otherwise I cannot plot it. If one writes
+   * a 'real' solver, the residual however should be marked as discard.
+   */
+  persistent parallelise double     residual;
+  
+  persistent double stencil[THREE_POWER_D];  
+  persistent double prolongation[FIVE_POWER_D];  
+  persistent double restriction[FIVE_POWER_D];  
+  
+  
+  /**
+   * This is needed for the calculation of the Petrov-Galerkin coarse grid operators.
+   */
+  discard double tempP[TWO_POWER_D];
+
+  /**
+   * This is needed for the calculation of the Petrov-Galerkin coarse grid operators.
+   */
+  discard double tempAP[TWO_POWER_D];
+
+  /**
+   * Should be discard, too, but I make it persistent to be able to plot it.
+   */
+  persistent parallelise double linearSurplus[DIMENSIONS];
+};

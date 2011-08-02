@@ -1,0 +1,5 @@
+Packed-Type: short int;
+
+class peano::applications::shallowwater::dastgen::State {
+  persistent parallelise int timestep;
+};

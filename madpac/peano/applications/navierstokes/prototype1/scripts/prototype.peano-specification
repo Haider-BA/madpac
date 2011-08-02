@@ -1,0 +1,95 @@
+component: Navierstokes
+
+configuration-tag: navierstokes
+repository: Prototype
+namespace: peano::applications::navierstokes::prototype1
+
+vertex:
+  name: FluidVertexEnhancedDivFreeEulerExplicit
+  // this path is set relative to the PDE's subdirectory dastgen 
+  dastgen-file: FluidVertex.def
+  //read vector: u //does not work correctly
+  read scalar: A
+  
+cell:
+  name: FluidCellEnhancedDivFreeEulerExplicit
+  dastgen-file: FluidCell.def
+
+state:
+  name: FluidStateEnhancedDivFreeEulerExplicit
+  dastgen-file: FluidState.def
+  
+  
+event-mapping:
+  name: InitialiseScenario  
+  
+event-mapping:
+  name: MergeA
+  
+event-mapping:
+  name: CalculateF
+  
+event-mapping:
+  name: MergeF
+
+event-mapping:
+  name: CalculatePPERHS
+
+event-mapping:
+  name: GaussSeidelForEnhancedDivFree
+  
+event-mapping:
+  name: MergePressureGradientUpdate
+
+event-mapping:
+  name: UpdateVelocity
+
+event-mapping:
+  name: PlotSolutionVTK
+
+event-mapping:
+	name: PlotRegularSolutionVTK
+	
+event-mapping:
+  name: UpdateScenario
+	
+	
+
+adapter:
+  name: InitialiseScenario
+  merge-with-user-defined-mapping: InitialiseScenario
+ 
+adapter:
+  name: MergeA
+  merge-with-user-defined-mapping: MergeA
+ 
+adapter:
+  name: CalculateF
+  merge-with-user-defined-mapping: CalculateF
+
+adapter:
+  name: CalculatePPERHS
+  merge-with-user-defined-mapping: MergeF
+  merge-with-user-defined-mapping: CalculatePPERHS
+
+adapter:
+  name: GaussSeidelForEnhancedDivFree
+  merge-with-user-defined-mapping: MergePressureGradientUpdate
+  merge-with-user-defined-mapping: GaussSeidelForEnhancedDivFree
+
+adapter:
+  name: UpdateVelocity
+  merge-with-user-defined-mapping: MergePressureGradientUpdate
+  merge-with-user-defined-mapping: UpdateVelocity
+
+adapter:
+  name: PlotSolutionVTK
+  merge-with-user-defined-mapping: PlotSolutionVTK
+  
+adapter:
+	name: PlotRegularSolutionVTK
+	merge-with-user-defined-mapping: PlotRegularSolutionVTK
+	
+adapter:
+  name: UpdateScenario
+  merge-with-user-defined-mapping: PlotRegularSolutionVTK

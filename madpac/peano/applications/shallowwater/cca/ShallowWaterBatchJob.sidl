@@ -1,0 +1,50 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package applications { 
+    package shallowwater {
+      package cca {
+        package ports {
+          interface ShallowWaterBatchJob {
+            switchToSetupExperiment();
+            switchToSetupExperimentAndPlotGrid();
+            switchToSetupExperimentAndPlotStartSolution();
+            switchToGodunovMethod();
+            switchToGodunovMethodAndPlotSolution();
+            switchToPlotSolution();
+
+            iterate();    
+
+            /**
+             * @todo Add your own operations here
+             */
+          }
+        }
+        
+          
+        class ShallowWaterBatchJobForRegularGrid
+          implements-all 
+            peano.applications.shallowwater.cca.ports.ShallowWaterBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+        
+          
+        class ShallowWaterBatchJobForSpacetreeGrid
+          implements-all 
+            peano.applications.shallowwater.cca.ports.ShallowWaterBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+      }
+}
+}
+}

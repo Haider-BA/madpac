@@ -1,0 +1,61 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package applications { 
+    package heatequation { 
+      package timestepping {
+      package cca {
+        package ports {
+          interface TimeSteppingBatchJob {
+            switchToSetupExperiment();
+            switchToSetupExperimentAndPlot();
+            switchToPerformExplitEulerTimeStep();
+            switchToPerformImplicitTimeStep();
+            switchToPerformImplicitTimeStepAndPlot();
+            switchToComputeImplicitSolutionWithJacobi();
+            switchToPerformExplitEulerTimeStepAndPlot();
+            switchToPlotSolution();
+            switchToPlotGrid();
+            switchToSmooth();
+            switchToCoarse();
+            switchToProlong();
+            switchToApplyRefineDeleteCriterion();
+            switchToSetupOneLevelOfExperiment();
+            switchToProbeSolution();
+
+            iterate();    
+
+            /**
+             * @todo Add your own operations here
+             */
+          }
+        }
+        
+          
+        class TimeSteppingBatchJobForRegularGrid
+          implements-all 
+            peano.applications.heatequation.timestepping.cca.ports.TimeSteppingBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+        
+          
+        class TimeSteppingBatchJobForSpacetreeGrid
+          implements-all 
+            peano.applications.heatequation.timestepping.cca.ports.TimeSteppingBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+      }
+}
+}
+}
+}

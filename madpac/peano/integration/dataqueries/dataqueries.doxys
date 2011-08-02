@@ -1,0 +1,76 @@
+/**
+
+ @dir "Queries in Peano - Don't call us, we call you"
+ 
+ Queries in Peano implement the idea that the application should not stream 
+ simulation data to a database from which the data is postprocess. Instead, 
+ the application delivers only the data the postprocessing units really need. 
+ The image below shows, in the upper part, how data exchange classical works
+ (streaming paradigm) and how it works with queries.
+ 
+ @image html dataqueries.png
+
+ The single point of contact for the whole query management is the class 
+ QueryServer. The concrete answering of queries is described there. 
+ 
+ !!! Prepare your code to answer queries
+ 
+ - Add a mapping that answers your queries. This mapping will be the central 
+   object we'll gonna manipulate in the following lines.
+ - Define what data your code should be able to deliver. I strongly recommend 
+   to add an enum to your mapping. Have a look for example on
+   peano::applications::poisson::jacobi2::mappings::RegularGrid2AnswerQueries.
+   This enum defines which data can be delivered.
+ - Whenever the mapping encounters data that might be of interest for the 
+   query, it has to check at the query service whether this is the case, and 
+   then write the data accordingly. See
+   peano::applications::poisson::jacobi2::mappings::RegularGrid2AnswerQueries::touchVertexLastTime()
+   for example.
+ - Call the commitQueries() operation on the query server in your mapping's
+   endIteration() method.
+   
+ Finally, we switch to the runner and fill the query service with the. Again 
+ peano::applications::poisson::jacobi2::runners::JacobiBatchJobRunnerForRegularGrid::answerToQueries 
+ is a good starting point. Then, switch to the mapping answering the queries 
+ and let it roll.
+
+ There's also a dummy query configuration object that makes it easier if you 
+ wanna enable the user to specify queries in the configuration file.
+ 
+ @image html screenshot.png
+ 
+ Why are snapshots always assymetric while the real simulation data is 
+ symmetric? Well, the snapshots in this case rely on two assumptions:
+ - The query grid is coarser than the computing grid, and
+ - it does not matter in which order the vertices write their value to the
+   snapshot grid.
+ Obviously, if issues one holds, issues two cannot hold: The vertices are 
+ processed by the grid either along the traversal or nondeterministic (if 
+ multicore support is switched on). As a consequence, the resulting snapshot
+ can have different values in different regions even though the simulation data
+ might be perfectly symmetric. This is not an error in the snapshot or the 
+ solver - it is indeed a feature!
+ 
+ !!! Queries on parameter combinations
+ 
+ If one query should return several parameters (the velocity and the heat of a 
+ fluid for example) simultaneously, just create several data writers using one
+ query.
+  
+ !!! Implement a complete query server
+ 
+ t.b.d.
+ 
+ !!! The Query Server Description
+
+ The following source code stems from the file
+ de.tum.queries.QueryServer.sidl defining the query server's
+ interface.
+ 
+ \code
+  \include de.tum.queries.QueryServer.sidl
+\endcode
+
+
+ */
+ 

@@ -1,0 +1,29 @@
+#include "peano/utils/Globals.h"
+
+
+template < class Cell, class CellStack >
+tarch::logging::Log peano::kernel::spacetreegrid::nodes::tasks::StoreSubCells< Cell, CellStack >::_log( "peano::kernel::spacetreegrid::nodes::tasks::StoreSubCells" );
+
+
+template < class Cell, class CellStack >
+peano::kernel::spacetreegrid::nodes::tasks::StoreSubCells< Cell, CellStack >::StoreSubCells(
+  Cell const * const                  subCells,
+  CellStack&                          cellStack,
+  const peano::utils::LoopDirection&  loopDirection
+):
+  _subCells(subCells),
+  _cellStack(cellStack),
+  _loopDirection(loopDirection) {
+}
+
+
+template < class Cell, class CellStack >
+void peano::kernel::spacetreegrid::nodes::tasks::StoreSubCells< Cell, CellStack >::operator()() {
+  logTraceIn( "operator()" );
+  zfor( i, 3, _loopDirection ) {
+    const int cellIndex = peano::utils::dLinearised(i,3);
+    logDebug( "operator()", "push " << _subCells[cellIndex] << " from subcell position " << cellIndex << " (" << i << ")" );
+    _cellStack.push(peano::kernel::stacks::Constants::InOutStack, _subCells[cellIndex] );
+  }
+  logTraceOut( "operator()" );
+}

@@ -1,0 +1,112 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /multigrid.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/poisson/multigrid/dastgen/MultigridBatchJobRepositoryState.def
+ - /peano/applications/poisson/multigrid/dastgen/RegularGridVertex.def
+ - /peano/applications/poisson/multigrid/dastgen/SpacetreeGridVertex.def
+ - /peano/applications/poisson/multigrid/dastgen/RegularGridCell.def
+ - /peano/applications/poisson/multigrid/dastgen/SpacetreeGridCell.def
+ - /peano/applications/poisson/multigrid/dastgen/RegularGridState.def
+ - /peano/applications/poisson/multigrid/dastgen/SpacetreeGridState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /SpacetreeGridVertex.h
+ - /SpacetreeGridVertex.cpp
+ - /SpacetreeGridCell.h
+ - /SpacetreeGridCell.cpp
+ - /State.h
+ - /SpacetreeGridState.h
+ - /SpacetreeGridState.cpp
+ - /mappings/SpacetreeGrid2SetupExperiment.h
+ - /mappings/SpacetreeGrid2SetupExperiment.cpp
+ - /mappings/SpacetreeGrid2Smooth.h
+ - /mappings/SpacetreeGrid2Smooth.cpp
+ - /mappings/SpacetreeGrid2PlotSolution.h
+ - /mappings/SpacetreeGrid2PlotSolution.cpp
+ - /mappings/SpacetreeGrid2ComputeGalerkinCoarseGridOperator.h
+ - /mappings/SpacetreeGrid2ComputeGalerkinCoarseGridOperator.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/MultigridBatchJobRepository.h
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGrid.h
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridArrayStackImplementation.h
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridArrayStackImplementation.cpp
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridFileStackImplementation.h
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridFileStackImplementation.cpp
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.h
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.cpp
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridSTDStackImplementation.h
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridSTDStackImplementation.cpp
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.h
+ - /repositories/MultigridBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.cpp
+ - /repositories/MultigridBatchJobRepositoryFactory.h
+ - /repositories/MultigridBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-MultigridBatchJob-on-spacetree-grid.xml
+ - /configurations/MultigridBatchJobConfigurationForSpacetreeGrid.h
+ - /configurations/MultigridBatchJobConfigurationForSpacetreeGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/MultigridBatchJobRunnerForSpacetreeGrid.h
+ - /runners/MultigridBatchJobRunnerForSpacetreeGrid.cpp
+ - /runners/MultigridBatchJobRunnerForSpacetreeGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/SpacetreeGrid2SetupExperiment.h
+ - /adapters/SpacetreeGrid2SetupExperiment.cpp
+ - /adapters/SpacetreeGrid2SetupExperimentAndPlotGrid.h
+ - /adapters/SpacetreeGrid2SetupExperimentAndPlotGrid.cpp
+ - /adapters/SpacetreeGrid2SetupExperimentAndPlotStartSolution.h
+ - /adapters/SpacetreeGrid2SetupExperimentAndPlotStartSolution.cpp
+ - /adapters/SpacetreeGrid2SmoothAndComputeGalerkinCoarseGridOperator.h
+ - /adapters/SpacetreeGrid2SmoothAndComputeGalerkinCoarseGridOperator.cpp
+ - /adapters/SpacetreeGrid2PlotSolution.h
+ - /adapters/SpacetreeGrid2PlotSolution.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/MultigridBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/MultigridBatchJobForSpacetreeGridImplementation.h
+ - /cca/MultigridBatchJobForSpacetreeGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/MultigridBatchJobTest.h
+ - /tests/MultigridBatchJobTest.cpp
+*/

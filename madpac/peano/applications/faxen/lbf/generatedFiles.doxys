@@ -1,0 +1,315 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /lbf.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/faxen/lbf/dastgen/LBFBatchJobRepositoryState.def
+ - /peano/applications/faxen/lbf/dastgen/RegularGridBlockVertex.def
+ - /peano/applications/faxen/lbf/dastgen/SpacetreeGridBlockVertex.def
+ - /peano/applications/faxen/lbf/dastgen/RegularGridBlockCell.def
+ - /peano/applications/faxen/lbf/dastgen/SpacetreeGridBlockCell.def
+ - /peano/applications/faxen/lbf/dastgen/RegularGridBlockState.def
+ - /peano/applications/faxen/lbf/dastgen/SpacetreeGridBlockState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /RegularGridBlockVertex.h
+ - /RegularGridBlockVertex.cpp
+ - /SpacetreeGridBlockVertex.h
+ - /SpacetreeGridBlockVertex.cpp
+ - /RegularGridBlockCell.h
+ - /RegularGridBlockCell.cpp
+ - /SpacetreeGridBlockCell.h
+ - /SpacetreeGridBlockCell.cpp
+ - /BlockState.h
+ - /RegularGridBlockState.h
+ - /RegularGridBlockState.cpp
+ - /SpacetreeGridBlockState.h
+ - /SpacetreeGridBlockState.cpp
+ - /mappings/RegularGrid2Initialize.h
+ - /mappings/RegularGrid2Initialize.cpp
+ - /mappings/SpacetreeGrid2Initialize.h
+ - /mappings/SpacetreeGrid2Initialize.cpp
+ - /mappings/RegularGrid2ExploreBoundaries.h
+ - /mappings/RegularGrid2ExploreBoundaries.cpp
+ - /mappings/SpacetreeGrid2ExploreBoundaries.h
+ - /mappings/SpacetreeGrid2ExploreBoundaries.cpp
+ - /mappings/RegularGrid2ControlTimeStep.h
+ - /mappings/RegularGrid2ControlTimeStep.cpp
+ - /mappings/SpacetreeGrid2ControlTimeStep.h
+ - /mappings/SpacetreeGrid2ControlTimeStep.cpp
+ - /mappings/RegularGrid2SetVelocitiesBoundary.h
+ - /mappings/RegularGrid2SetVelocitiesBoundary.cpp
+ - /mappings/SpacetreeGrid2SetVelocitiesBoundary.h
+ - /mappings/SpacetreeGrid2SetVelocitiesBoundary.cpp
+ - /mappings/RegularGrid2SetScenarioBoundary.h
+ - /mappings/RegularGrid2SetScenarioBoundary.cpp
+ - /mappings/SpacetreeGrid2SetScenarioBoundary.h
+ - /mappings/SpacetreeGrid2SetScenarioBoundary.cpp
+ - /mappings/RegularGrid2ComputeVelocitiesDerivatives.h
+ - /mappings/RegularGrid2ComputeVelocitiesDerivatives.cpp
+ - /mappings/SpacetreeGrid2ComputeVelocitiesDerivatives.h
+ - /mappings/SpacetreeGrid2ComputeVelocitiesDerivatives.cpp
+ - /mappings/RegularGrid2ComputeRightHandSide.h
+ - /mappings/RegularGrid2ComputeRightHandSide.cpp
+ - /mappings/SpacetreeGrid2ComputeRightHandSide.h
+ - /mappings/SpacetreeGrid2ComputeRightHandSide.cpp
+ - /mappings/RegularGrid2SetZeroPressureBoundary.h
+ - /mappings/RegularGrid2SetZeroPressureBoundary.cpp
+ - /mappings/SpacetreeGrid2SetZeroPressureBoundary.h
+ - /mappings/SpacetreeGrid2SetZeroPressureBoundary.cpp
+ - /mappings/RegularGrid2SetPressureBoundary.h
+ - /mappings/RegularGrid2SetPressureBoundary.cpp
+ - /mappings/SpacetreeGrid2SetPressureBoundary.h
+ - /mappings/SpacetreeGrid2SetPressureBoundary.cpp
+ - /mappings/RegularGrid2SORStep.h
+ - /mappings/RegularGrid2SORStep.cpp
+ - /mappings/SpacetreeGrid2SORStep.h
+ - /mappings/SpacetreeGrid2SORStep.cpp
+ - /mappings/RegularGrid2ComputeResidualNorm.h
+ - /mappings/RegularGrid2ComputeResidualNorm.cpp
+ - /mappings/SpacetreeGrid2ComputeResidualNorm.h
+ - /mappings/SpacetreeGrid2ComputeResidualNorm.cpp
+ - /mappings/RegularGrid2ComputeVelocities.h
+ - /mappings/RegularGrid2ComputeVelocities.cpp
+ - /mappings/SpacetreeGrid2ComputeVelocities.h
+ - /mappings/SpacetreeGrid2ComputeVelocities.cpp
+ - /mappings/RegularGrid2PlotSolution.h
+ - /mappings/RegularGrid2PlotSolution.cpp
+ - /mappings/SpacetreeGrid2PlotSolution.h
+ - /mappings/SpacetreeGrid2PlotSolution.cpp
+ - /mappings/RegularGrid2MoveParticles.h
+ - /mappings/RegularGrid2MoveParticles.cpp
+ - /mappings/SpacetreeGrid2MoveParticles.h
+ - /mappings/SpacetreeGrid2MoveParticles.cpp
+ - /mappings/RegularGrid2RegularBlockSolver.h
+ - /mappings/RegularGrid2RegularBlockSolver.cpp
+ - /mappings/SpacetreeGrid2RegularBlockSolver.h
+ - /mappings/SpacetreeGrid2RegularBlockSolver.cpp
+ - /mappings/RegularGrid2BlockVTKOutput.h
+ - /mappings/RegularGrid2BlockVTKOutput.cpp
+ - /mappings/SpacetreeGrid2BlockVTKOutput.h
+ - /mappings/SpacetreeGrid2BlockVTKOutput.cpp
+ - /mappings/RegularGrid2BlockCCAOutput.h
+ - /mappings/RegularGrid2BlockCCAOutput.cpp
+ - /mappings/SpacetreeGrid2BlockCCAOutput.h
+ - /mappings/SpacetreeGrid2BlockCCAOutput.cpp
+ - /mappings/RegularGrid2InitialiseSpacetreeGrid.h
+ - /mappings/RegularGrid2InitialiseSpacetreeGrid.cpp
+ - /mappings/SpacetreeGrid2InitialiseSpacetreeGrid.h
+ - /mappings/SpacetreeGrid2InitialiseSpacetreeGrid.cpp
+ - /mappings/RegularGrid2DynamicRefinementForSpacetreeGrid.h
+ - /mappings/RegularGrid2DynamicRefinementForSpacetreeGrid.cpp
+ - /mappings/SpacetreeGrid2DynamicRefinementForSpacetreeGrid.h
+ - /mappings/SpacetreeGrid2DynamicRefinementForSpacetreeGrid.cpp
+ - /mappings/RegularGrid2SwitchFromLB2NSE.h
+ - /mappings/RegularGrid2SwitchFromLB2NSE.cpp
+ - /mappings/SpacetreeGrid2SwitchFromLB2NSE.h
+ - /mappings/SpacetreeGrid2SwitchFromLB2NSE.cpp
+ - /mappings/RegularGrid2ExtractDataNSE2LB.h
+ - /mappings/RegularGrid2ExtractDataNSE2LB.cpp
+ - /mappings/SpacetreeGrid2ExtractDataNSE2LB.h
+ - /mappings/SpacetreeGrid2ExtractDataNSE2LB.cpp
+ - /mappings/RegularGrid2CorrectDensity4LB.h
+ - /mappings/RegularGrid2CorrectDensity4LB.cpp
+ - /mappings/SpacetreeGrid2CorrectDensity4LB.h
+ - /mappings/SpacetreeGrid2CorrectDensity4LB.cpp
+ - /mappings/RegularGrid2ComputeEqPDF4LB.h
+ - /mappings/RegularGrid2ComputeEqPDF4LB.cpp
+ - /mappings/SpacetreeGrid2ComputeEqPDF4LB.h
+ - /mappings/SpacetreeGrid2ComputeEqPDF4LB.cpp
+ - /mappings/RegularGrid2TraceNSEData.h
+ - /mappings/RegularGrid2TraceNSEData.cpp
+ - /mappings/SpacetreeGrid2TraceNSEData.h
+ - /mappings/SpacetreeGrid2TraceNSEData.cpp
+ - /mappings/RegularGrid2TraceLBData.h
+ - /mappings/RegularGrid2TraceLBData.cpp
+ - /mappings/SpacetreeGrid2TraceLBData.h
+ - /mappings/SpacetreeGrid2TraceLBData.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/LBFBatchJobRepository.h
+ - /repositories/LBFBatchJobRepositoryForRegularGrid.h
+ - /repositories/LBFBatchJobRepositoryForRegularGridStandardImplementation.h
+ - /repositories/LBFBatchJobRepositoryForRegularGridStandardImplementation.cpp
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGrid.h
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridArrayStackImplementation.h
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridArrayStackImplementation.cpp
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridFileStackImplementation.h
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridFileStackImplementation.cpp
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.h
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.cpp
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridSTDStackImplementation.h
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridSTDStackImplementation.cpp
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.h
+ - /repositories/LBFBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.cpp
+ - /repositories/LBFBatchJobRepositoryFactory.h
+ - /repositories/LBFBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-LBFBatchJob-on-regular-grid.xml
+ - /configurations/LBFBatchJobConfigurationForRegularGrid.h
+ - /configurations/LBFBatchJobConfigurationForRegularGrid.cpp
+ - /run-LBFBatchJob-on-spacetree-grid.xml
+ - /configurations/LBFBatchJobConfigurationForSpacetreeGrid.h
+ - /configurations/LBFBatchJobConfigurationForSpacetreeGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/LBFBatchJobRunnerForRegularGrid.h
+ - /runners/LBFBatchJobRunnerForRegularGrid.cpp
+ - /runners/LBFBatchJobRunnerForRegularGridParallelWorker.cpp
+ - /runners/LBFBatchJobRunnerForSpacetreeGrid.h
+ - /runners/LBFBatchJobRunnerForSpacetreeGrid.cpp
+ - /runners/LBFBatchJobRunnerForSpacetreeGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/RegularGrid2Initialize.h
+ - /adapters/RegularGrid2Initialize.cpp
+ - /adapters/SpacetreeGrid2Initialize.h
+ - /adapters/SpacetreeGrid2Initialize.cpp
+ - /adapters/RegularGrid2InitializeAndSetBoundary.h
+ - /adapters/RegularGrid2InitializeAndSetBoundary.cpp
+ - /adapters/SpacetreeGrid2InitializeAndSetBoundary.h
+ - /adapters/SpacetreeGrid2InitializeAndSetBoundary.cpp
+ - /adapters/RegularGrid2PlotGrid.h
+ - /adapters/RegularGrid2PlotGrid.cpp
+ - /adapters/SpacetreeGrid2PlotGrid.h
+ - /adapters/SpacetreeGrid2PlotGrid.cpp
+ - /adapters/RegularGrid2ControlTimeStep.h
+ - /adapters/RegularGrid2ControlTimeStep.cpp
+ - /adapters/SpacetreeGrid2ControlTimeStep.h
+ - /adapters/SpacetreeGrid2ControlTimeStep.cpp
+ - /adapters/RegularGrid2SetVelocitiesBoundary.h
+ - /adapters/RegularGrid2SetVelocitiesBoundary.cpp
+ - /adapters/SpacetreeGrid2SetVelocitiesBoundary.h
+ - /adapters/SpacetreeGrid2SetVelocitiesBoundary.cpp
+ - /adapters/RegularGrid2SetScenarioBoundary.h
+ - /adapters/RegularGrid2SetScenarioBoundary.cpp
+ - /adapters/SpacetreeGrid2SetScenarioBoundary.h
+ - /adapters/SpacetreeGrid2SetScenarioBoundary.cpp
+ - /adapters/RegularGrid2ComputeVelocitiesDerivatives.h
+ - /adapters/RegularGrid2ComputeVelocitiesDerivatives.cpp
+ - /adapters/SpacetreeGrid2ComputeVelocitiesDerivatives.h
+ - /adapters/SpacetreeGrid2ComputeVelocitiesDerivatives.cpp
+ - /adapters/RegularGrid2ComputeRightHandSide.h
+ - /adapters/RegularGrid2ComputeRightHandSide.cpp
+ - /adapters/SpacetreeGrid2ComputeRightHandSide.h
+ - /adapters/SpacetreeGrid2ComputeRightHandSide.cpp
+ - /adapters/RegularGrid2SetZeroPressureBoundary.h
+ - /adapters/RegularGrid2SetZeroPressureBoundary.cpp
+ - /adapters/SpacetreeGrid2SetZeroPressureBoundary.h
+ - /adapters/SpacetreeGrid2SetZeroPressureBoundary.cpp
+ - /adapters/RegularGrid2SetPressureBoundary.h
+ - /adapters/RegularGrid2SetPressureBoundary.cpp
+ - /adapters/SpacetreeGrid2SetPressureBoundary.h
+ - /adapters/SpacetreeGrid2SetPressureBoundary.cpp
+ - /adapters/RegularGrid2SORStep.h
+ - /adapters/RegularGrid2SORStep.cpp
+ - /adapters/SpacetreeGrid2SORStep.h
+ - /adapters/SpacetreeGrid2SORStep.cpp
+ - /adapters/RegularGrid2ComputeResidualNorm.h
+ - /adapters/RegularGrid2ComputeResidualNorm.cpp
+ - /adapters/SpacetreeGrid2ComputeResidualNorm.h
+ - /adapters/SpacetreeGrid2ComputeResidualNorm.cpp
+ - /adapters/RegularGrid2ComputeVelocities.h
+ - /adapters/RegularGrid2ComputeVelocities.cpp
+ - /adapters/SpacetreeGrid2ComputeVelocities.h
+ - /adapters/SpacetreeGrid2ComputeVelocities.cpp
+ - /adapters/RegularGrid2PlotSolution.h
+ - /adapters/RegularGrid2PlotSolution.cpp
+ - /adapters/SpacetreeGrid2PlotSolution.h
+ - /adapters/SpacetreeGrid2PlotSolution.cpp
+ - /adapters/RegularGrid2MoveParticles.h
+ - /adapters/RegularGrid2MoveParticles.cpp
+ - /adapters/SpacetreeGrid2MoveParticles.h
+ - /adapters/SpacetreeGrid2MoveParticles.cpp
+ - /adapters/RegularGrid2SwitchFromLB2NSE.h
+ - /adapters/RegularGrid2SwitchFromLB2NSE.cpp
+ - /adapters/SpacetreeGrid2SwitchFromLB2NSE.h
+ - /adapters/SpacetreeGrid2SwitchFromLB2NSE.cpp
+ - /adapters/RegularGrid2ExtractDataNSE2LB.h
+ - /adapters/RegularGrid2ExtractDataNSE2LB.cpp
+ - /adapters/SpacetreeGrid2ExtractDataNSE2LB.h
+ - /adapters/SpacetreeGrid2ExtractDataNSE2LB.cpp
+ - /adapters/RegularGrid2CorrectDensityAndComputeEqPDF4LB.h
+ - /adapters/RegularGrid2CorrectDensityAndComputeEqPDF4LB.cpp
+ - /adapters/SpacetreeGrid2CorrectDensityAndComputeEqPDF4LB.h
+ - /adapters/SpacetreeGrid2CorrectDensityAndComputeEqPDF4LB.cpp
+ - /adapters/RegularGrid2RegularBlockSolverAdapter.h
+ - /adapters/RegularGrid2RegularBlockSolverAdapter.cpp
+ - /adapters/SpacetreeGrid2RegularBlockSolverAdapter.h
+ - /adapters/SpacetreeGrid2RegularBlockSolverAdapter.cpp
+ - /adapters/RegularGrid2InitialiseSpacetreeGridAdapter.h
+ - /adapters/RegularGrid2InitialiseSpacetreeGridAdapter.cpp
+ - /adapters/SpacetreeGrid2InitialiseSpacetreeGridAdapter.h
+ - /adapters/SpacetreeGrid2InitialiseSpacetreeGridAdapter.cpp
+ - /adapters/RegularGrid2BlockCCAOutputAdapter.h
+ - /adapters/RegularGrid2BlockCCAOutputAdapter.cpp
+ - /adapters/SpacetreeGrid2BlockCCAOutputAdapter.h
+ - /adapters/SpacetreeGrid2BlockCCAOutputAdapter.cpp
+ - /adapters/RegularGrid2DynamicRefinementForSpacetreeGridAdapter.h
+ - /adapters/RegularGrid2DynamicRefinementForSpacetreeGridAdapter.cpp
+ - /adapters/SpacetreeGrid2DynamicRefinementForSpacetreeGridAdapter.h
+ - /adapters/SpacetreeGrid2DynamicRefinementForSpacetreeGridAdapter.cpp
+ - /adapters/RegularGrid2BlockVTKOutputAdapter.h
+ - /adapters/RegularGrid2BlockVTKOutputAdapter.cpp
+ - /adapters/SpacetreeGrid2BlockVTKOutputAdapter.h
+ - /adapters/SpacetreeGrid2BlockVTKOutputAdapter.cpp
+ - /adapters/RegularGrid2RegularBlockSolverAndVTKOutputAdapter.h
+ - /adapters/RegularGrid2RegularBlockSolverAndVTKOutputAdapter.cpp
+ - /adapters/SpacetreeGrid2RegularBlockSolverAndVTKOutputAdapter.h
+ - /adapters/SpacetreeGrid2RegularBlockSolverAndVTKOutputAdapter.cpp
+ - /adapters/RegularGrid2TraceNSEData.h
+ - /adapters/RegularGrid2TraceNSEData.cpp
+ - /adapters/SpacetreeGrid2TraceNSEData.h
+ - /adapters/SpacetreeGrid2TraceNSEData.cpp
+ - /adapters/RegularGrid2TraceLBData.h
+ - /adapters/RegularGrid2TraceLBData.cpp
+ - /adapters/SpacetreeGrid2TraceLBData.h
+ - /adapters/SpacetreeGrid2TraceLBData.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/LBFBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/LBFBatchJobForRegularGridImplementation.h
+ - /cca/LBFBatchJobForRegularGridImplementation.cpp
+ - /cca/LBFBatchJobForSpacetreeGridImplementation.h
+ - /cca/LBFBatchJobForSpacetreeGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/LBFBatchJobTest.h
+ - /tests/LBFBatchJobTest.cpp
+*/

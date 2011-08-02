@@ -1,0 +1,35 @@
+/**
+
+ @dir "Jacobi Solver with Virtual Hierarchical H-Method"
+ 
+ If you wanna regenerate the glue code, type in 
+ 
+ \code
+ java -classpath releases/tools/DaStGen.jar:releases/tools/PeProt.jar de.tum.peano.peprot.PeProt src/peano/applications/poisson/vhhjacobi/vhhjacobi.peano-specification src peprot/templates src/peano/kernel regulargrid
+ \endcode
+ 
+ !!! Data structures
+ 
+ The solver is based on the following DaStGen models:
+
+ !! Cell 
+ 
+ \code
+   \include dastgen/Cell.def
+ \endcode
+ 
+ !! State 
+ 
+ \code
+   \include dastgen/State.def
+ \endcode
+
+ !! Vertex 
+ 
+ \code
+   \include dastgen/Vertex.def
+ \endcode
+ 
+ */
+ 
+ 

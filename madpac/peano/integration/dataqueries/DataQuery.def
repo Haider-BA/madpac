@@ -1,0 +1,25 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+Packed-Type: short int;
+
+
+#include "peano/utils/Dimensions.h"
+
+Constant: DIMENSIONS;
+
+
+class peano::integration::dataqueries::DataQuery {
+  /**
+   * Internal ID that enumerates all the queries.
+   * This query field does not directly correspond to a SIDL query but it used
+   * by the query server to distinguish several queries on the same data type.
+   */
+  parallelise persistent int id;
+  parallelise persistent int recordsPerEntry;
+
+  parallelise persistent int    scope;
+  parallelise persistent double boundingBoxOffset[DIMENSIONS];  
+  parallelise persistent double boundingBox[DIMENSIONS];  
+  parallelise persistent int    resolution[DIMENSIONS];
+};

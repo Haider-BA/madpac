@@ -1,0 +1,88 @@
+template <class Vertex>
+peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::VertexSTDDoubleStack(
+  int initialSize
+):
+  _currentInputStack(0){
+  _inputOutputStack.init( initialSize );
+}
+
+
+template <class Vertex>
+peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::~VertexSTDDoubleStack() {
+}
+
+
+template <class Vertex>
+Vertex peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::pop(int stackNumber) {
+  if (stackNumber==peano::kernel::stacks::Constants::InOutStack) {
+    return _inputOutputStack.pop(_currentInputStack);
+  }
+  else {
+    return _temporaryStack[stackNumber].pop();
+  }
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::push( int stackNumber, const Vertex& vertex ) {
+  if (stackNumber==peano::kernel::stacks::Constants::InOutStack) {
+    _inputOutputStack.push(1-_currentInputStack,vertex.getRecords());
+  }
+  else {
+    _temporaryStack[stackNumber].push(vertex);
+  }
+}
+
+
+template <class Vertex>
+int peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::sizeOfInputStack() const {
+  return _inputOutputStack.size(_currentInputStack);
+}
+
+
+template <class Vertex>
+int peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::sizeOfOutputStack() const {
+  return _inputOutputStack.size(1-_currentInputStack);
+}
+
+
+template <class Vertex>
+bool peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::isInputStackEmpty() const {
+  return _inputOutputStack.isEmpty(_currentInputStack);
+}
+
+
+template <class Vertex>
+bool peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::isOutputStackEmpty() const {
+  return _inputOutputStack.isEmpty(1-_currentInputStack);
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::clear() {
+  _inputOutputStack.clear();
+  for (int i=0; i<NUMBER_OF_TEMPORARY_STACKS; i++) {
+	_temporaryStack[i].clear();
+  }
+}
+
+
+template <class Vertex>
+void peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::flipInputAndOutputStack() {
+  assertion( isInputStackEmpty() );
+  _currentInputStack = 1-_currentInputStack;
+}
+
+
+template <class Vertex>
+template <class Cell>
+void peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::writeToCheckpoint( peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) const {
+  assertionMsg( false, "not implemented yet" );
+}
+
+
+template <class Vertex>
+template <class Cell>
+void peano::kernel::stacks::VertexSTDDoubleStack<Vertex>::readFromCheckpoint( const peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) {
+  assertionMsg( false, "not implemented yet" );
+}

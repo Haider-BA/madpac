@@ -1,0 +1,93 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+#include "peano/applications/latticeboltzmann/LatticeBoltzmannDefinitions.h"
+#include "peano/utils/Dimensions.h"
+
+
+Packed-Type: short int;
+Constant: LB_CURRENT_DIR;
+Constant: DIMENSIONS;
+Constant: LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS;
+
+class peano::applications::latticeboltzmann::blocklatticeboltzmann::dastgen::BlockState {
+
+  // ------------------ grid and discretisation parameters -----------------------------------
+
+  // reference level of simulation
+  persistent parallelise int level;
+  
+  // total number of grid levels
+  persistent parallelise int numberLevels;
+
+  // meshsize on the current level
+  persistent parallelise double dx;
+  
+  // timestep size of this level
+  persistent parallelise double dt;
+  
+  // ------------------- scenario parameters --------------------------------------
+  
+  // total number of timesteps
+  persistent parallelise int numberTimesteps;
+  
+  // fluid density
+  persistent parallelise double density;
+  
+  // trigger reflagging for dynamically changing geometries
+  persistent parallelise short int dynamicGeometry;
+  
+  // trigger force computations
+  persistent parallelise short int computeForces;
+  
+  
+  // --------------- collision model parameters ------------------------
+  
+  persistent parallelise short int collisionModelId[LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS];
+  
+  // kinematic viscosity (in lattice scaling)
+  persistent parallelise double viscosityL;
+  
+  // bulk viscosity (in lattice scaling)
+  persistent parallelise double bulkViscosityL;
+  
+  // single relaxation time
+  persistent parallelise double tau;
+
+  // dimensionless Boltzmann's constant
+  persistent parallelise double boltzmannConstant;
+  
+  // factor used for thermal fluctuations
+  persistent parallelise double mu;
+  
+  // relaxation parameters for fluctuating LB model
+  persistent parallelise double gamma[LB_CURRENT_DIR];
+  
+  // relaxation parameters for MRT model by d'Humieres
+  persistent parallelise double mrtHumieresGamma[LB_CURRENT_DIR];
+  
+  // ---------------------- plotter parameters --------------------------
+  persistent parallelise int timestep;
+  persistent parallelise short int plotVtk;
+  persistent parallelise int numberTimestepsPerPlotting;
+  persistent signed char vtkFilename[128];
+  
+  // ----------------- performance measurement --------------------------
+  persistent parallelise short int measurePerformance;
+  persistent parallelise int localNumberOfCells;
+  #ifdef Parallel
+  persistent parallelise int globalNumberOfCells;
+  persistent parallelise double globalCpuTime;
+  #endif
+  
+  
+  
+  // ------------ TODO THESE ARE ONLY NEEDED FOR THE SPACETREE GRID!!! ----  
+  persistent int lastLevel;
+  persistent int currentLevel;
+  persistent int nextLevel;
+  
+  persistent short int geometryChanged;
+   
+  persistent int cellCounter;
+};

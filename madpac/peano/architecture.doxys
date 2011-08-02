@@ -1,0 +1,102 @@
+/**
+
+ @page "Architecture"
+ 
+@image html ./icon_packages.png
+  
+  !! T-components
+
+
+@image html architecture.png
+  
+  T-components are not allowed to implement any feature that has to do with an
+  application. The configuration component for example provides an interface for
+  parsing xml files, but it does not know anything about how what content is 
+  placed in xml files. There are five T-components:
+   
+  - la
+  - configuration
+  - irr
+  - utils
+  - solver-toolbox
+  
+  Besides them, several other components (plotter, e.g.) belong to the 
+  technical architecture. However, they are not mandatory for each build, i.e.
+  if a build uses them, this fact is explicitly mentioned within the 
+  documentation or tutorial respectively. It nevertheless never hurts, if you
+  include all the T-components into your build.
+  
+  !! A-components
+
+  A-components hold application-specific data. As they are the real plugins, no 
+  A-component is allowed to communicate to another A-Component directly. If they
+  have to communicate, they have to use the light-component-composition design
+  pattern. Yet, A-components are allowed to use T-Components without any adapter
+  in between.
+  
+  \image directory-structure.png
+  
+  Every application component exhibits the same subdirectory and file structure. 
+  
+  - The #component's directory# itself contains all the features and implementations. 
+  - The #component's directory# also contains a manifesto file $Component.h$. $Component.h$ 
+    controls if all the other components required are available, and it adds the package to 
+    the usage message.
+  - The #adapter# subdirectory contains all the adapters used to implement 
+    light-component-composition pattern. Whereas the component's directory implements 
+    the separation-of-concerns paradigm, i.e. does not know any other A-component, 
+    this subdirectory uses other A-components. 
+  - The #tests# subdirectory implements all the unit-tests. It includes the test 
+    classes from the T-component utils. Unit-tests should be independent of any 
+    other package. 
+  - The #integration-test# subdirectory implements all the integration tests. 
+    Typically, lots of them depend on the compile flags. 
+  - The #configuration# subdirectory holds the configuration classes. It includes the 
+    configuration files from the T-component configuration. In turn, the classes of 
+    configuration hold one class of the subdirectory, if the component is included 
+    in the current build.
+  - The #records# subdirectory holds the record classes. One should never code the degree of freedom 
+    classes directly, but model them with DaStGen. The generated source code is placed 
+    within the record subdirectory. Typically, one has to specialise the record classes 
+    to add application-specific operations. These specialisations are placed within 
+    the component's root directory.
+  - The #parallel# subdirectory holds the parallel extensions. It does not hold the 
+    parallel versions of the degrees of freedom as they are implement by DaStGen in 
+    the files within records. Yet, this file contains all the application-specific 
+    parallel files. One example are mergers for parallel boundary degrees of freedom. 
+  - The #runners# subdirectory holds the runners triggered by peano.cpp and the test 
+    case runners, too. 
+  
+  The file #Components.h# holds a listing of all the components included into the 
+  build. There is no consistency check within this file as all checks are done within 
+  the component's file $Component.h$ holds the consistency checks. 
+  
+  There is a conflict whenever one writes an integration test or an application 
+  runner. Typically, these objects include lots of different classes from 
+  different packages. A runner for the poisson equation, e.g., might use 
+  trivialgrid, poisson and output, so valid locations for the runner are 
+  
+  - trivialgrid/runners, 
+  - poisson/runners and 
+  - output/runners. 
+  
+  By convention, these runners are always located within the component 
+  representing the PDE/problem solved. Thus, the example runner above is stored 
+  within poisson/runners. 
+  
+  Another interesting issue is how to handle the component dependencies for the 
+  runners and integration tests. There are two opportunities: 
+  
+  - If a component is missing, the whole type isn't defined. peano.cpp (or 
+    whoever wants to use the component) has to ensure it does not include the 
+    type in this case. Thus, external components have to know which components 
+    are necessary. Bad idea. 
+  - There are always to instances of a integration test/runner. One version is 
+    switched on if all the required components are available, otherwise a dummy 
+    is defined. The dummy writes an error message and quits. 
+    
+  We chose to implement the second variant throughout the application. 
+ 
+
+ */
+ 

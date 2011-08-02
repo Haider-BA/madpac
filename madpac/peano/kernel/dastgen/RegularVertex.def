@@ -1,0 +1,37 @@
+#include "peano/utils/Globals.h"
+
+Constant: DIMENSIONS;
+Constant: TWO_POWER_D;
+
+/**
+ * The packed type should be defined by the application's dof. I recommend short
+ * int, i.e. using the following statement:
+ *
+ * Packed-Type: short int;
+ */
+
+class peano::kernel::grid::dastgen::RegularVertex {
+  enum InsideOutsideDomain {
+    Inside, Boundary, Outside
+  };
+
+  /**
+   * A vertex is outside, if all @f$ 2^d @f$ adjacent cells are outside. In this
+   * case, no events are called for it. 
+   */
+  #ifdef Asserts
+  persistent packed parallelise InsideOutsideDomain insideOutsideDomain;
+  #endif
+
+  #ifndef Asserts
+  persistent packed InsideOutsideDomain insideOutsideDomain;
+  #endif
+
+  #ifdef Debug
+  persistent parallelise double x[DIMENSIONS];
+  #endif
+  
+  #ifdef Parallel
+  persistent parallelise int adjacentRanks[TWO_POWER_D];
+  #endif
+};

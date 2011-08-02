@@ -1,0 +1,21 @@
+#include "peano/applications/latticeboltzmann/LatticeBoltzmannDefinitions.h"
+#include "peano/applications/latticeboltzmann/blocklatticeboltzmann/BlockDefinitions.h"
+#include "peano/utils/Globals.h"
+
+Packed-Type: short int;
+Constant: LB_BLOCK_NUMBER_OF_CELLS_ON_BLOCKBOUNDARY;
+Constant: LB_PDFS_ON_BLOCKBOUNDARY;
+
+class peano::applications::latticeboltzmann::blocklatticeboltzmann::dastgen::BlockVertexRecord {
+#ifdef Parallel
+  persistent parallelise double _lbPdfDiff[LB_PDFS_ON_BLOCKBOUNDARY];
+  persistent parallelise double _lbDensityOnBoundary[LB_BLOCK_NUMBER_OF_CELLS_ON_BLOCKBOUNDARY];
+#endif
+
+  persistent parallelise int _vertexNumber;
+  
+  
+  // ------ TODO ONLY NEEDED FOR THE SPACETREE GRID VERTEX!!!! -----
+  enum DynamicRefinementState{LB_REFINEMENT_DEFAULT,LB_REFINEMENT_IS_NEW_PERSISTENT_VERTEX,LB_REFINEMENT_HAS_NEW_PERSISTENT_SUBVERTICES,LB_REFINEMENT_IS_COARSED};
+  persistent parallelise DynamicRefinementState _lbRefinementState;
+};

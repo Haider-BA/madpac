@@ -1,0 +1,55 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package applications { 
+    package navierstokes { 
+      package prototype1 {
+      package cca {
+        package ports {
+          interface Prototype {
+            switchToInitialiseScenario();
+            switchToMergeA();
+            switchToCalculateF();
+            switchToCalculatePPERHS();
+            switchToGaussSeidelForEnhancedDivFree();
+            switchToUpdateVelocity();
+            switchToPlotSolutionVTK();
+            switchToPlotRegularSolutionVTK();
+            switchToUpdateScenario();
+
+            iterate();    
+
+            /**
+             * @todo Add your own operations here
+             */
+          }
+        }
+        
+          
+        class PrototypeForRegularGrid
+          implements-all 
+            peano.applications.navierstokes.prototype1.cca.ports.Prototype,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+        
+          
+        class PrototypeForSpacetreeGrid
+          implements-all 
+            peano.applications.navierstokes.prototype1.cca.ports.Prototype,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+      }
+}
+}
+}
+}

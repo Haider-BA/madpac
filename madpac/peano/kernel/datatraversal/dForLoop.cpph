@@ -1,0 +1,115 @@
+#include "peano/kernel/datatraversal/dForRange.h"
+
+#include "tarch/multicore/Lock.h"
+
+#ifdef SharedTBB
+#include "tbb/parallel_for.h"
+#endif
+
+#ifdef SharedOMP
+#include <omp.h>
+#endif
+
+template <class LoopBody>
+tarch::logging::Log peano::kernel::datatraversal::dForLoop<LoopBody>::_log( "peano::kernel::datatraversal::dForLoop" );
+
+
+template <class LoopBody>
+peano::kernel::datatraversal::dForLoop<LoopBody>::dForLoop(
+  const tarch::la::Vector<DIMENSIONS,int>&  range,
+  const LoopBody&                           body,
+  int                                       grainSize,
+  bool                                      handleBoundaryOfDomainSequential
+) {
+	assertion( grainSize >= 0 );
+	if (grainSize>0) {
+	  dForLoopInstance loopInstance(body);
+
+    #ifdef SharedTBB
+		logTraceInWith3Arguments( "dForLoop(...)", range, grainSize, "tbb" );
+		tbb::parallel_for( dForRange( range, grainSize, handleBoundaryOfDomainSequential ), loopInstance );
+
+    #elif SharedOMP
+		logTraceInWith3Arguments( "dForLoop(...)", range, grainSize, "omp" );
+		
+		std::vector<dForRange> ranges;
+		ranges.push_back( dForRange( range, grainSize, handleBoundaryOfDomainSequential ) );
+		bool dividedRange;
+		do{
+		  dividedRange = false;
+
+		  int length = ranges.size();
+		  for(int i = 0; i < length; i++){
+		    if(ranges[i].is_divisible()){
+		      ranges.push_back( dForRange( ranges[i], dForRange::Split() ) );
+		      dividedRange = true;
+		    }
+		  }
+
+		}while(dividedRange);
+
+    #pragma omp for schedule(dynamic, grainSize)
+		for( int i=0; i < (int)ranges.size(); i++ ){
+		  loopInstance(ranges[i]);
+		}
+#else
+		logTraceInWith3Arguments( "dForLoop", range, grainSize, "no-parallelisation" );
+		LoopBody localLoopBody(body);
+		dfor(i,range) {
+			localLoopBody(i);
+		}
+		localLoopBody.updateGlobalValues();
+#endif
+	}
+	else {
+		logTraceInWith2Arguments( "dForLoop", range, grainSize );
+		LoopBody localLoopBody(body);
+		dfor(i,range) {
+			localLoopBody(i);
+		}
+		localLoopBody.updateGlobalValues();
+	}
+
+	logTraceOut( "dForLoop(...)" );
+}
+
+
+template <class LoopBody>
+tarch::multicore::BooleanSemaphore peano::kernel::datatraversal::dForLoop<LoopBody>::_semaphore;
+
+template <class LoopBody>
+peano::kernel::datatraversal::dForLoop<LoopBody>::dForLoopInstance::dForLoopInstance( const LoopBody& loopBody ):
+_loopBody(loopBody) {
+	logTraceIn( "dForLoopInstance::dForLoopInstance()" );
+	logTraceOut( "dForLoopInstance::dForLoopInstance()" );
+}
+
+template <class LoopBody>
+void peano::kernel::datatraversal::dForLoop<LoopBody>::dForLoopInstance::operator() (const dForRange& range) const {
+	logTraceInWith1Argument( "dForLoopInstance::operator()", range.toString() );
+	LoopBody localLoopBody(_loopBody);
+	logDebug( "dForLoopInstance::operator()", "copy of loop body created for range " << range.toString() );
+
+	if (range.isSequentialBoundaryRange()) {
+    dfor(i,range.getRange()) {
+      bool isOnBoundary = false;
+      for (int d=0; d<DIMENSIONS; d++) {
+        isOnBoundary |= (i(d)==0);
+        isOnBoundary |= (i(d)==range.getRange()(d)-1);
+      }
+      if (isOnBoundary) {
+        localLoopBody(i + range.getOffset());
+      }
+    }
+	}
+	else {
+	  dfor(i,range.getRange()) {
+	    localLoopBody(i + range.getOffset());
+	  }
+	}
+
+	tarch::multicore::Lock lock( _semaphore );
+	localLoopBody.updateGlobalValues();
+
+	logTraceOutWith1Argument( "dForLoopInstance::operator()", range.toString() );
+}

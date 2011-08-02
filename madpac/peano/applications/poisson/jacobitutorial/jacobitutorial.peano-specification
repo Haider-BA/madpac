@@ -1,0 +1,101 @@
+component: jacobitutorial
+
+configuration-tag: jacobitutorial
+repository: JacobiBatchJob
+namespace: peano::applications::poisson::jacobitutorial
+
+/**
+ * There's only one type of vertex in the whole component and I call it Vertex. 
+ * It's definition is contained in the file Vertex.def. As RaPeP expects the def 
+ * files relative to the dastgen subdirectory, there's no need to add a path to 
+ * this description.
+ *
+ * For the evaluation of the matrix-vector product @f$ Au @f$ on each element, 
+ * we need to be able read the u value which is a scalar value. While we could 
+ * write the setters and getters manually, this is the simpler way to do so. 
+ * To accumulate the residual, we need both residual get and set operations.
+ * These requirements are reflected by the read and write annotations. read and
+ * write are only available for vertices.
+ *
+ * There's a stupid realisation trick: The first versions of RaPeP do not care 
+ * about a consistent uppercase/lowercase writing. So even if your DaStGen file 
+ * defines the attributes as lower-case, be sure that the first letter of the 
+ * read and write identifiers is an uppercase letter. Another remark: This 
+ * conversion methods work solely for doubles, i.e. if you invoke them for 
+ * integers or booleans, RaPeP's behaviour ain't documented.
+ */
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  read scalar: Residual
+  read scalar: U
+  write scalar: Residual
+  
+  
+/**
+ * Cell used for the solver.
+ */
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+  
+/**
+ * There is only one state for the solver and it is called State.
+ */
+state:
+  name: State
+  dastgen-file: State.def
+
+/**
+ * Whenever a vertex is created, we have to set approximate initial values 
+ * (we'll use zero) or the Dirichlet boundary conditions. 
+ */
+event-mapping:
+  name: SetupExperiment
+ 
+/**
+ * In a Jacobi step, we have to do three things:
+ * - touch a vertex the first time: Erase the residual, i.e. set it to zero.
+ * - handle an element: Take the residuals and values of the @f$ 2^d @f$ 
+ *   adjacent vertices of the cell, compute the element-wise stiffness matrix
+ *   contribution to the residual and write the new residual back.
+ * - touch a vertex the last time: Update the approximation u analysing the 
+ *   residual.
+ */
+event-mapping:
+  name: JacobiStep
+ 
+/**
+ * Plot the solution to a vtk file.
+ */
+event-mapping:
+  name: PlotSolution
+ 
+adapter:
+  name: SetupExperiment
+  merge-with-user-defined-mapping: SetupExperiment
+
+adapter:
+  name: SetupExperimentAndPlotGrid
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-predefined-mapping: VTKGridVisualiser
+
+adapter:
+  name: SetupExperimentAndPlotStartSolution
+  merge-with-user-defined-mapping: SetupExperiment
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: JacobiStep
+  merge-with-user-defined-mapping: JacobiStep
+
+adapter:
+  name: JacobiStepAndPlotSolution
+  merge-with-user-defined-mapping: JacobiStep
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: PlotSolution
+  merge-with-user-defined-mapping: PlotSolution
+  

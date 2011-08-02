@@ -1,0 +1,48 @@
+component: vhhjacobi
+
+configuration-tag: vhhjacobi
+repository: JacobiBatchJob
+namespace: peano::applications::poisson::vhhjacobi
+
+vertex:
+  name: Vertex
+  dastgen-file: Vertex.def
+  read scalar: Residual
+  read scalar: U
+  read scalar: Rhs
+  write scalar: Residual
+  
+cell:
+  name: Cell
+  dastgen-file: Cell.def
+
+state:
+  name: State
+  dastgen-file: State.def
+
+event-mapping:
+  name: SetupExperiment
+ 
+event-mapping:
+  name: JacobiStep
+ 
+event-mapping:
+  name: PlotSolution
+ 
+adapter:
+  name: SetupExperiment
+  merge-with-user-defined-mapping: SetupExperiment
+
+adapter:
+  name: JacobiStep
+  merge-with-user-defined-mapping: JacobiStep
+
+adapter:
+  name: JacobiStepAndPlotSolution
+  merge-with-user-defined-mapping: JacobiStep
+  merge-with-user-defined-mapping: PlotSolution
+
+adapter:
+  name: PlotSolution
+  merge-with-user-defined-mapping: PlotSolution
+  

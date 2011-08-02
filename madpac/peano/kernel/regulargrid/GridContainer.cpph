@@ -1,0 +1,256 @@
+#include "peano/utils/Loop.h"
+#include "peano/kernel/regulargrid/RegularGridVertexEnumerator.h"
+
+
+#ifdef Parallel
+#include <set>
+#include "peano/kernel/parallel/LevelTransferOperators.h"
+#include "peano/kernel/parallel/SendReceiveBufferPool.h"
+#endif
+
+
+template <class Vertex,class Cell>
+tarch::logging::Log peano::kernel::regulargrid::GridContainer<Vertex,Cell>::_log( "peano::kernel::regulargrid::GridContainer<...>" );
+
+
+template <class Vertex,class Cell>
+int peano::kernel::regulargrid::GridContainer<Vertex,Cell>::getVertexIndex(const tarch::la::Vector<DIMENSIONS,int>& position) const {
+  int result = 0;
+  int offset = 1;
+  for (int d = 0; d < DIMENSIONS; d++) {
+    assertion3( position(d) < (_numberOfGridPoints(d)), d, position(d), _numberOfGridPoints(d) );
+    result += position(d) * offset;
+    offset *= _numberOfGridPoints(d);
+  }
+  assertion( result>=0 );
+  assertion( result < tarch::la::volume(getNumberOfGridVertices()) );
+  return result;
+}
+
+
+template <class Vertex,class Cell>
+tarch::la::Vector<DIMENSIONS,int> peano::kernel::regulargrid::GridContainer<Vertex,Cell>::getNumberOfGridVertices() const {
+  assertion( _numberOfGridPoints(0)>=2 );
+  assertion( _numberOfGridPoints(1)>=2 );
+  return _numberOfGridPoints;
+}
+
+
+
+template <class Vertex,class Cell>
+tarch::la::Vector<DIMENSIONS,int> peano::kernel::regulargrid::GridContainer<Vertex,Cell>::getNumberOfGridCells() const {
+  assertion( _numberOfGridPoints(0)>=2 );
+  assertion( _numberOfGridPoints(1)>=2 );
+
+  tarch::la::Vector<DIMENSIONS,int> result = _numberOfGridPoints-1;
+
+  #ifdef Asserts
+  for (int d=0; d<DIMENSIONS; d++) {
+    assertionEquals( result(d), _numberOfGridPoints(d)-1 );
+  }
+  #endif
+
+  return result;
+}
+
+
+template <class Vertex,class Cell>
+int peano::kernel::regulargrid::GridContainer<Vertex,Cell>::getCellIndex(const tarch::la::Vector<DIMENSIONS,int>& position) const {
+  int result = 0;
+  int offset = 1;
+  for (int d = 0; d < DIMENSIONS; d++) {
+    assertion3( position(d) < (_numberOfGridPoints(d) - 1), d, position(d), (_numberOfGridPoints(d) - 1) );
+    result += position(d) * offset;
+    offset *= _numberOfGridPoints(d) - 1;
+  }
+  assertion( result>=0 );
+  assertion( result < tarch::la::volume(getNumberOfGridCells()) );
+  return result;
+}
+
+
+template <class Vertex,class Cell>
+peano::kernel::regulargrid::GridContainer<Vertex,Cell>::GridContainer():
+  _arrayOfUnpackedVertices(0),
+  _numberOfGridPoints(-1),
+  _cellContainer(),
+  _vertexContainer() {
+}
+
+
+template <class Vertex,class Cell>
+void peano::kernel::regulargrid::GridContainer<Vertex,Cell>::terminate() {
+  assertion( !_vertexContainer.empty() );
+  assertion( !_cellContainer.empty() );
+
+  _vertexContainer.clear();
+  _cellContainer.clear();
+
+  delete[] _arrayOfUnpackedVertices;
+  _arrayOfUnpackedVertices = 0;
+
+  _numberOfGridPoints = tarch::la::Vector<DIMENSIONS,int>(0);
+}
+
+
+
+template <class Vertex,class Cell>
+#ifdef Parallel
+void peano::kernel::regulargrid::GridContainer<Vertex,Cell>::restart(
+  const tarch::la::Vector<DIMENSIONS,int>&                     numberOfGridPoints,
+  const tarch::la::Vector<DIMENSIONS,double>&                  domainSize,
+  const tarch::la::Vector<DIMENSIONS,double>&                  computationalDomainOffset,
+  const tarch::la::Vector<TWO_POWER_D_TIMES_TWO_POWER_D,int>&  neighbourRanks
+) {
+#else
+void peano::kernel::regulargrid::GridContainer<Vertex,Cell>::restart(
+  const tarch::la::Vector<DIMENSIONS,int>&     numberOfGridPoints,
+  const tarch::la::Vector<DIMENSIONS,double>&  domainSize,
+  const tarch::la::Vector<DIMENSIONS,double>&  computationalDomainOffset
+) {
+#endif
+  assertion( _vertexContainer.empty() );
+  assertion( _cellContainer.empty() );
+
+  logTraceInWith3Arguments( "restart()", numberOfGridPoints, domainSize, computationalDomainOffset);
+
+  #ifdef Parallel
+  peano::kernel::parallel::SendReceiveBufferPool::getInstance().restart();
+  #endif
+
+  _numberOfGridPoints = numberOfGridPoints;
+
+  for (int i=0; i<tarch::la::volume(getNumberOfGridCells()); i++) {
+    Cell newCell;
+    _cellContainer.push_back( newCell.getRecords() );
+  }
+  dfor(x,_numberOfGridPoints) {
+    Vertex newVertex;
+    _vertexContainer.push_back( newVertex.getRecords() );
+  }
+
+  tarch::la::Vector<DIMENSIONS,double> h;
+  h = domainSize;
+  for (int d=0; d<DIMENSIONS; d++) {
+    h(d) = h(d) / getNumberOfGridCells()(d);
+  }
+  RegularGridVertexEnumerator enumerator(_numberOfGridPoints,RegularGridVertexEnumerator::LocalVertexIntegerIndex(0),h,computationalDomainOffset);
+
+  dfor(x,_numberOfGridPoints) {
+    enumerator.setOffset(x);
+    Vertex newVertex = getVertex( x );
+    #ifdef Debug
+    newVertex.setX(enumerator.getVertexPosition());
+    #endif
+
+    #ifdef Parallel
+    newVertex.setAdjacentRanks(
+      peano::kernel::parallel::getAdjacencyList(
+        neighbourRanks, numberOfGridPoints, x
+      )
+    );
+
+    if (newVertex.belongsToParallelBoundary()) {
+      std::set<int> ranks = newVertex.getAdjacentRemoteRanks();
+      for (
+        std::set<int>::const_iterator p = ranks.begin();
+        p != ranks.end();
+        p++
+      ) {
+        peano::kernel::parallel::SendReceiveBufferPool::getInstance().sendVertex(newVertex,*p,peano::kernel::parallel::SendReceiveBufferPool::FIFO);
+      }
+    }
+    #endif
+
+    logDebug( "restart(...)", "set vertex at " << x << " to " << newVertex );
+    setVertex( x, newVertex.getRecords() );
+  }
+
+  #ifdef Parallel
+  peano::kernel::parallel::SendReceiveBufferPool::getInstance().releaseMessages();
+  #endif
+
+  _arrayOfUnpackedVertices = new Vertex[ tarch::la::volume(getNumberOfGridVertices()) ];
+
+  logTraceOut( "restart()" );
+}
+
+
+template <class Vertex,class Cell>
+peano::kernel::regulargrid::GridContainer<Vertex,Cell>::~GridContainer() {
+  assertionMsg( _arrayOfUnpackedVertices==0, "forgot to call terminate()" );
+}
+
+
+template <class Vertex,class Cell>
+typename Cell::PersistentCell
+peano::kernel::regulargrid::GridContainer<Vertex,Cell>::getCell( const tarch::la::Vector<DIMENSIONS,int>& position ) const {
+  return _cellContainer[ getCellIndex(position) ];
+}
+
+
+template <class Vertex,class Cell>
+typename Vertex::PersistentVertex
+peano::kernel::regulargrid::GridContainer<Vertex,Cell>::getVertex( const tarch::la::Vector<DIMENSIONS,int>& position ) const {
+  return _vertexContainer[ getVertexIndex(position) ];
+}
+
+
+template <class Vertex,class Cell>
+void peano::kernel::regulargrid::GridContainer<Vertex,Cell>::setCell(
+  const tarch::la::Vector<DIMENSIONS,int>&  position,
+  const typename Cell::PersistentCell&      cell
+) {
+  _cellContainer[ getCellIndex(position) ] = cell;
+}
+
+
+template <class Vertex,class Cell>
+void peano::kernel::regulargrid::GridContainer<Vertex,Cell>::setVertex(
+  const tarch::la::Vector<DIMENSIONS,int>&  position,
+  const typename Vertex::PersistentVertex&  vertex
+) {
+  _vertexContainer[ getVertexIndex(position) ] = vertex;
+}
+
+
+template <class Vertex,class Cell>
+void peano::kernel::regulargrid::GridContainer<Vertex,Cell>::writeToCheckpoint( peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) const {
+  assertionEquals( checkpoint.getNumberOfCells(), 0 );
+  assertionEquals( checkpoint.getNumberOfVertices(), 0 );
+
+  dfor(i,getNumberOfGridCells()) {
+    checkpoint.storeCell( getCell(i) );
+  }
+
+  dfor(i,getNumberOfGridVertices()) {
+    checkpoint.storeVertex( getVertex(i) );
+  }
+}
+
+
+template <class Vertex,class Cell>
+void peano::kernel::regulargrid::GridContainer<Vertex,Cell>::readFromCheckpoint( const peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) {
+  assertionEquals( static_cast<int>(checkpoint.getNumberOfCells()), tarch::la::volume(getNumberOfGridCells()) );
+  assertionEquals( static_cast<int>(checkpoint.getNumberOfVertices()), tarch::la::volume(getNumberOfGridVertices()) );
+
+  int counter = 0;
+  dfor(i,(int)sqrt(checkpoint.getNumberOfCells())) {
+    setCell( i,checkpoint.getCell(counter).getRecords() );
+    counter++;
+  }
+
+  counter = 0;
+  dfor(i,(int)sqrt(checkpoint.getNumberOfVertices())) {
+    setVertex( i, checkpoint.getVertex(counter).getRecords() );
+    counter++;
+  }
+}
+
+
+template <class Vertex,class Cell>
+Vertex* peano::kernel::regulargrid::GridContainer<Vertex,Cell>::getArrayForUnpackedVertices() const {
+  assertion( _arrayOfUnpackedVertices!=0 );
+  return _arrayOfUnpackedVertices;
+}
+

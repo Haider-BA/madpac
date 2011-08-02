@@ -1,0 +1,33 @@
+/**
+
+ @page "CCA - Peano's Integration into the a Simplified Common Component Architecture"
+ 
+ !!! Prepare Your Component For CCA 
+ 
+ Once before you start to work with CCA, you have to do some preparation steps.
+ These steps have to be done once and only once.   
+ Run the following script on the terminal to generate all the glue code:
+ \code
+ cd Peano's src directory
+ java -jar ../releases/tools/scicode-compiler.jar -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L xml-c++   -l libblocklatticeboltzmann.so peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/BlockLatticeBoltzmannBatchJob.sidl 
+ java -jar ../releases/tools/scicode-compiler.jar -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-ports peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/BlockLatticeBoltzmannBatchJob.sidl 
+ java -jar ../releases/tools/scicode-compiler.jar -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-plain peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/BlockLatticeBoltzmannBatchJob.sidl 
+ \endcode
+
+ Sometimes, this doesn't work as the jar file depends on other jar files. In 
+ this case, you might try: 
+ \code
+ cd Peano's src directory
+ java -classpath ../releases/tools/scicode-compiler.jar:../releases/tools/jargs.jar de.tum.scicode.sidl.Compiler -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L xml-c++   -l libblocklatticeboltzmann.so peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/BlockLatticeBoltzmannBatchJob.sidl 
+ java -classpath ../releases/tools/scicode-compiler.jar:../releases/tools/jargs.jar de.tum.scicode.sidl.Compiler -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-ports peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/BlockLatticeBoltzmannBatchJob.sidl 
+ java -classpath ../releases/tools/scicode-compiler.jar:../releases/tools/jargs.jar de.tum.scicode.sidl.Compiler -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-plain peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/BlockLatticeBoltzmannBatchJob.sidl 
+ \endcode
+ Also, adding the argument $-v$ might give you some hints what actually goes wrong.
+
+ Include the directory peano/integration/cca into your build path and recompile 
+ your code with $-DCCA$ into a shared lib. For this, Peano's setup script has 
+ already prepared a makefile. 
+
+ */
+ 
+ 

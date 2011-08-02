@@ -60,7 +60,6 @@ namespace mardyn
   {
     //      Molecule* tM;
 
-
     prepareTimestep();
 
     if (madpac::PeanoCouplingService::getInstance().bEnabled())
@@ -89,6 +88,7 @@ namespace mardyn
 
         _lbConnector->moveParticles(_simstep);
 
+
         global_log->debug() << "Updating container and decomposition" << endl;
         updateParticleContainerAndDecomposition();
 
@@ -96,6 +96,7 @@ namespace mardyn
           _lbConnector->adjustRho(_domainDecomposition, _simstep);
         else
           _firstMDStep = false;
+
 
         _moleculeContainer->deleteOuterParticles();
         updateParticleContainerAndDecomposition();
@@ -114,9 +115,7 @@ namespace mardyn
           }
 #endif
 
-#ifndef ENABLE_MPI
-        _moleculeContainer->deleteOuterParticles(); //TODO: rm
-#endif
+
 
         _hybridTimer->stop();
       }

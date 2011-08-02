@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-navierstokes-on-regular-grid>
+    <log-filter target="debug" component="tarch"             switch="off" />
+
+    <log-filter target="debug" component="peano::geometry"   switch="off" />
+    <log-filter target="debug" component="peano::kernel"     switch="off" />
+    <log-filter target="debug" component="peano::kernel::regulargrid"     switch="off" />
+    <log-filter target="debug" component="peano::applications"     switch="off" />
+    <log-filter target="debug" component="peano::applications::navierstokes::prototype1"     switch="on" />
+    
+    <log-output column-separator=" " log-time-stamp="no" log-time-stamp-human-readable="yes" log-machine-name="no" log-message-type="yes" log-trace="yes" />
+
+     <builtin-geometry-configuration>
+	   <hexahedron invert="false" offset="0;0" width="1;1" />
+	 </builtin-geometry-configuration>
+
+
+    <regular-grid number-of-vertices="200;200" 
+      domain-size="1.0 ; 1.0"
+      domain-offset="0.0 ; 0.0" />
+    <multicore threads="2" />
+  </run-navierstokes-on-regular-grid>
+</peano-configuration>

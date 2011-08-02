@@ -1,0 +1,33 @@
+Packed-Type: short int;
+
+class peano::applications::diffusionequation::explicittimestepping::dastgen::State {
+  persistent parallelise double updateUMax;
+
+  persistent parallelise double updateUH;
+
+  persistent parallelise double uMax;
+
+  persistent parallelise double uH;
+  
+  persistent parallelise double uGlobalMax;
+
+  persistent parallelise double uGlobalH;
+  
+  persistent parallelise int timeStep;
+  
+  persistent parallelise double timeStepSize;
+
+  persistent parallelise double time;
+
+  persistent parallelise double numberOfStencilUpdates;
+
+  /**
+   * Used only by spacetree grid.
+   */  
+  persistent parallelise double minimalAllowedMeshSize;
+
+  /**
+   * Used only by spacetree grid.
+   */  
+  persistent parallelise double maximalAllowedMeshSize;
+};

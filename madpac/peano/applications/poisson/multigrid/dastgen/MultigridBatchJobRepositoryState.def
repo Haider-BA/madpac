@@ -1,0 +1,9 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+class peano::applications::poisson::multigrid::repositories::MultigridBatchJobRepositoryState { 
+  enum Action { WriteCheckpoint, ReadCheckpoint, Terminate,UseAdapterSetupExperiment,UseAdapterSetupExperimentAndPlotGrid,UseAdapterSetupExperimentAndPlotStartSolution,UseAdapterSmoothAndComputeGalerkinCoarseGridOperator,UseAdapterPlotSolution};
+  persistent parallelise Action action;
+
+  persistent parallelise bool reduceState;
+};

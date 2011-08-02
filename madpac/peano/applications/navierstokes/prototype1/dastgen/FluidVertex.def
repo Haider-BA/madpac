@@ -1,0 +1,77 @@
+#include "peano/applications/navierstokes/prototype1/NSEGlobals.h"
+
+Packed-Type: short int;
+
+Constant: DIMENSIONS;
+Constant: VERTEX_NUMBER_OF_EDGE_DOFS;
+Constant: VERTEX_NUMBER_OF_EDGE_DOFS_PLUS_DIM;
+
+class peano::applications::navierstokes::prototype1::dastgen::FluidVertex {
+
+    enum DebugFluidVertexType {
+      INNER, 
+      DIRICHLET, 
+      NEUMANN, 
+      MIXED_DIRICHLET_NEUMANN, 
+      PERIODIC,
+      OUTER,
+      UNDEF
+    };
+
+    enum DebugBoundaryType {
+      BOUNDARY_TYPE_UNDEF,
+      INFLOW,
+      OUTFLOW,      
+      LID,
+      OBSTACLE,
+      PERIODIC_LEFT,
+      PERIODIC_RIGHT,
+      PERIODIC_CORNER,
+      WALL,
+      WALL_FREE_SLIP_Y,
+      WALL_FREE_SLIP_Z,
+      WALL_FREE_SLIP_YZ,
+      WALL_FREE_SLIP_CORNER_TO_INLET_NEUMANN,
+      WALL_FREE_SLIP_CORNER_TO_OUTLET_NEUMANN,
+      IGNORED
+    }; 
+
+    /**
+     * Type of an instance of a vertex (node).
+     */
+    persistent parallelise DebugFluidVertexType fluidVertexType;
+  
+    /**
+     * Variable for different boundary types.
+     */
+    persistent parallelise DebugBoundaryType boundaryType;
+    
+    /**
+     * Variable for velocity (Vector).
+     */
+    persistent parallelise packed double u[VERTEX_NUMBER_OF_EDGE_DOFS_PLUS_DIM];
+    
+    /**
+     * Variable for pressure gradient (Vector).
+     */
+    persistent parallelise packed double gradP[VERTEX_NUMBER_OF_EDGE_DOFS_PLUS_DIM];
+    
+    #ifdef Parallel
+    discard parallelise packed double gradPUpdate[VERTEX_NUMBER_OF_EDGE_DOFS_PLUS_DIM];
+    #endif
+    
+    /**
+     * Variable for diffusion/convection F (Vector).
+     */
+    persistent parallelise packed double F[VERTEX_NUMBER_OF_EDGE_DOFS_PLUS_DIM];
+    
+    /**
+     * Variable for saving local force values (i.e. @f$ \sigma\cdot\mathbf{n} @f$).
+     */
+    persistent parallelise packed double force[VERTEX_NUMBER_OF_EDGE_DOFS_PLUS_DIM];
+
+    /**
+     * Variable for the lumped mass matrix element $A_i$ on a vertex $i$.
+     */
+    persistent parallelise packed double A;    
+};

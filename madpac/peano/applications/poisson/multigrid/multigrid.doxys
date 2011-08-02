@@ -1,0 +1,52 @@
+/**
+
+ @dir "multigrid"
+ 
+ The documentation yet has to be written.
+ 
+ !!! Script Invocation
+ 
+ \code
+ cd peano
+ java -classpath releases/tools/DaStGen.jar:releases/tools/PeProt.jar de.tum.peano.peprot.PeProt src/peano/applications/poisson/multigrid/multigrid.peano-specification src peprot/templates src/peano/kernel spacetreegrid 
+ \endcode
+ 
+
+ !!! Algorithmic steps
+ 
+ The component algorithm consists of the following steps:
+ 
+|| Adapter name | Semantics 
+| SetupExperiment | t.b.d.
+| SetupExperimentAndPlotGrid | t.b.d.
+| SetupExperimentAndPlotStartSolution | t.b.d.
+| Smooth | t.b.d.
+| PlotSolution | t.b.d.
+
+ 
+ 
+ !!! Data structures
+ 
+ The solver is based on the following DaStGen models:
+
+ !! Cell 
+ 
+ \code
+   \include dastgen/Cell.def
+ \endcode
+ 
+ !! State 
+ 
+ \code
+   \include dastgen/State.def
+ \endcode
+
+ !! Vertex 
+ 
+ \code
+   \include dastgen/Vertex.def
+ \endcode
+ 
+ */
+ 
+ 

@@ -1,0 +1,61 @@
+Packed-Type: short int;
+
+class peano::applications::faxen::dastgen::State {
+
+  /**
+  * Geometry data:
+  * domain size in x direction;
+  * domain size in y direction;
+  * length of one cell in x direction;
+  * length of one cell in y direction.
+  */
+  persistent double xlength;
+  persistent double ylength;
+  persistent double delx;
+  persistent double dely;			
+  
+  /**
+  * Time-stepping data:
+  * current time value;
+  * final time;
+  * time step size;
+  * safety factor for time step control.
+  */
+  persistent double t;
+  persistent double t_end;
+  persistent double delt;
+  persistent double tau;
+  
+  /**
+  * Pressure-iteration data:
+  * maximal number of pressure iterations in one time step;
+  * norm of pressure equation residual;
+  * stopping tolerance for pressure iteration;
+  * relaxation parameter for SOR iteration;
+  * upwind differencing factor.
+  */
+  persistent int itermax;
+  persistent double res;
+  persistent double eps;
+  persistent double omega;
+  persistent double gamma;
+  
+  /**
+  * Problem-dependent data:
+  * Reynolds number;
+  * body forces (gravity);
+  * initial values for velocities and pressure;
+  */
+  persistent double Re;
+  persistent double GX;
+  persistent double GY;
+  persistent double UI;
+  persistent double VI;
+  persistent double PI;
+  
+  /**
+   * If we plot multiple files, the solver enumerates them one by one so no old
+   * data is overwritten. This counter is holds by fileNumber.
+   */
+  persistent parallelise int fileNumber;
+};

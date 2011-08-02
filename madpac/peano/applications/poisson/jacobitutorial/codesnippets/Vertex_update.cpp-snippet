@@ -1,0 +1,8 @@
+  assertion( relaxationFactor >  0.0 );
+  assertion( relaxationFactor <= 1.0 );
+  if (isInside())  {
+    double diagonalElement = RegularGridCell::getDiagonalElement();
+    double update = relaxationFactor / diagonalElement * getResidual();
+    _vertexData.setU( _vertexData.getU() + update );
+    assertion(_vertexData.getU()!=0.0);
+  }

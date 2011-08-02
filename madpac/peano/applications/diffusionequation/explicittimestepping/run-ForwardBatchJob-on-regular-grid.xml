@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-diffusionEquationExplicitTimeStepping-on-regular-grid>
+  </run-diffusionEquationExplicitTimeStepping-on-regular-grid>
+</peano-configuration>

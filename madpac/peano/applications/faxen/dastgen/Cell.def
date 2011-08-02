@@ -1,0 +1,41 @@
+Packed-Type: long int;
+
+class peano::applications::faxen::dastgen::Cell {
+  
+  /**
+   * Pressure in the center of the cell  
+   */
+   persistent double P;
+   
+   /**
+   * Horizontal fluid speed in the middle of the left edge
+   */
+   persistent double U;
+   
+   /**
+   * Vertical fluid speed in the middle of the top edge
+   */
+   persistent double V;
+   
+   /**
+   * Auxiliary parameter to compute right hand side
+   * placed in the middle of the the left edge
+   */
+   persistent double F;
+   
+   /**
+   * Auxiliary parameter to compute right hand side
+   * placed in the middle of the right edge
+   */
+   persistent double G;
+   
+   /**
+   * Right hand side for pressure equation
+   */
+   persistent double rhs;
+   
+   /**
+   * Residual for pressure equation
+   */
+   persistent double res;
+};

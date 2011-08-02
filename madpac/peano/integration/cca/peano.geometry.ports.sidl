@@ -1,0 +1,71 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+
+package peano {
+  package integration {
+    package cca {
+      package ports {
+        package geometry {
+          /**
+           * For a detailed description of the semantics of the routines, see the
+           * interface peano::geometry::Geometry in the Peano repository. 
+           */
+          interface Geometry2D {
+            void isCompletelyOutside( 
+              out bool    result, 
+              in  double  x,  
+              in  double  y,  
+              in  double  resolutionX,  
+              in  double  resolutionY
+            );  
+            void isCompletelyInside( 
+              out bool    result, 
+              in    double  x,  
+              in  double  y,  
+              in  double  resolutionX,  
+              in  double  resolutionY
+          );  
+          void isOutsideClosedDomain( 
+            out bool    result, 
+            in  double  x,  
+            in  double  y
+          );  
+        }
+
+        /**
+         * For a detailed description of the semantics of the routines, see the
+         * interface peano::geometry::Geometry in the Peano repository. 
+         */
+        interface Geometry3D {
+          void isCompletelyOutside( 
+            out bool    result, 
+            in  double  x,  
+            in  double  y,  
+            in  double  z,  
+            in  double  resolutionX,  
+            in  double  resolutionY,
+            in  double  resolutionZ
+          );  
+          void isCompletelyInside( 
+            out bool    result, 
+            in  double  x,  
+            in  double  y,  
+            in  double  z,  
+            in  double  resolutionX,  
+            in  double  resolutionY,
+            in  double  resolutionZ
+            );  
+            void isOutsideClosedDomain( 
+              out bool    result, 
+              in  double  x,  
+              in  double  y,
+              in  double  z  
+            );  
+          }
+        }
+      }
+    }
+  }
+}

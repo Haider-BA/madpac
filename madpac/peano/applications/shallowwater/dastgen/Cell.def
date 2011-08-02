@@ -1,0 +1,12 @@
+Packed-Type: short int;
+
+class peano::applications::shallowwater::dastgen::Cell {
+   
+   persistent double heightWater;
+   
+   persistent double heightSeabed;
+   
+   persistent double momentumX;
+   
+   persistent double momentumY;
+};

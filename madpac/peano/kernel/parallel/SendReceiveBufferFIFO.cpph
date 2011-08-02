@@ -1,0 +1,69 @@
+#include "tarch/parallel/Node.h"
+#include "tarch/utils/Watch.h"
+#include "peano/utils/PeanoOptimisations.h"
+
+#include <sstream>
+
+
+template <class Vertex>
+tarch::logging::Log peano::kernel::parallel::SendReceiveBufferFIFO<Vertex>::_log("peano::kernel::parallel::SendReceiveBufferFIFO");
+
+
+template <class Vertex>
+peano::kernel::parallel::SendReceiveBufferFIFO<Vertex>::SendReceiveBufferFIFO(
+  int toRank, int bufferSize
+):
+  Base(toRank,bufferSize) {
+  Base::_currentDeployBufferPage = 0;
+  Base::_currentDeployBufferElement = -1;
+}
+
+
+
+template <class Vertex>
+peano::kernel::parallel::SendReceiveBufferFIFO<Vertex>::~SendReceiveBufferFIFO() {
+}
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiveBufferFIFO<Vertex>::updateDeployCounterDueToSwitchReceiveAndDeployBuffer() {
+  logTraceIn( "updateDeployCounterDueToSwitchReceiveAndDeployBuffer()" );
+  Base::_currentDeployBufferPage    = 0;
+  Base::_currentDeployBufferElement = -1;
+  Base::_sizeOfDeployBuffer         = Base::_numberOfElementsSent;
+
+  assertion5(
+    Base::_currentDeployBufferPage >= 0,
+    Base::_currentDeployBufferPage, Base::_sizeOfDeployBuffer, Base::_currentDeployBufferElement,
+    Base::_bufferPageSize, tarch::parallel::Node::getInstance().getRank()
+  );
+  assertion5(
+    Base::_currentDeployBufferElement >= -1,
+    Base::_currentDeployBufferPage, Base::_sizeOfDeployBuffer, Base::_currentDeployBufferElement,
+    Base::_bufferPageSize, tarch::parallel::Node::getInstance().getRank()
+  );
+  assertion5(
+    Base::_currentDeployBufferElement < Base::_bufferPageSize,
+    Base::_currentDeployBufferPage, Base::_sizeOfDeployBuffer, Base::_currentDeployBufferElement,
+    Base::_bufferPageSize, tarch::parallel::Node::getInstance().getRank()
+  );
+  logTraceOutWith4Arguments( "updateDeployCounterDueToSwitchReceiveAndDeployBuffer()",Base::_currentDeployBufferPage,Base::_currentDeployBufferElement,Base::_sizeOfDeployBuffer,Base::_bufferPageSize);
+}
+
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiveBufferFIFO<Vertex>::moveDeployBufferPointerDueToGetVertex() {
+  Base::_currentDeployBufferElement++;
+  if ( Base::_currentDeployBufferElement == Base::_bufferPageSize ) {
+    Base::_currentDeployBufferElement = 0;
+    Base::_currentDeployBufferPage++;
+  }
+}
+
+
+
+template <class Vertex>
+int peano::kernel::parallel::SendReceiveBufferFIFO<Vertex>::getNumberOfDeployedMessages() const {
+  return Base::_currentDeployBufferElement+1;
+}

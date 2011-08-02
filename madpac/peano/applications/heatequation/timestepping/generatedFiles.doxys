@@ -1,0 +1,227 @@
+/**
+
+@page "PeProt - Generated Files"
+
+ - The following files are generated automatically for the given script (filenames are relative to the application's root directory):
+
+ - !!! Doxys Files
+
+ - /adapters/readme.txt
+ - /records/readme.txt
+ - /repositories/readme.txt
+ - /heatequation.doxys
+ - 
+
+!!! DoF-File Wrapper (Blueprints)
+
+ - /peano/applications/heatequation/timestepping/dastgen/TimeSteppingBatchJobRepositoryState.def
+ - /peano/applications/heatequation/timestepping/dastgen/RegularGridSingleStepVertex.def
+ - /peano/applications/heatequation/timestepping/dastgen/SpacetreeGridSingleStepVertex.def
+ - /peano/applications/heatequation/timestepping/dastgen/RegularGridCell.def
+ - /peano/applications/heatequation/timestepping/dastgen/SpacetreeGridCell.def
+ - /peano/applications/heatequation/timestepping/dastgen/RegularGridState.def
+ - /peano/applications/heatequation/timestepping/dastgen/SpacetreeGridState.def
+ - 
+
+!!! DaStGen Records (Do not change!)
+
+ - 
+
+!!! Vertices, Cells, States and Mappings (Blueprints)
+
+ - /RegularGridSingleStepVertex.h
+ - /RegularGridSingleStepVertex.cpp
+ - /SpacetreeGridSingleStepVertex.h
+ - /SpacetreeGridSingleStepVertex.cpp
+ - /RegularGridCell.h
+ - /RegularGridCell.cpp
+ - /SpacetreeGridCell.h
+ - /SpacetreeGridCell.cpp
+ - /State.h
+ - /RegularGridState.h
+ - /RegularGridState.cpp
+ - /SpacetreeGridState.h
+ - /SpacetreeGridState.cpp
+ - /mappings/RegularGrid2SetupExperiment.h
+ - /mappings/RegularGrid2SetupExperiment.cpp
+ - /mappings/SpacetreeGrid2SetupExperiment.h
+ - /mappings/SpacetreeGrid2SetupExperiment.cpp
+ - /mappings/RegularGrid2SetupOneLevelOfExperiment.h
+ - /mappings/RegularGrid2SetupOneLevelOfExperiment.cpp
+ - /mappings/SpacetreeGrid2SetupOneLevelOfExperiment.h
+ - /mappings/SpacetreeGrid2SetupOneLevelOfExperiment.cpp
+ - /mappings/RegularGrid2PerformExplitEulerTimeStep.h
+ - /mappings/RegularGrid2PerformExplitEulerTimeStep.cpp
+ - /mappings/SpacetreeGrid2PerformExplitEulerTimeStep.h
+ - /mappings/SpacetreeGrid2PerformExplitEulerTimeStep.cpp
+ - /mappings/RegularGrid2PerformImplicitTimeStep.h
+ - /mappings/RegularGrid2PerformImplicitTimeStep.cpp
+ - /mappings/SpacetreeGrid2PerformImplicitTimeStep.h
+ - /mappings/SpacetreeGrid2PerformImplicitTimeStep.cpp
+ - /mappings/RegularGrid2PlotSolution.h
+ - /mappings/RegularGrid2PlotSolution.cpp
+ - /mappings/SpacetreeGrid2PlotSolution.h
+ - /mappings/SpacetreeGrid2PlotSolution.cpp
+ - /mappings/RegularGrid2ComputeImplicitSolutionWithJacobi.h
+ - /mappings/RegularGrid2ComputeImplicitSolutionWithJacobi.cpp
+ - /mappings/SpacetreeGrid2ComputeImplicitSolutionWithJacobi.h
+ - /mappings/SpacetreeGrid2ComputeImplicitSolutionWithJacobi.cpp
+ - /mappings/RegularGrid2Smooth.h
+ - /mappings/RegularGrid2Smooth.cpp
+ - /mappings/SpacetreeGrid2Smooth.h
+ - /mappings/SpacetreeGrid2Smooth.cpp
+ - /mappings/RegularGrid2CoarseSolution.h
+ - /mappings/RegularGrid2CoarseSolution.cpp
+ - /mappings/SpacetreeGrid2CoarseSolution.h
+ - /mappings/SpacetreeGrid2CoarseSolution.cpp
+ - /mappings/RegularGrid2ComputeHierarchicalSurplus.h
+ - /mappings/RegularGrid2ComputeHierarchicalSurplus.cpp
+ - /mappings/SpacetreeGrid2ComputeHierarchicalSurplus.h
+ - /mappings/SpacetreeGrid2ComputeHierarchicalSurplus.cpp
+ - /mappings/RegularGrid2RestrictRhs.h
+ - /mappings/RegularGrid2RestrictRhs.cpp
+ - /mappings/SpacetreeGrid2RestrictRhs.h
+ - /mappings/SpacetreeGrid2RestrictRhs.cpp
+ - /mappings/RegularGrid2Prolong.h
+ - /mappings/RegularGrid2Prolong.cpp
+ - /mappings/SpacetreeGrid2Prolong.h
+ - /mappings/SpacetreeGrid2Prolong.cpp
+ - /mappings/RegularGrid2ComputeHierarchicalResidual.h
+ - /mappings/RegularGrid2ComputeHierarchicalResidual.cpp
+ - /mappings/SpacetreeGrid2ComputeHierarchicalResidual.h
+ - /mappings/SpacetreeGrid2ComputeHierarchicalResidual.cpp
+ - /mappings/RegularGrid2ProbeSolution.h
+ - /mappings/RegularGrid2ProbeSolution.cpp
+ - /mappings/SpacetreeGrid2ProbeSolution.h
+ - /mappings/SpacetreeGrid2ProbeSolution.cpp
+ - /mappings/RegularGrid2ApplyRefineDeleteCriterion.h
+ - /mappings/RegularGrid2ApplyRefineDeleteCriterion.cpp
+ - /mappings/SpacetreeGrid2ApplyRefineDeleteCriterion.h
+ - /mappings/SpacetreeGrid2ApplyRefineDeleteCriterion.cpp
+ - 
+
+!!! Repositories (Do not change!)
+
+ - /repositories/TimeSteppingBatchJobRepository.h
+ - /repositories/TimeSteppingBatchJobRepositoryForRegularGrid.h
+ - /repositories/TimeSteppingBatchJobRepositoryForRegularGridStandardImplementation.h
+ - /repositories/TimeSteppingBatchJobRepositoryForRegularGridStandardImplementation.cpp
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGrid.h
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridArrayStackImplementation.h
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridArrayStackImplementation.cpp
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridFileStackImplementation.h
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridFileStackImplementation.cpp
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.h
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridSTDDoubleStackImplementation.cpp
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridSTDStackImplementation.h
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridSTDStackImplementation.cpp
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.h
+ - /repositories/TimeSteppingBatchJobRepositoryForSpacetreeGridDynamicStackImplementation.cpp
+ - /repositories/TimeSteppingBatchJobRepositoryFactory.h
+ - /repositories/TimeSteppingBatchJobRepositoryFactory.cpp
+ - 
+
+Configuration:
+
+ - /run-TimeSteppingBatchJob-on-regular-grid.xml
+ - /configurations/TimeSteppingBatchJobConfigurationForRegularGrid.h
+ - /configurations/TimeSteppingBatchJobConfigurationForRegularGrid.cpp
+ - /run-TimeSteppingBatchJob-on-spacetree-grid.xml
+ - /configurations/TimeSteppingBatchJobConfigurationForSpacetreeGrid.h
+ - /configurations/TimeSteppingBatchJobConfigurationForSpacetreeGrid.cpp
+ - 
+
+!!! Runners (Blueprints)
+
+ - /runners/TimeSteppingBatchJobRunnerForRegularGrid.h
+ - /runners/TimeSteppingBatchJobRunnerForRegularGrid.cpp
+ - /runners/TimeSteppingBatchJobRunnerForRegularGridParallelWorker.cpp
+ - /runners/TimeSteppingBatchJobRunnerForSpacetreeGrid.h
+ - /runners/TimeSteppingBatchJobRunnerForSpacetreeGrid.cpp
+ - /runners/TimeSteppingBatchJobRunnerForSpacetreeGridParallelWorker.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /adapters/RegularGrid2SetupExperiment.h
+ - /adapters/RegularGrid2SetupExperiment.cpp
+ - /adapters/SpacetreeGrid2SetupExperiment.h
+ - /adapters/SpacetreeGrid2SetupExperiment.cpp
+ - /adapters/RegularGrid2SetupExperimentAndPlot.h
+ - /adapters/RegularGrid2SetupExperimentAndPlot.cpp
+ - /adapters/SpacetreeGrid2SetupExperimentAndPlot.h
+ - /adapters/SpacetreeGrid2SetupExperimentAndPlot.cpp
+ - /adapters/RegularGrid2PerformExplitEulerTimeStep.h
+ - /adapters/RegularGrid2PerformExplitEulerTimeStep.cpp
+ - /adapters/SpacetreeGrid2PerformExplitEulerTimeStep.h
+ - /adapters/SpacetreeGrid2PerformExplitEulerTimeStep.cpp
+ - /adapters/RegularGrid2PerformImplicitTimeStep.h
+ - /adapters/RegularGrid2PerformImplicitTimeStep.cpp
+ - /adapters/SpacetreeGrid2PerformImplicitTimeStep.h
+ - /adapters/SpacetreeGrid2PerformImplicitTimeStep.cpp
+ - /adapters/RegularGrid2PerformImplicitTimeStepAndPlot.h
+ - /adapters/RegularGrid2PerformImplicitTimeStepAndPlot.cpp
+ - /adapters/SpacetreeGrid2PerformImplicitTimeStepAndPlot.h
+ - /adapters/SpacetreeGrid2PerformImplicitTimeStepAndPlot.cpp
+ - /adapters/RegularGrid2ComputeImplicitSolutionWithJacobi.h
+ - /adapters/RegularGrid2ComputeImplicitSolutionWithJacobi.cpp
+ - /adapters/SpacetreeGrid2ComputeImplicitSolutionWithJacobi.h
+ - /adapters/SpacetreeGrid2ComputeImplicitSolutionWithJacobi.cpp
+ - /adapters/RegularGrid2PerformExplitEulerTimeStepAndPlot.h
+ - /adapters/RegularGrid2PerformExplitEulerTimeStepAndPlot.cpp
+ - /adapters/SpacetreeGrid2PerformExplitEulerTimeStepAndPlot.h
+ - /adapters/SpacetreeGrid2PerformExplitEulerTimeStepAndPlot.cpp
+ - /adapters/RegularGrid2PlotSolution.h
+ - /adapters/RegularGrid2PlotSolution.cpp
+ - /adapters/SpacetreeGrid2PlotSolution.h
+ - /adapters/SpacetreeGrid2PlotSolution.cpp
+ - /adapters/RegularGrid2PlotGrid.h
+ - /adapters/RegularGrid2PlotGrid.cpp
+ - /adapters/SpacetreeGrid2PlotGrid.h
+ - /adapters/SpacetreeGrid2PlotGrid.cpp
+ - /adapters/RegularGrid2Smooth.h
+ - /adapters/RegularGrid2Smooth.cpp
+ - /adapters/SpacetreeGrid2Smooth.h
+ - /adapters/SpacetreeGrid2Smooth.cpp
+ - /adapters/RegularGrid2Coarse.h
+ - /adapters/RegularGrid2Coarse.cpp
+ - /adapters/SpacetreeGrid2Coarse.h
+ - /adapters/SpacetreeGrid2Coarse.cpp
+ - /adapters/RegularGrid2Prolong.h
+ - /adapters/RegularGrid2Prolong.cpp
+ - /adapters/SpacetreeGrid2Prolong.h
+ - /adapters/SpacetreeGrid2Prolong.cpp
+ - /adapters/RegularGrid2ApplyRefineDeleteCriterion.h
+ - /adapters/RegularGrid2ApplyRefineDeleteCriterion.cpp
+ - /adapters/SpacetreeGrid2ApplyRefineDeleteCriterion.h
+ - /adapters/SpacetreeGrid2ApplyRefineDeleteCriterion.cpp
+ - /adapters/RegularGrid2SetupOneLevelOfExperiment.h
+ - /adapters/RegularGrid2SetupOneLevelOfExperiment.cpp
+ - /adapters/SpacetreeGrid2SetupOneLevelOfExperiment.h
+ - /adapters/SpacetreeGrid2SetupOneLevelOfExperiment.cpp
+ - /adapters/RegularGrid2ProbeSolution.h
+ - /adapters/RegularGrid2ProbeSolution.cpp
+ - /adapters/SpacetreeGrid2ProbeSolution.h
+ - /adapters/SpacetreeGrid2ProbeSolution.cpp
+ - 
+
+!!! Adapters (Do not change!)
+
+ - /cca/TimeSteppingBatchJob.sidl
+ - /cca/cca.doxys
+ - /cca/TimeSteppingBatchJobForRegularGridImplementation.h
+ - /cca/TimeSteppingBatchJobForRegularGridImplementation.cpp
+ - /cca/TimeSteppingBatchJobForSpacetreeGridImplementation.h
+ - /cca/TimeSteppingBatchJobForSpacetreeGridImplementation.cpp
+ - 
+
+!!! Makefiles
+
+ - /makefile
+ - 
+
+Tests:
+
+ - /tests/TimeSteppingBatchJobTest.h
+ - /tests/TimeSteppingBatchJobTest.cpp
+*/

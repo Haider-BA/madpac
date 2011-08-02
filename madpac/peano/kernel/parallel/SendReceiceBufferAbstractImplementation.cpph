@@ -1,0 +1,658 @@
+#include "tarch/parallel/Node.h"
+#include "tarch/utils/Watch.h"
+#include "peano/utils/PeanoOptimisations.h"
+
+#include <sstream>
+#include <cstring>
+
+
+template <class Vertex>
+tarch::logging::Log peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::_log("peano::kernel::parallel::SendReceiceBufferAbstractImplementation");
+
+
+//template <class Vertex>
+//peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::SendReceiceBufferAbstractImplementation():
+//  _bufferPageSize(0),
+//  _numberOfElementsSent(0),
+//  _sendBufferRequestHandle(0),
+//  _receiveBufferRequestHandle(0),
+//  _sendBuffer(0),
+//  _sendBufferCurrentPageElement(0),
+//  _destinationNodeNumber(-1),
+//  _currentReceiveBuffer(0),
+//  _sizeOfDeployBuffer(0),
+//  _sizeOfReceiveBuffer(0),
+//  _currentDeployBufferPage(0),
+//  _currentDeployBufferElement(-1),
+//  _currentReceiveBufferPage(0),
+//  _sendDataWaitTime(0) {
+//}
+
+
+//template <class Vertex>
+//peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::SendReceiceBufferAbstractImplementation( const peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>& copy ):
+//  _bufferPageSize(0),
+//  _numberOfElementsSent(0),
+//  _sendBufferRequestHandle(0),
+//  _receiveBufferRequestHandle(0),
+//  _sendBuffer(0),
+//  _sendBufferCurrentPageElement(0),
+//  _destinationNodeNumber(-1),
+//  _currentReceiveBuffer(0),
+//  _sizeOfDeployBuffer(0),
+//  _sizeOfReceiveBuffer(0),
+//  _currentDeployBufferPage(0),
+//  _currentDeployBufferElement(-1),
+//  _currentReceiveBufferPage(0),
+//  _sendDataWaitTime(0) {
+//  *this = copy;
+//}
+
+//template <class Vertex>
+//peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>& peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::operator=(const SendReceiceBufferAbstractImplementation<Vertex>& copy ) {
+//  assertionEquals( _numberOfElementsSent,         0 );
+//  assertionEquals( _sendBufferRequestHandle,      0 );
+//  assertionEquals( _receiveBufferRequestHandle,   0 );
+//  assertionEquals( _sendBufferCurrentPageElement, 0 );
+//  assertionEquals( _currentReceiveBuffer,         0 );
+//  assertionEquals( _sizeOfDeployBuffer,           0 );
+//  assertionEquals( _sizeOfReceiveBuffer,          0 );
+//  assertionEquals( _currentDeployBufferPage,      0 );
+//  assertionEquals( _currentDeployBufferElement,  -1 );
+//  assertionEquals( _currentReceiveBufferPage,     0 );
+//
+//  assertionEquals( copy._numberOfElementsSent,         0 );
+//  assertionEquals( copy._sendBufferRequestHandle,      0 );
+//  assertionEquals( copy._receiveBufferRequestHandle,   0 );
+//  assertionEquals( copy._sendBufferCurrentPageElement, 0 );
+//  assertionEquals( copy._currentReceiveBuffer,         0 );
+//  assertionEquals( copy._sizeOfDeployBuffer,           0 );
+//  assertionEquals( copy._sizeOfReceiveBuffer,          0 );
+//  assertionEquals( copy._currentDeployBufferPage,      0 );
+//  assertionEquals( copy._currentDeployBufferElement,  -1 );
+//  assertionEquals( copy._currentReceiveBufferPage,     0 );
+//
+//  _bufferPageSize        = copy._bufferPageSize;
+//  _destinationNodeNumber = copy._destinationNodeNumber;
+//
+//  if ( _sendBuffer!=0 ) {
+//    delete _sendBuffer;
+//  }
+//  if ( _bufferPageSize > 0 ) {
+//    _sendBuffer = new typename Vertex::MPIDatatypeContainer[_bufferPageSize];
+//  }
+//  else {
+//    _sendBuffer = 0;
+//  }
+//
+//  return *this;
+//}
+
+template <class Vertex>
+peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::SendReceiceBufferAbstractImplementation(
+  int toRank, int bufferSize
+):
+  _bufferPageSize(bufferSize),
+  _numberOfElementsSent(0),
+  _sendBufferRequestHandle(0),
+  _receiveBufferRequestHandle(0),
+  _sendBuffer(0),
+  _sendBufferCurrentPageElement(0),
+  _destinationNodeNumber(toRank),
+  _currentReceiveBuffer(0),
+  _sizeOfDeployBuffer(0),
+  _sizeOfReceiveBuffer(0),
+  _currentReceiveBufferPage(0),
+  _sendDataWaitTime(0) {
+  assertion( bufferSize > 0 );
+  assertion( _bufferPageSize > 0 );
+  _sendBuffer = new typename Vertex::MPIDatatypeContainer[bufferSize];
+
+  #ifdef Debug
+  std::ostringstream out;
+  out << "buffer size for destination node " << _destinationNodeNumber
+      << " max. " << bufferSize << " messages (min. "
+      << sizeof( Vertex ) << " byte(s), max. "
+      << sizeof( Vertex )*bufferSize << " byte(s))";
+  _log.debug("SendReceiceBufferAbstractImplementation<VertexDoF>(...)", out.str() );
+  #endif
+}
+
+
+//template <class Vertex>
+//bool peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::isEmpty() const {
+//  return (_sendBufferRequestHandle==0) &&
+//         (_receiveBufferRequestHandle==0) &&
+//         (_sendBufferCurrentPageElement==0) &&
+//         (_sizeOfReceiveBuffer==0) &&
+//         (_currentDeployBufferElement < 0 ) &&
+//         (_currentDeployBufferPage <= 0);
+//}
+
+
+template <class Vertex>
+peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::~SendReceiceBufferAbstractImplementation() {
+  assertion1(
+    _sendBufferRequestHandle==0,
+    tarch::parallel::Node::getInstance().getRank()
+  );
+  assertion1(
+    _receiveBufferRequestHandle==0,
+    tarch::parallel::Node::getInstance().getRank()
+  );
+  if ( _sendBuffer != 0 ) {
+    delete[] _sendBuffer;
+  }
+  int _numberOfReceivePages = _receiveBuffer[0].size();
+  for (int i=0; i<_numberOfReceivePages; i++) {
+    delete[] _receiveBuffer[0].at(i);
+    delete[] _receiveBuffer[1].at(i);
+  }
+}
+
+
+//template <class Vertex>
+//void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::createStatisticsLogEntries() {
+//  //tarch::utils::XMLStatisticsBuilder statistics( _log, "createStatisticsLogEntries()", "send-receive-buffer", false );
+//  //statistics.addAttribute( "destination", static_cast<int>(_destinationNodeNumber) );
+//  //statistics.addAttribute( "exchanged-messages", static_cast<int>(_sizeOfDeployBuffer) );
+//  //statistics.addAttribute( "accumulated-send-process-delay", static_cast<int>(_sendDataWaitTime) );
+//
+//  _sendDataWaitTime=0;
+//}
+
+
+//template <class Vertex>
+//std::string peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::toShortDescription() const {
+//  std::ostringstream result;
+//
+//  result << "("
+//         << "dest:" << _destinationNodeNumber
+//         << ",sent:" << _numberOfElementsSent;
+//
+//  if (_sendBufferRequestHandle==0) {
+//    result << ",no-send";
+//  }
+//  else {
+//  result << ",send-pending";
+//  }
+//
+//  if (_receiveBufferRequestHandle==0) {
+//    result << ",no-recv";
+//  }
+//  else {
+//    result << ",recv-pending";
+//  }
+//
+//  result << ",depl-buffer:" << _sizeOfDeployBuffer
+//         << ",recv-buffer:" << _sizeOfReceiveBuffer
+//         << ")";
+//
+//  return result.str();
+//}
+
+
+//template <class Vertex>
+//void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::logDeployBuffer() const {
+//  int entriesToBeLogged       = _sizeOfDeployBuffer;
+//  int currentDeployBufferPage = 0;
+//  logDebug( "logDeployBuffer()", "entriesToBeLogged:" << entriesToBeLogged);
+//  while (entriesToBeLogged>0) {
+//    int entriesOnThisPage =  entriesToBeLogged > _bufferPageSize? _bufferPageSize:entriesToBeLogged;
+//    entriesToBeLogged     -= _bufferPageSize;
+//    for (int i=0; i<entriesOnThisPage; i++) {
+//      logDebug( "logDeployBuffer()", "element (" << currentDeployBufferPage << "," <<  i << "): " << _receiveBuffer[1-_currentReceiveBuffer].at(currentDeployBufferPage)[i].toString() );
+//    }
+//    currentDeployBufferPage++;
+//  }
+//}
+
+
+//template <class Vertex>
+//void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::logReceiveBuffer() const {
+//  int entriesToBeLogged       = (_sizeOfReceiveBuffer<_numberOfElementsSent || _numberOfElementsSent==0) ? _sizeOfReceiveBuffer : _numberOfElementsSent;
+//  logDebug( "logReceiveBuffer()", "entriesToBeLogged:" << entriesToBeLogged);
+//  int currentReceiveBufferPage = 0;
+//  while (entriesToBeLogged>0) {
+//    int entriesOnThisPage =  entriesToBeLogged > _bufferPageSize? _bufferPageSize:entriesToBeLogged;
+//    entriesToBeLogged     -= _bufferPageSize;
+//    for (int i=0; i<entriesOnThisPage; i++) {
+//      logDebug( "logReceiveBuffer()", "element (" << currentReceiveBufferPage << "," <<  i << "): " << _receiveBuffer[_currentReceiveBuffer].at(currentReceiveBufferPage)[i].toString() );
+//    }
+//    currentReceiveBufferPage++;
+//  }
+//}
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::finishOngoingSendTask() {
+  if ( _sendBufferRequestHandle != 0 ) {
+    logDebug( "finishOngoingSendTask()", "start to finish ongoing send task" );
+
+    MPI_Status  status;
+    int         flag = 0;
+    clock_t     timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
+    clock_t     timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
+    clock_t     timeStamp        = clock();
+    bool        triggeredTimeoutWarning = false;
+
+    while (!flag) {
+      int result = MPI_Test( _sendBufferRequestHandle, &flag, &status );
+      if (result!=MPI_SUCCESS) {
+        std::ostringstream msg;
+        msg << "testing for finished send task on node "
+            << " failed: " << tarch::parallel::MPIReturnValueToString(result);
+        _log.error("finishOngoingSendTask()", msg.str() );
+      }
+
+      // deadlock aspect
+      if ( tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() && (clock()>timeOutWarning) && (!triggeredTimeoutWarning)) {
+        tarch::parallel::Node::getInstance().writeTimeOutWarning( "peano::kernel::parallel::SendReceiceBufferAbstractImplementation<VertexDoF>", "finishOngoingSendTask()", _destinationNodeNumber );
+        triggeredTimeoutWarning = true;
+      }
+      if ( tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() && (clock()>timeOutShutdown)) {
+        tarch::parallel::Node::getInstance().triggerDeadlockTimeOut( "peano::kernel::parallel::SendReceiceBufferAbstractImplementation<VertexDoF>", "finishOngoingSendTask()", _destinationNodeNumber );
+      }
+      tarch::parallel::Node::getInstance().receiveDanglingMessages();
+    }
+
+    delete _sendBufferRequestHandle;
+    _sendBufferRequestHandle = 0;
+
+    _sendDataWaitTime += clock() - timeStamp;
+
+    logDebug( "finishOngoingSendTask()", "finished ongoing send task" );
+  }
+}
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::sendVertex( const Vertex& vertex ) {
+  finishOngoingSendTask();
+
+  logTraceInWith1Argument( "sendVertex(Vertex)", vertex );
+
+  #if defined(ParallelExchangePackedRecords)
+  _sendBuffer[_sendBufferCurrentPageElement] = vertex.getVertexData().convert();
+  #else
+  _sendBuffer[_sendBufferCurrentPageElement] = vertex.getVertexData();
+  #endif
+
+  _sendBufferCurrentPageElement++;
+  if (_sendBufferCurrentPageElement == _bufferPageSize) {
+    sendBuffer();
+  }
+
+  logTraceOut( "sendVertex(Vertex)" );
+}
+
+
+
+template<class Vertex>
+void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::addAdditionalReceiveDeployBuffer() {
+  _receiveBuffer[0].push_back(new typename Vertex::MPIDatatypeContainer[_bufferPageSize]);
+  _receiveBuffer[1].push_back(new typename Vertex::MPIDatatypeContainer[_bufferPageSize]);
+}
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::receivePageIfAvailable() {
+  if ( _receiveBufferRequestHandle != 0 ) {
+    int        flag   = 0;
+    MPI_Status status;
+    int        result = MPI_Test(_receiveBufferRequestHandle, &flag, &status);
+    if (result!=MPI_SUCCESS) {
+      std::ostringstream msg;
+      msg << "test for messages on node " << _destinationNodeNumber
+          << " failed: " << tarch::parallel::MPIReturnValueToString(result);
+      _log.error("receivePageIfAvailable()", msg.str() );
+    }
+
+    if (flag) {
+      #ifdef Debug
+      std::ostringstream msg;
+      msg << "finished receive of messages from node " << _destinationNodeNumber
+          << ". messages received: " << _sizeOfReceiveBuffer;
+      _log.debug("receivePageIfAvailable()", msg.str() );
+      #endif
+
+      delete _receiveBufferRequestHandle;
+      _receiveBufferRequestHandle = 0;
+    }
+  }
+
+  if ( _receiveBufferRequestHandle == 0 ) {
+    int        flag   = 0;
+    MPI_Status status;
+    int        result = MPI_Iprobe(
+      _destinationNodeNumber,
+      peano::kernel::parallel::SendReceiveBufferPool::getInstance().getIterationDataTag(),
+      tarch::parallel::Node::getInstance().getCommunicator(), &flag, &status
+    );
+    if (result!=MPI_SUCCESS) {
+      std::ostringstream msg;
+      msg << "probing for messages on node " << _destinationNodeNumber
+          << " failed: " << tarch::parallel::MPIReturnValueToString(result);
+      _log.error("receivePageIfAvailable()", msg.str() );
+    }
+    if (flag) {
+      int messages = 0;
+      MPI_Get_count(&status, Vertex::MPIDatatypeContainer::Datatype, &messages);
+
+      if ( _currentReceiveBufferPage >= static_cast<int>(_receiveBuffer[0].size()) ) {
+        addAdditionalReceiveDeployBuffer();
+      }
+
+      _receiveBufferRequestHandle = new MPI_Request();
+      int result = MPI_Irecv(
+        _receiveBuffer[ _currentReceiveBuffer ].at(_currentReceiveBufferPage),
+        messages,
+        Vertex::MPIDatatypeContainer::Datatype,
+        _destinationNodeNumber,
+        peano::kernel::parallel::SendReceiveBufferPool::getInstance().getIterationDataTag(),
+        tarch::parallel::Node::getInstance().getCommunicator(),
+        _receiveBufferRequestHandle
+      );
+
+      if (result!=MPI_SUCCESS) {
+        std::ostringstream msg;
+        msg << "MPI_Irecv failed: " << tarch::parallel::MPIReturnValueToString(result)
+            << ". Check for buffer overflow on node"
+            << _destinationNodeNumber;
+        _log.error("receivePageIfAvailable()", msg.str() );
+      }
+      #ifdef Debug
+      std::ostringstream out;
+      out << "start to receive " << messages  << " message(s) from node "
+          << _destinationNodeNumber << ". buffer size: " << _bufferPageSize
+          << ", receive buffer page: " << _currentReceiveBufferPage
+          << " (i.e. " << getNumberOfReceivedMessages()
+          << " message(s) received before in receive buffer with "
+          << getSizeOfReceiveBuffer()
+          << " entries, messages sent: "
+          << _numberOfElementsSent << ")";
+      _log.debug("receivePageIfAvailable()", out.str() );
+      #endif
+
+      _sizeOfReceiveBuffer += messages;
+      _currentReceiveBufferPage++;
+    }
+  }
+}
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::releaseSentMessages() {
+  #ifdef Debug
+  std::ostringstream out0;
+  out0 << "start to release messages for node " << _destinationNodeNumber;
+  _log.debug("releaseSentMessages()", out0.str() );
+  #endif
+
+  finishOngoingSendTask();
+
+  if (_sendBufferCurrentPageElement>0) {
+    sendBuffer();
+    finishOngoingSendTask();
+  }
+
+  assertion5(
+    _sendBufferRequestHandle==0,
+    _sizeOfReceiveBuffer, _numberOfElementsSent, _currentReceiveBufferPage,
+    _destinationNodeNumber,
+    tarch::parallel::Node::getInstance().getRank()
+  );
+  assertionEquals5(
+    _sendBufferCurrentPageElement,0,
+    _sizeOfReceiveBuffer, _numberOfElementsSent, _currentReceiveBufferPage,
+    _destinationNodeNumber,
+    tarch::parallel::Node::getInstance().getRank()
+  );
+
+  #ifdef Debug
+  std::ostringstream out1;
+  out1 << "sent all messages belonging to node " << _destinationNodeNumber
+       << " (" << getNumberOfSentMessages() << " message(s))";
+  _log.debug("releaseSentMessages()", out1.str() );
+  #endif
+}
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::releaseReceivedMessages(bool callReceiveDangingMessages) {
+  #ifdef Debug
+  std::ostringstream out0;
+  out0 << "Start to receive outstanding messages (at least "
+       << getNumberOfSentMessages() << " message(s)). Received "
+       << getNumberOfReceivedMessages() << " messages already from node "
+       << _destinationNodeNumber;
+  _log.debug("releaseReceivedMessages()", out0.str() );
+  #endif
+
+  clock_t      timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
+  clock_t      timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
+  bool         triggeredTimeoutWarning = false;
+
+  while (
+    getNumberOfReceivedMessages() < getNumberOfSentMessages() ||
+    _receiveBufferRequestHandle != 0
+  ) {
+    // deadlock aspect
+    if ( tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() && (clock()>timeOutWarning) && (!triggeredTimeoutWarning)) {
+      tarch::parallel::Node::getInstance().writeTimeOutWarning( "peano::kernel::parallel::SendReceiceBufferAbstractImplementation<VertexDoF>", "releaseReceivedMessages()", _destinationNodeNumber );
+      triggeredTimeoutWarning = true;
+    }
+    if ( tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() && (clock()>timeOutShutdown)) {
+      std::ostringstream comment;
+      comment << "sent-elements: "  << getNumberOfSentMessages()
+              << ",recv-dangling: " << callReceiveDangingMessages
+              << ",recv-messages: " << getNumberOfReceivedMessages();
+      tarch::parallel::Node::getInstance().triggerDeadlockTimeOut( "peano::kernel::parallel::SendReceiceBufferAbstractImplementation<VertexDoF>", "releaseReceivedMessages()", _destinationNodeNumber, comment.str() );
+    }
+    receivePageIfAvailable();
+    if (callReceiveDangingMessages) {
+      tarch::parallel::Node::getInstance().receiveDanglingMessages();
+    }
+  }
+
+  switchReceiveAndDeployBuffer();
+
+  #ifdef Debug
+  std::ostringstream out2;
+  out2 << "received all messages from node " << _destinationNodeNumber
+       << ". Switched deploy and receive buffer";
+  _log.debug("releaseReceivedMessages()", out2.str() );
+  #endif
+}
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::switchReceiveAndDeployBuffer() {
+  logTraceInWith4Arguments(
+    "switchReceiveAndDeployBuffer()",
+    _destinationNodeNumber, _sizeOfReceiveBuffer,     _currentReceiveBufferPage,
+    _bufferPageSize
+  );
+
+  updateDeployCounterDueToSwitchReceiveAndDeployBuffer();
+
+  while (_receiveBufferRequestHandle!=0) {
+    receivePageIfAvailable();
+  }
+  assertion5(
+    _receiveBufferRequestHandle==0,
+    _sizeOfReceiveBuffer, _numberOfElementsSent, _currentReceiveBufferPage,
+    _destinationNodeNumber,
+    tarch::parallel::Node::getInstance().getRank()
+  );
+
+  if (_numberOfElementsSent==0 && _sizeOfReceiveBuffer==0) return;
+
+  int numberOfTransferredReceivePages = _numberOfElementsSent / _bufferPageSize;
+  if (numberOfTransferredReceivePages * _bufferPageSize < _numberOfElementsSent) {
+    numberOfTransferredReceivePages++;
+  }
+
+  int copyToDeployBufferPage = 0;
+  int numberOfElementsToCopy = _sizeOfReceiveBuffer - _numberOfElementsSent;
+  assertion8(
+    (numberOfElementsToCopy==0) || (numberOfTransferredReceivePages<_currentReceiveBufferPage),
+    _sizeOfReceiveBuffer, _numberOfElementsSent, numberOfElementsToCopy,
+    numberOfTransferredReceivePages, _currentReceiveBufferPage,
+    (_receiveBufferRequestHandle==0),
+    _destinationNodeNumber,
+    tarch::parallel::Node::getInstance().getRank()
+  );
+
+
+  for (int currentPage = numberOfTransferredReceivePages; currentPage < _currentReceiveBufferPage; currentPage++) {
+    assertion2(
+      numberOfElementsToCopy>=0,
+      numberOfElementsToCopy, tarch::parallel::Node::getInstance().getRank()
+    );
+    int numberOfElementsToCopyOnThisPage = numberOfElementsToCopy;
+    if (numberOfElementsToCopyOnThisPage>_bufferPageSize) {
+      numberOfElementsToCopyOnThisPage = _bufferPageSize;
+    }
+    numberOfElementsToCopy -= numberOfElementsToCopyOnThisPage;
+    std::memcpy(
+      _receiveBuffer[1-_currentReceiveBuffer].at(copyToDeployBufferPage),
+      _receiveBuffer[_currentReceiveBuffer].at(currentPage),
+      numberOfElementsToCopyOnThisPage * sizeof(typename Vertex::MPIDatatypeContainer)
+    );
+    copyToDeployBufferPage++;
+  }
+  assertionEquals6(
+    numberOfElementsToCopy,0,
+    _sizeOfReceiveBuffer, _numberOfElementsSent,
+    numberOfTransferredReceivePages, _currentReceiveBufferPage, _destinationNodeNumber,
+    tarch::parallel::Node::getInstance().getRank()
+  );
+
+  _currentReceiveBufferPage = copyToDeployBufferPage;
+  _sizeOfReceiveBuffer      = _sizeOfReceiveBuffer - _numberOfElementsSent;
+  _numberOfElementsSent     = 0;
+  _currentReceiveBuffer     = 1-_currentReceiveBuffer;
+
+  assertion3(
+    _currentReceiveBufferPage != 0 ||
+    _sizeOfReceiveBuffer      == 0,
+    _currentReceiveBufferPage,
+    _sizeOfReceiveBuffer,
+    tarch::parallel::Node::getInstance().getRank()
+  );
+
+  logDebug("switchReceiveAndDeployBuffer()", "all messages moved from receive to deploy buffer: " << (_sizeOfReceiveBuffer==0) );
+  logTraceOutWith5Arguments(
+    "switchReceiveAndDeployBuffer()",
+    _destinationNodeNumber, _sizeOfReceiveBuffer,     _currentReceiveBufferPage,
+    _sizeOfDeployBuffer,    _bufferPageSize
+  );
+}
+
+
+template <class Vertex>
+void peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::sendBuffer() {
+  assertion( _sendBufferCurrentPageElement > 0 );
+  assertion( _sendBufferCurrentPageElement <= _bufferPageSize );
+  assertion( _sendBufferRequestHandle==0 );
+
+  _sendBufferRequestHandle = new MPI_Request();
+
+  assertion( _sendBufferRequestHandle!=0 );
+
+  int result = 0;
+  result =
+  MPI_Isend(
+    _sendBuffer,
+    _sendBufferCurrentPageElement,
+    Vertex::MPIDatatypeContainer::Datatype,
+    _destinationNodeNumber,
+    peano::kernel::parallel::SendReceiveBufferPool::getInstance().getIterationDataTag(),
+    tarch::parallel::Node::getInstance().getCommunicator(),
+    _sendBufferRequestHandle
+  );
+
+  if (result!=MPI_SUCCESS) {
+    std::ostringstream msg;
+    msg << "MPI_Isend failed: " << tarch::parallel::MPIReturnValueToString(result)
+        << ". Check for buffer overflow on node"
+        << _destinationNodeNumber;
+    _log.error("sendBuffer()", msg.str() );
+  }
+
+  #ifdef Debug
+  std::ostringstream msg;
+  msg << "sent " << _sendBufferCurrentPageElement << " message(s) to node "
+      << _destinationNodeNumber << ", buffer size: " << _bufferPageSize
+      << ", messages sent up to now: " << _numberOfElementsSent
+      << ". Number of elements received already: "
+      << getNumberOfReceivedMessages()
+      << ". First message in queue: " << _sendBuffer[0].toString();
+  _log.debug( "sendBuffer()", msg.str() );
+  #endif
+
+  _numberOfElementsSent+=_sendBufferCurrentPageElement;
+  _sendBufferCurrentPageElement = 0;
+}
+
+
+template <class Vertex>
+int peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::getSizeOfReceiveBuffer() const {
+  return _currentReceiveBufferPage*_bufferPageSize;
+}
+
+
+template <class Vertex>
+Vertex peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::getVertex() {
+  logTraceIn( "getVertex()");
+  moveDeployBufferPointerDueToGetVertex();
+  logDebug( "getVertex()", "current-receive-buffer:" << _currentReceiveBuffer << ",_current-deploy-buffer-page=" << _currentDeployBufferPage << ",current-deploy-buffer-element=" << _currentDeployBufferElement);
+
+  assertion3(
+    _currentReceiveBuffer >= 0 &&
+    _currentReceiveBuffer <= 1,
+    _currentDeployBufferElement,
+    tarch::parallel::Node::getInstance().getRank(),
+    _destinationNodeNumber
+  );
+  assertion4(
+    _currentDeployBufferPage>=0 &&
+    _currentDeployBufferPage<static_cast<int>(_receiveBuffer[ 1-_currentReceiveBuffer ].size()),
+    _currentDeployBufferPage,
+    _receiveBuffer[ 1-_currentReceiveBuffer ].size(),
+    tarch::parallel::Node::getInstance().getRank(),
+    _destinationNodeNumber
+  );
+  assertion4(
+    _currentDeployBufferElement>=0 &&
+    _currentDeployBufferElement<_bufferPageSize,
+    _currentDeployBufferElement,
+    _bufferPageSize,
+    tarch::parallel::Node::getInstance().getRank(),
+    _destinationNodeNumber
+  );
+
+  Vertex result;
+  typename Vertex::MPIDatatypeContainer receivedData = _receiveBuffer[ 1-_currentReceiveBuffer ].at(_currentDeployBufferPage)[_currentDeployBufferElement];
+  #if defined(ParallelExchangePackedRecords)
+  result.setVertexData( receivedData.convert() );
+  #else
+  result.setVertexData( receivedData );
+  #endif
+
+  logTraceOutWith1Argument( "getVertex()", result.toString() );
+
+  return result;
+}
+
+
+template <class Vertex>
+int peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::getNumberOfReceivedMessages() const {
+  return _sizeOfReceiveBuffer;
+}
+
+
+template <class Vertex>
+int peano::kernel::parallel::SendReceiceBufferAbstractImplementation<Vertex>::getNumberOfSentMessages() const {
+  return _numberOfElementsSent;
+}

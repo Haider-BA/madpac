@@ -1,0 +1,46 @@
+/**
+
+ @dir "puregrid"
+
+ The puregrid application is, besides some logging and parallelisation 
+ configuration tags, a component as-is, i.e. as it is created by RaPeP.
+ It just creates one adaptive grid for a (hyper-)sphere, and, thus, might 
+ be a perfect starting point to get familiar with Peano from a computer 
+ science point of view. However, let me point out that the poisson component 
+ provides a worked-out tutorial on Peano.
+
+ @image html puregrid.png
+ 
+ !!! Regeneration
+ 
+ To regenerate the glue code, type in 
+ \code
+ java -classpath releases/tools/DaStGen.jar:releases/tools/PeProt.jar de.tum.peano.peprot.PeProt src/peano/applications/puregrid/puregrid.peano-specification src peprot/templates src/peano/kernel all
+ java -classpath releases/tools/DaStGen.jar:releases/tools/PeProt.jar de.tum.peano.peprot.PeProt src/peano/applications/puregrid/grid-construction-movie.peano-specification src peprot/templates src/peano/kernel spacetreegrid
+ \endcode
+  
+ !!! Data structures
+ 
+ The solver is based on the following DaStGen models:
+
+ !! Cell 
+ 
+ \code
+   \include dastgen/Cell.def
+ \endcode
+ 
+ !! State 
+ 
+ \code
+   \include dastgen/State.def
+ \endcode
+
+ !! Vertex 
+ 
+ \code
+   \include dastgen/Vertex.def
+ \endcode
+ 
+ */
+ 
+ 

@@ -1,0 +1,77 @@
+template <class Cell>
+peano::kernel::stacks::CellDynamicStack<Cell>::CellDynamicStack():
+  _inputStackNumber(0) {
+}
+
+
+template <class Cell>
+peano::kernel::stacks::CellDynamicStack<Cell>::~CellDynamicStack() {
+}
+
+
+template <class Cell>
+Cell peano::kernel::stacks::CellDynamicStack<Cell>::pop(int stackNumber) {
+  assertionEquals(stackNumber, peano::kernel::stacks::Constants::InOutStack);
+  assertion1(!_stack[_inputStackNumber].isEmpty(), stackNumber);
+  return _stack[_inputStackNumber].pop();
+}
+
+
+template <class Cell>
+void peano::kernel::stacks::CellDynamicStack<Cell>::push( int stackNumber, const Cell& cell ) {
+  assertionEquals(stackNumber, peano::kernel::stacks::Constants::InOutStack);
+  _stack[1-_inputStackNumber].push(cell.getRecords());
+}
+
+
+template <class Cell>
+int peano::kernel::stacks::CellDynamicStack<Cell>::sizeOfInputStack() const {
+  return _stack[_inputStackNumber].size();
+}
+
+
+template <class Cell>
+int peano::kernel::stacks::CellDynamicStack<Cell>::sizeOfOutputStack() const {
+  return _stack[1-_inputStackNumber].size();
+}
+
+
+template <class Cell>
+bool peano::kernel::stacks::CellDynamicStack<Cell>::isInputStackEmpty() const {
+  return _stack[_inputStackNumber].isEmpty();
+}
+
+
+template <class Cell>
+bool peano::kernel::stacks::CellDynamicStack<Cell>::isOutputStackEmpty() const {
+  return _stack[1-_inputStackNumber].isEmpty();
+}
+
+
+template <class Cell>
+void peano::kernel::stacks::CellDynamicStack<Cell>::clear() {
+  _stack[_inputStackNumber].clear();
+  _stack[1-_inputStackNumber].clear();
+}
+
+
+template <class Cell>
+void peano::kernel::stacks::CellDynamicStack<Cell>::flipInputAndOutputStack() {
+  assertion( isInputStackEmpty() );
+  _inputStackNumber = 1-_inputStackNumber;
+}
+
+
+template <class Cell>
+template <class Vertex>
+void peano::kernel::stacks::CellDynamicStack<Cell>::writeToCheckpoint( peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) const {
+  assertionMsg( false, "not implemented yet" );
+}
+
+
+
+template <class Cell>
+template <class Vertex>
+void peano::kernel::stacks::CellDynamicStack<Cell>::readFromCheckpoint( const peano::kernel::gridinterface::Checkpoint<Vertex,Cell>& checkpoint ) {
+  assertionMsg( false, "not implemented yet" );
+}

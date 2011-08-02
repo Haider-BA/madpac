@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+
+
+  <run-heatEquationTimeStepping-on-spacetree-grid     
+    initial-time-step-size="1.0/100" 
+    solver="V-cycle"
+    solver-accuracy="1e-10"
+    number-of-snapshots-per-sequence="10" number-of-sequences="1" relaxation-factor="0.8" 
+    minimal-mesh-size="0.34"
+    maximal-mesh-size="0.34"
+    pre-smoothing-steps="2"
+    post-smoothing-steps="2"
+    >
+  
+    <log-filter target="debug" switch="off" component="tarch" />
+    <log-filter target="debug" switch="off" component="peano::kernel" />
+    <log-filter target="debug" switch="off" component="peano::geometry" />
+    <log-filter target="debug" switch="off" component="peano::kernel::regulargrid::loops" />
+    <log-filter target="debug" switch="off" component="peano::kernel::regulargrid::GridContainer" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping::adapters" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping::mappings" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping::mappings::SpacetreeGrid2PlotSolution" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping::mappings::SpacetreeGrid2SetupExperiment" />
+
+    <fadingSinus />
+  </run-heatEquationTimeStepping-on-spacetree-grid>
+
+
+<!--
+
+  <run-heatEquationTimeStepping-on-spacetree-grid     
+    initial-time-step-size="1.0/100" 
+    solver="implicit-Euler-with-Jacobi"
+    solver-accuracy="1e-4"
+    number-of-snapshots-per-sequence="10" number-of-sequences="1" relaxation-factor="0.8" 
+    minimal-mesh-size="0.2"
+    maximal-mesh-size="0.2"
+    >
+  
+    <log-filter target="debug" switch="off" component="tarch" />
+    <log-filter target="debug" switch="off" component="peano::kernel" />
+    <log-filter target="debug" switch="off" component="peano::geometry" />
+    <log-filter target="debug" switch="off" component="peano::kernel::regulargrid::loops" />
+    <log-filter target="debug" switch="off" component="peano::kernel::regulargrid::GridContainer" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping::adapters" />
+    <log-filter target="debug" switch="off" component="peano::applications::heatequation::timestepping::mappings" />
+
+    <fadingSinus />
+  </run-heatEquationTimeStepping-on-spacetree-grid>
+
+
+-->
+</peano-configuration>

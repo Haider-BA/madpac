@@ -1,0 +1,72 @@
+// Copyright (C) 2009 Technische Universitaet Muenchen
+// This file is part of the Peano project. For conditions of distribution and
+// use, please see the copyright notice at www5.in.tum.de/peano
+
+package peano { 
+  package applications { 
+    package faxen { 
+      package lbf {
+      package cca {
+        package ports {
+          interface LBFBatchJob {
+            switchToInitialize();
+            switchToInitializeAndSetBoundary();
+            switchToPlotGrid();
+            switchToControlTimeStep();
+            switchToSetVelocitiesBoundary();
+            switchToSetScenarioBoundary();
+            switchToComputeVelocitiesDerivatives();
+            switchToComputeRightHandSide();
+            switchToSetZeroPressureBoundary();
+            switchToSetPressureBoundary();
+            switchToSORStep();
+            switchToComputeResidualNorm();
+            switchToComputeVelocities();
+            switchToPlotSolution();
+            switchToMoveParticles();
+            switchToSwitchFromLB2NSE();
+            switchToExtractDataNSE2LB();
+            switchToCorrectDensityAndComputeEqPDF4LB();
+            switchToRegularBlockSolverAdapter();
+            switchToInitialiseSpacetreeGridAdapter();
+            switchToBlockCCAOutputAdapter();
+            switchToDynamicRefinementForSpacetreeGridAdapter();
+            switchToBlockVTKOutputAdapter();
+            switchToRegularBlockSolverAndVTKOutputAdapter();
+            switchToTraceNSEData();
+            switchToTraceLBData();
+
+            iterate();    
+
+            /**
+             * @todo Add your own operations here
+             */
+          }
+        }
+        
+          
+        class LBFBatchJobForRegularGrid
+          implements-all 
+            peano.applications.faxen.lbf.cca.ports.LBFBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+        
+          
+        class LBFBatchJobForSpacetreeGrid
+          implements-all 
+            peano.applications.faxen.lbf.cca.ports.LBFBatchJob,
+            peano.integration.cca.ports.grid.Grid
+          uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+        {}
+      }
+}
+}
+}
+}

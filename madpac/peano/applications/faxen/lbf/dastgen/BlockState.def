@@ -1,0 +1,171 @@
+#include "peano/applications/latticeboltzmann/LatticeBoltzmannDefinitions.h"
+#include "peano/utils/Dimensions.h"
+
+Packed-Type: short int;
+/**
+ * Lattice Boltzmann component related constants
+ */
+Constant: LB_CURRENT_DIR;
+Constant: DIMENSIONS;
+Constant: LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS;
+
+class peano::applications::faxen::lbf::dastgen::BlockState {
+
+ /**
+  * State's data for the Faxen component
+  */
+  
+  /**
+  * Run only NSE solver?
+  */
+  persistent bool only_nse;
+
+ /**
+  * Geometry data:
+  * domain size in x direction;
+  * domain size in y direction;
+  * length of one cell in x direction;
+  * length of one cell in y direction.
+  */
+  persistent double xlength;
+  persistent double ylength;
+  persistent double delx;
+  persistent double dely;			
+  
+  /**
+  * Time-stepping data:
+  * current time value;
+  * final time;
+  * time step size;
+  * safety factor for time step control.
+  */
+  persistent double t;
+  persistent double t_end;
+  persistent double delt;
+  persistent double ftau;
+  persistent double vis_delt;
+  
+  /**
+  * Pressure-iteration data:
+  * maximal number of pressure iterations in one time step;
+  * norm of pressure equation residual;
+  * stopping tolerance for pressure iteration;
+  * relaxation parameter for SOR iteration;
+  * upwind differencing factor.
+  */
+  persistent int itermax;
+  persistent double res;
+  persistent double eps;
+  persistent double omega;
+  persistent double fgamma;
+  
+  /**
+  * Problem-dependent data:
+  * Reynolds number;
+  * body forces (gravity);
+  * initial values for velocities and pressure;
+  */
+  persistent double Re;
+  persistent double GX;
+  persistent double GY;
+  persistent double UI;
+  persistent double VI;
+  persistent double PI;
+  
+  /**
+  * Auxiliary variable to keep average density extracted from NSE staggered grid;
+  * in the mapping CorrectDensity4LB, this variable is used to get corrected densities.
+  */
+  persistent double avrExtractedDensity;
+  
+  /**
+   * If we plot multiple files, the solver enumerates them one by one so no old
+   * data is overwritten. This counter is holds by fileNumber.
+   */
+  persistent parallelise int fileNumber;
+  
+  /**
+   * State's data for the Lattice Boltzmann component
+   */
+
+// ------------------ grid and discretisation parameters -----------------------------------
+
+  // reference level of simulation
+  persistent parallelise int level;
+  
+  // total number of grid levels
+  persistent parallelise int numberLevels;
+
+  // meshsize on the current level
+  persistent parallelise double dx;
+  
+  // timestep size of this level
+  persistent parallelise double dt;
+  
+  // ------------------- scenario parameters --------------------------------------
+  
+  // total number of timesteps
+  persistent parallelise int numberTimesteps;
+  
+  // fluid density
+  persistent parallelise double density;
+  
+  // trigger reflagging for dynamically changing geometries
+  persistent parallelise short int dynamicGeometry;
+  
+  // trigger force computations
+  persistent parallelise short int computeForces;
+  
+  
+  // --------------- collision model parameters ------------------------
+  
+  persistent parallelise short int collisionModelId[LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS];
+  
+  // kinematic viscosity (in lattice scaling)
+  persistent parallelise double viscosityL;
+  
+  // bulk viscosity (in lattice scaling)
+  persistent parallelise double bulkViscosityL;
+  
+  // single relaxation time
+  persistent parallelise double tau;
+
+  // dimensionless Boltzmann's constant
+  persistent parallelise double boltzmannConstant;
+  
+  // factor used for thermal fluctuations
+  persistent parallelise double mu;
+  
+  // relaxation parameters for fluctuating LB model
+  persistent parallelise double gamma[LB_CURRENT_DIR];
+  
+  // relaxation parameters for MRT model by d'Humieres
+  persistent parallelise double mrtHumieresGamma[LB_CURRENT_DIR];
+  
+  // ---------------------- plotter parameters --------------------------
+  persistent parallelise int timestep;
+  persistent parallelise short int plotVtk;
+  persistent parallelise int numberTimestepsPerPlotting;
+  persistent signed char vtkFilename[128];
+  
+  // ----------------- performance measurement --------------------------
+  persistent parallelise short int measurePerformance;
+  persistent parallelise int localNumberOfCells;
+  #ifdef Parallel
+  persistent parallelise int globalNumberOfCells;
+  persistent parallelise double globalCpuTime;
+  #endif
+  
+  
+  
+  // ------------ TODO THESE ARE ONLY NEEDED FOR THE SPACETREE GRID!!! ----  
+  persistent int lastLevel;
+  persistent int currentLevel;
+  persistent int nextLevel;
+  
+  persistent short int geometryChanged;
+   
+  persistent int cellCounter;
+};
+
+

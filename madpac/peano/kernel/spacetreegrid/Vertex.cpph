@@ -1,0 +1,348 @@
+#ifdef Parallel
+#include "tarch/parallel/Node.h"
+#endif
+
+
+template <class VertexData>
+peano::kernel::spacetreegrid::Vertex<VertexData>::Vertex():
+  _vertexData() {
+  _vertexData.setInsideOutsideDomain(Records::Outside);
+  _vertexData.setIsHangingNode(true);
+  _vertexData.setMaximumSubtreeHeight(-1);
+  _vertexData.setRefinementControl(Records::Unrefined);
+  _vertexData.setNumberOfAdjacentRefinedCells(0);
+}
+
+
+template <class VertexData>
+peano::kernel::spacetreegrid::Vertex<VertexData>::Vertex( const PersistentVertex& argument ):
+  _vertexData( (typename VertexData::Packed(argument)).convert() ) {
+}
+
+
+template <class VertexData>
+peano::kernel::spacetreegrid::Vertex<VertexData>::~Vertex() {
+}
+
+
+template <class VertexData>
+std::string peano::kernel::spacetreegrid::Vertex<VertexData>::toString() const {
+  return _vertexData.toString();
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::toString( std::ostream& out ) const {
+  _vertexData.toString(out);
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::switchToNonhangingNode() {
+  assertion1( _vertexData.getRefinementControl()==VertexData::Unrefined, _vertexData.toString() );
+
+  _vertexData.setIsHangingNode(false);
+  _vertexData.setMaximumSubtreeHeight(0);
+}
+
+
+template <class VertexData>
+std::ostream& operator<<(std::ostream& out, const peano::kernel::spacetreegrid::Vertex<VertexData>& attr) {
+  attr.toString(out);
+  return out;
+}
+
+
+template <class VertexData>
+typename peano::kernel::spacetreegrid::Vertex<VertexData>::PersistentVertex
+peano::kernel::spacetreegrid::Vertex<VertexData>::getRecords() const {
+  #if defined(StoreOnlyPersistentAttributes) && defined(PackedRecords)
+  return _vertexData.convert().getPersistentRecords();
+  #endif
+  #if !defined(StoreOnlyPersistentAttributes) && defined(PackedRecords)
+  return _vertexData.convert();
+  #endif
+  #if defined(StoreOnlyPersistentAttributes) && !defined(PackedRecords)
+  return _vertexData.getPersistentRecords();
+  #endif
+  #if !defined(StoreOnlyPersistentAttributes) && !defined(PackedRecords)
+  return _vertexData;
+  #endif
+}
+
+
+#ifdef Debug
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::setPosition(
+  const tarch::la::Vector<DIMENSIONS,double>&  x,
+  int                                          level
+) {
+  _vertexData.setX(x);
+  _vertexData.setLevel(level);
+}
+
+
+template <class VertexData>
+int peano::kernel::spacetreegrid::Vertex<VertexData>::getLevel() const {
+  return _vertexData.getLevel();
+}
+#endif
+
+
+template <class VertexData>
+bool peano::kernel::spacetreegrid::Vertex<VertexData>::isOutside() const {
+  return _vertexData.getInsideOutsideDomain() == Records::Outside;
+}
+
+
+template <class VertexData>
+bool peano::kernel::spacetreegrid::Vertex<VertexData>::isBoundary() const {
+  return _vertexData.getInsideOutsideDomain() == Records::Boundary;
+}
+
+
+template <class VertexData>
+bool peano::kernel::spacetreegrid::Vertex<VertexData>::isInside() const {
+  return _vertexData.getInsideOutsideDomain() == Records::Inside;
+}
+
+
+template <class VertexData>
+bool peano::kernel::spacetreegrid::Vertex<VertexData>::switchRefinementTriggeredToRefining() {
+  bool doTransition = _vertexData.getRefinementControl()==VertexData::RefinementTriggered;
+#ifdef Parallel
+  assertionMsg( false, "adjacency lists not taken into account yet" );
+#endif
+  if( doTransition ) {
+    _vertexData.setRefinementControl( VertexData::Refining );
+  }
+  return doTransition;
+}
+
+
+template <class VertexData>
+bool peano::kernel::spacetreegrid::Vertex<VertexData>::switchEraseTriggeredToErasing() {
+  bool doTransition = _vertexData.getRefinementControl()==VertexData::EraseTriggered;
+#ifdef Parallel
+  assertionMsg( false, "adjacency lists not taken into account yet" );
+#endif
+  if ( doTransition ) {
+    _vertexData.setRefinementControl( VertexData::Erasing );
+  }
+  return doTransition;
+}
+
+
+template <class VertexData>
+bool peano::kernel::spacetreegrid::Vertex<VertexData>::isHangingNode() const {
+  return _vertexData.getIsHangingNode();
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::switchToInside() {
+  // well we cannot be sure that the vertex really is a boundary, as it might
+  // also be just initialised.
+  assertion1(
+    _vertexData.getInsideOutsideDomain() == Records::Boundary ||
+    _vertexData.getInsideOutsideDomain() == Records::Outside,
+    *this
+  );
+  _vertexData.setInsideOutsideDomain(Records::Inside);
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::updateTransientRefinementFlagsBeforeVertexIsStoredToOutputStack() {
+  if (_vertexData.getRefinementControl()==VertexData::Refining) {
+    _vertexData.setRefinementControl( VertexData::Refined );
+  }
+  if (_vertexData.getRefinementControl()==VertexData::Erasing) {
+    _vertexData.setRefinementControl( VertexData::Unrefined );
+  }
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::refine() {
+  assertion1( !_vertexData.getIsHangingNode(), toString() );
+  assertion1( !_vertexData.getRefinementControl()==VertexData::Refined, toString() );
+
+  if (_vertexData.getRefinementControl()==VertexData::Unrefined) {
+	  _vertexData.setRefinementControl(VertexData::RefinementTriggered);
+	  _vertexData.setMaximumSubtreeHeight(-1);
+  }
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::erase() {
+  assertion1( !_vertexData.getIsHangingNode(), toString() );
+
+  if (_vertexData.getRefinementControl()==VertexData::Refined) {
+	_vertexData.setRefinementControl(VertexData::EraseTriggered);
+	_vertexData.setMaximumSubtreeHeight(-1);
+  }
+}
+
+
+template <class VertexData>
+typename VertexData::RefinementControl peano::kernel::spacetreegrid::Vertex<VertexData>::getRefinementControl() const {
+  return _vertexData.getRefinementControl();
+}
+
+
+template <class VertexData>
+int peano::kernel::spacetreegrid::Vertex<VertexData>::getMaximumSubtreeHeight() const {
+  return _vertexData.getMaximumSubtreeHeight();
+}
+
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::switchToBoundary() {
+  _vertexData.setInsideOutsideDomain(Records::Boundary);
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::switchToOutside() {
+  assertion1( _vertexData.getInsideOutsideDomain() != Records::Inside, *this );
+  _vertexData.setInsideOutsideDomain(Records::Outside);
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::clearCounterOfAdjacentRefinedCells() {
+  _vertexData.setNumberOfAdjacentRefinedCells(0);
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::incCounterOfAdjacentRefinedCells() {
+  _vertexData.setNumberOfAdjacentRefinedCells(_vertexData.getNumberOfAdjacentRefinedCells()+1);
+  assertion1( !isInside() || _vertexData.getNumberOfAdjacentRefinedCells()<=TWO_POWER_D, toString() );
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::refineVertexIfItHasOnlyRefinedAdjacentCells() {
+  if (
+    isInside() &&
+    _vertexData.getNumberOfAdjacentRefinedCells()==TWO_POWER_D &&
+    getRefinementControl() == Vertex::Records::Unrefined
+  ) {
+    refine();
+  }
+}
+
+
+#ifdef Debug
+template <class VertexData>
+tarch::la::Vector<DIMENSIONS,double> peano::kernel::spacetreegrid::Vertex<VertexData>::getX() const {
+  return _vertexData.getX();
+}
+#endif
+
+
+#ifdef Parallel
+template <class VertexData>
+std::set<int> peano::kernel::spacetreegrid::Vertex<VertexData>::getAdjacentRemoteRanks() const {
+  assertion( belongsToParallelBoundary() );
+
+  std::set<int> result;
+  for (int i=0; i<TWO_POWER_D; i++) {
+    if (
+      _vertexData.getAdjacentRanks(i) != tarch::parallel::Node::getInstance().getRank() &&
+      _vertexData.getAdjacentRanks(i) != -1
+    ) {
+      result.insert(_vertexData.getAdjacentRanks(i));
+    }
+  }
+  return result;
+}
+
+
+template <class VertexData>
+bool peano::kernel::spacetreegrid::Vertex<VertexData>::belongsToParallelBoundary() const {
+  for (int i=0; i<TWO_POWER_D; i++) {
+    if (
+      _vertexData.getAdjacentRanks(i) != tarch::parallel::Node::getInstance().getRank() &&
+      _vertexData.getAdjacentRanks(i) != -1
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::initDatatype() {
+  if (MPIDatatypeContainer::Datatype==0) {
+    MPIDatatypeContainer::initDatatype();
+  }
+
+  assertion(MPIDatatypeContainer::Datatype!=0);
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::send(int destination, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  _vertexData.convert().send(destination,tag);
+  #else
+  _vertexData.send(destination,tag);
+  #endif
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::receive(int source, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  MPIDatatypeContainer receivedMessage;
+  receivedMessage.receive(source,tag);
+  _vertexData = receivedMessage.convert();
+  #else
+  _vertexData.receive(source,tag);
+  #endif
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::prepareSendToNeighbour() {
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::mergeWithNeighbour(const peano::kernel::spacetreegrid::Vertex<VertexData>& neighbour, int fromRank) {
+  #ifdef Debug
+  assertionEquals3(_vertexData.getX(), neighbour._vertexData.getX(), toString(), neighbour.toString(), tarch::parallel::Node::getInstance().getRank());
+  #endif
+  assertionEquals3(_vertexData.getInsideOutsideDomain(), neighbour._vertexData.getInsideOutsideDomain(), toString(), neighbour.toString(), tarch::parallel::Node::getInstance().getRank());
+  assertionEquals4(_vertexData.getAdjacentRanks(), neighbour._vertexData.getAdjacentRanks(), "joins are not supported yet", toString(), neighbour.toString(), tarch::parallel::Node::getInstance().getRank());
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::setAdjacentRanks( const tarch::la::Vector<TWO_POWER_D,int>& ranks ) {
+  _vertexData.setAdjacentRanks( ranks );
+}
+
+
+template <class VertexData>
+void peano::kernel::spacetreegrid::Vertex<VertexData>::setVertexData(const VertexData& vertexData) {
+  _vertexData = vertexData;
+}
+
+
+template <class VertexData>
+VertexData peano::kernel::spacetreegrid::Vertex<VertexData>::getVertexData() const {
+  return _vertexData;
+}
+
+#endif

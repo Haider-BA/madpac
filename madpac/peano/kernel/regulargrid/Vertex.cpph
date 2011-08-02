@@ -1,0 +1,222 @@
+#ifdef Parallel
+#include "tarch/parallel/Node.h"
+#endif
+
+
+template <class VertexData>
+peano::kernel::regulargrid::Vertex<VertexData>::Vertex():
+  _vertexData() {
+  _vertexData.setInsideOutsideDomain(Records::Outside);
+}
+
+
+template <class VertexData>
+peano::kernel::regulargrid::Vertex<VertexData>::Vertex( const PersistentVertex& argument ):
+  _vertexData( (typename VertexData::Packed(argument)).convert() ) {
+}
+
+
+template <class VertexData>
+peano::kernel::regulargrid::Vertex<VertexData>::~Vertex() {
+}
+
+
+template <class VertexData>
+std::string peano::kernel::regulargrid::Vertex<VertexData>::toString() const {
+  return _vertexData.toString();
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::toString( std::ostream& out ) const {
+  _vertexData.toString(out);
+}
+
+
+template <class VertexData>
+std::ostream& operator<<(std::ostream& out, const peano::kernel::regulargrid::Vertex<VertexData>& attr) {
+  attr.toString(out);
+  return out;
+}
+
+
+template <class VertexData>
+typename peano::kernel::regulargrid::Vertex<VertexData>::PersistentVertex peano::kernel::regulargrid::Vertex<VertexData>::getRecords() const {
+  #if defined(StoreOnlyPersistentAttributes) && defined(PackedRecords)
+  return _vertexData.convert().getPersistentRecords();
+  #endif
+  #if !defined(StoreOnlyPersistentAttributes) && defined(PackedRecords)
+  return _vertexData.convert();
+  #endif
+  #if defined(StoreOnlyPersistentAttributes) && !defined(PackedRecords)
+  return _vertexData.getPersistentRecords();
+  #endif
+  #if !defined(StoreOnlyPersistentAttributes) && !defined(PackedRecords)
+  return _vertexData;
+  #endif
+}
+
+
+#ifdef Debug
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::setX(
+  const tarch::la::Vector<DIMENSIONS,double>&  x
+) {
+  _vertexData.setX(x);
+}
+#endif
+
+
+template <class VertexData>
+bool peano::kernel::regulargrid::Vertex<VertexData>::isOutside() const {
+  return _vertexData.getInsideOutsideDomain() == Records::Outside;
+}
+
+
+template <class VertexData>
+bool peano::kernel::regulargrid::Vertex<VertexData>::isBoundary() const {
+  return _vertexData.getInsideOutsideDomain() == Records::Boundary;
+}
+
+
+template <class VertexData>
+bool peano::kernel::regulargrid::Vertex<VertexData>::isInside() const {
+  return _vertexData.getInsideOutsideDomain() == Records::Inside;
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::switchToInside() {
+  // well we cannot be sure that the vertex really is a boundary, as it might
+  // also be just initialised.
+  assertion1(
+    _vertexData.getInsideOutsideDomain() == Records::Boundary ||
+    _vertexData.getInsideOutsideDomain() == Records::Outside,
+    *this
+  );
+  _vertexData.setInsideOutsideDomain(Records::Inside);
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::switchToBoundary() {
+  _vertexData.setInsideOutsideDomain(Records::Boundary);
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::switchToOutside() {
+  assertion1( _vertexData.getInsideOutsideDomain() != Records::Inside, *this );
+  _vertexData.setInsideOutsideDomain(Records::Outside);
+}
+
+
+#ifdef Debug
+template <class VertexData>
+tarch::la::Vector<DIMENSIONS,double> peano::kernel::regulargrid::Vertex<VertexData>::getX() const {
+  return _vertexData.getX();
+}
+#endif
+
+
+#ifdef Parallel
+template <class VertexData>
+std::set<int> peano::kernel::regulargrid::Vertex<VertexData>::getAdjacentRemoteRanks() const {
+  assertion( belongsToParallelBoundary() );
+
+  std::set<int> result;
+  for (int i=0; i<TWO_POWER_D; i++) {
+    if (
+      _vertexData.getAdjacentRanks(i) != tarch::parallel::Node::getInstance().getRank() &&
+      _vertexData.getAdjacentRanks(i) != -1
+    ) {
+      result.insert(_vertexData.getAdjacentRanks(i));
+    }
+  }
+  return result;
+}
+
+
+template <class VertexData>
+bool peano::kernel::regulargrid::Vertex<VertexData>::belongsToParallelBoundary() const {
+  for (int i=0; i<TWO_POWER_D; i++) {
+    if (
+      _vertexData.getAdjacentRanks(i) != tarch::parallel::Node::getInstance().getRank() &&
+      _vertexData.getAdjacentRanks(i) != -1
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::initDatatype() {
+  if (MPIDatatypeContainer::Datatype==0) {
+    MPIDatatypeContainer::initDatatype();
+  }
+
+  assertion(MPIDatatypeContainer::Datatype!=0);
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::send(int destination, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  _vertexData.convert().send(destination,tag);
+  #else
+  _vertexData.send(destination,tag);
+  #endif
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::receive(int source, int tag) {
+  assertion(MPIDatatypeContainer::Datatype!=0);
+
+  #if defined(ParallelExchangePackedRecords)
+  MPIDatatypeContainer receivedMessage;
+  receivedMessage.receive(source,tag);
+  _vertexData = receivedMessage.convert();
+  #else
+  _vertexData.receive(source,tag);
+  #endif
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::prepareSendToNeighbour() {
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::mergeWithNeighbour(const peano::kernel::regulargrid::Vertex<VertexData>& neighbour, int fromRank) {
+  #ifdef Debug
+  assertionEquals3(_vertexData.getX(), neighbour._vertexData.getX(), toString(), neighbour.toString(), tarch::parallel::Node::getInstance().getRank());
+  #endif
+  assertionEquals3(_vertexData.getInsideOutsideDomain(), neighbour._vertexData.getInsideOutsideDomain(), toString(), neighbour.toString(), tarch::parallel::Node::getInstance().getRank());
+  assertionEquals4(_vertexData.getAdjacentRanks(), neighbour._vertexData.getAdjacentRanks(), "joins are not supported yet", toString(), neighbour.toString(), tarch::parallel::Node::getInstance().getRank());
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::setAdjacentRanks( const tarch::la::Vector<TWO_POWER_D,int>& ranks ) {
+  _vertexData.setAdjacentRanks( ranks );
+}
+
+
+template <class VertexData>
+void peano::kernel::regulargrid::Vertex<VertexData>::setVertexData(const VertexData& vertexData) {
+  _vertexData = vertexData;
+}
+
+
+template <class VertexData>
+VertexData peano::kernel::regulargrid::Vertex<VertexData>::getVertexData() const {
+  return _vertexData;
+}
+
+#endif

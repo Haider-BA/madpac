@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-blocklatticeboltzmann-on-regular-grid>
+  </run-blocklatticeboltzmann-on-regular-grid>
+</peano-configuration>

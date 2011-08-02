@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-puregrid-on-regular-grid>
+    <log-filter target="debug" switch="off" component="tarch" />
+    <log-filter target="debug" switch="off" component="peano::kernel" />
+    <log-filter target="debug" switch="off" component="peano::geometry" />
+    <log-filter target="debug" switch="off" component="peano::applications::puregrid::adapters" />
+
+    <log-output column-separator=" " log-time-stamp="no" log-time-stamp-human-readable="yes" log-machine-name="no" log-message-type="yes" log-trace="yes" />
+  </run-puregrid-on-regular-grid>
+</peano-configuration>
