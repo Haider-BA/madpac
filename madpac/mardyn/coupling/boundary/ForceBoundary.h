@@ -27,7 +27,6 @@
 #include "utils/OptionParser.h"
 #include "utils/Logger.h"
 #include "utils/Testing.h"
-//#include "particleContainer/ParticleContainer.h"
 
 #include "parallel/DomainDecompBase.h"
 #include "FBoundary.h"

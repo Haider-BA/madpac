@@ -18,7 +18,10 @@
  ***************************************************************************/
 
 #include "MDCouplingConfiguration.h"
+
+#ifdef MADPAC_PEANOCOUPLING
 #include "madpac/PeanoCouplingService.h"
+#endif
 
 namespace madpac
 {
@@ -142,8 +145,11 @@ namespace madpac
     void
     MDCouplingConfiguration::initCoupling()
     {
+
       assertion(_isValid);
+#ifdef MADPAC_PEANOCOUPLING
       madpac::PeanoCouplingService::getInstance().setConfig(this);
+#endif
 
     }
   }

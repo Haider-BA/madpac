@@ -19,12 +19,15 @@
 
 #ifndef MADPAC_VELOCITYEXCHANGE_H_
 #define MADPAC_VELOCITYEXCHANGE_H_
-#include "madpac/core/ExchangeDataContainerWDCwithOutput.h"
+
 #include "particleContainer/ParticleContainer.h"
 #include "Domain.h"
 #include "parallel/DomainDecompBase.h"
 #include "thermostat/Thermostat.h"
 #include "usher/UsherConnector.h"
+
+//todo:
+#include "madpac/core/ExchangeDataContainerWDCwithOutput.h"
 
 namespace madpac
 {

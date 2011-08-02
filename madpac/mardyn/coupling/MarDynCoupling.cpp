@@ -20,11 +20,15 @@
 #include "MarDynCoupling.h"
 #include "molecules/Molecule.h"
 #include "particleContainer/ParticleContainer.h"
-#include "madpac/PeanoCouplingService.h"
-
 #include "configurations/MarDynCouplingConfiguration.h"
+
+#ifdef MADPAC
 #include "madpac/configurations/MDCouplingConfiguration.h"
 #include "madpac/configurations/CouplingConfiguration.h"
+#include "madpac/PeanoCouplingService.h"
+#endif
+
+
 namespace madpac
 {
   namespace mardyncoupling
@@ -40,6 +44,8 @@ namespace madpac
       std::cout << "streamdir " << _streamOutDir << std::endl;
 
       //std::cout << "lbC:DIM " << _dim << std::endl;
+#ifdef MADPAC
+
       _oldAdjustDensity
           = madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynConfig()->getCouplingConfig()->getOldAdjustDensity();
 
@@ -124,7 +130,7 @@ namespace madpac
       _bmovingwall
           = madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynConfig()->getBoundaryConfig()->getMovingWallConfig()->isValid();
       // std::cout << "NO CWT3" << std::endl;
-
+#endif
     }
 
     MarDynCoupling::~MarDynCoupling()

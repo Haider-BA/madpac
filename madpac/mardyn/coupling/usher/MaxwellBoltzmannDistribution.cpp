@@ -5,7 +5,7 @@
  * @Author: eckhardw
  */
 #include "MaxwellBoltzmannDistribution.h"
-#include "madpac/core/utils/Vector.h"
+#include "mardyn/coupling/utils/Vector.h"
 #include <cstdlib>
 
 /**

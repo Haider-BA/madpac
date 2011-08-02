@@ -453,6 +453,7 @@ elif target == 'madpac':
    cppdefines.append('MADPAC_LBMD_COUPLING') 
    cppdefines.append('MADPAC') 
    cppdefines.append('MADPAC_MARDYNCOUPLING') 
+   cppdefines.append('MADPAC_PEANOCOUPLING') 
    cppdefines.append('VTK') 
    libs.append ('xerces-c')
    ccflags.append('-fexceptions')
@@ -466,6 +467,7 @@ elif target == 'sanepac':
    cppdefines.append('MADPAC') 
    cpppath.append('dependencies-external/libxsd') 
    cppdefines.append('MADPAC_MDSBCOUPLING') 
+   cppdefines.append('MADPAC_PEANOCOUPLING') 
    libs.append ('xerces-c')
    libs.append ('log4cxx')
    libs.append ('cppunit')
@@ -804,11 +806,15 @@ sourcesMadpacMDSB = [
 	Glob(buildpath + 'madpac/mdsb/*/*.cpp'),
 	Glob(buildpath + 'madpac/mdsb/*/*/*.cpp')
 	]
-	
-sourcesMadpac = [
-	Glob(buildpath + 'madpac/*.cpp'),
+
+sourcesMadpacCore = [
 	Glob(buildpath + 'madpac/configurations/*.cpp'),
-	Glob(buildpath + 'madpac/core/*.cpp'),
+	Glob(buildpath + 'madpac/core/*.cpp')
+	]
+
+sourcesMadpac = [
+	sourcesMadpacCore,
+	Glob(buildpath + 'madpac/*.cpp'),
 	Glob(buildpath + 'madpac/peanocoupling/*.cpp')
 	]
 sourcesLatticeBoltzmann = [
@@ -991,6 +997,9 @@ if target == 'mardyn':
    env.Program(
       target = buildpath + 'mardyn.bin',
       source = [
+      sourcesTComponents,
+      sourcesMadpacCore,
+       sourcesMadpacMardyn,
         sourcesMarDyn,
         sourcesParallel
         ]

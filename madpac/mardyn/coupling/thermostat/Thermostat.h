@@ -20,9 +20,10 @@
 #ifndef MADPAC_THERMOSTAT_H_
 #define MADPAC_THERMOSTAT_H_
 #include "particleContainer/ParticleContainer.h"
-#include "madpac/core/ExchangeDataContainer.h"
 #include "mardyn/coupling/configurations/MarDynThermostatConfiguration.h"
 #include "Domain.h"
+
+#include "madpac/core/ExchangeDataContainer.h"
 
 namespace madpac
 {

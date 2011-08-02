@@ -24,7 +24,9 @@
 #include "madpac/configurations/CouplingOutputConfiguration.h"
 #include "madpac/configurations/CouplingGeometryConfiguration.h"
 
+#ifdef MADPAC_PEANOCOUPLING
 #include "madpac/PeanoCouplingService.h"
+#endif
 
 ExchangeDataContainer::ExchangeDataContainer(int dim,
     int mdIterations, int lbIterations) :
@@ -32,8 +34,10 @@ ExchangeDataContainer::ExchangeDataContainer(int dim,
           lbIterations)
 {
 	_timestep = -1;
+#ifdef MADPAC_PEANOCOUPLING
 	_ilb2md = madpac::PeanoCouplingService::getInstance().getConfig()->getCouplingConfig()->getLb2md(),
 		_imd2lb =	madpac::PeanoCouplingService::getInstance().getConfig()->getCouplingConfig()->getMd2lb(),
+#endif
 #ifdef MADPAC_MARDYNCOUPLING
   _domainDecomposition = madpac::PeanoCouplingService::getInstance().getDomainDecomposition();
   _numProcs = _domainDecomposition->getNumProcs();
@@ -206,11 +210,12 @@ ExchangeDataContainer::finishMDts()
     }
   _timestep++;
 }
-#ifdef MADPAC_MARDYNCOUPLING
+
 
 unsigned long
 ExchangeDataContainer::syncV(double *v, unsigned long numSamples)
 {
+#ifdef MADPAC_MARDYNCOUPLING
   int length = 3;
   _domainDecomposition->collCommInit(length + 1);
   for (int i = 0; i < length; i++)
@@ -225,12 +230,15 @@ ExchangeDataContainer::syncV(double *v, unsigned long numSamples)
     }
   numSamples = _domainDecomposition->collCommGetUnsLong();
   _domainDecomposition->collCommFinalize();
+#endif
   return numSamples;
 }
 
 void
 ExchangeDataContainer::syncE(double *v)
 {
+#ifdef MADPAC_MARDYNCOUPLING
+
   int length = 1;
   _domainDecomposition->collCommInit(length);
   for (int i = 0; i < length; i++)
@@ -243,8 +251,9 @@ ExchangeDataContainer::syncE(double *v)
       v[i] = _domainDecomposition->collCommGetDouble();
     }
   _domainDecomposition->collCommFinalize();
-}
 #endif
+}
+
 
 int
 ExchangeDataContainer::getRank()

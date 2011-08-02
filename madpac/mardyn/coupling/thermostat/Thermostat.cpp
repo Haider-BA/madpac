@@ -18,7 +18,11 @@
  ***************************************************************************/
 
 #include "Thermostat.h"
+#include "molecules/Molecule.h"
+
+#ifdef MADPAC
 #include "madpac/PeanoCouplingService.h"
+#endif
 
 namespace madpac
 {
@@ -38,8 +42,11 @@ namespace madpac
         _moleculeContainer(moleculeContainer), _domain(domain), _dataContainer(
             dataContainer), _streamOutDir(streamOutDir)
       {
+#ifdef MADPAC
+
         _md2ms
             = madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynConfig()->getCouplingConfig()->getMd2ms();
+#endif
         //TODO: ?
         double targetTemp = config->getTargetTemperature();
         _targetEnergy = 1.5 * ((double) _domain->getglobalNumMolecules())
@@ -53,11 +60,14 @@ namespace madpac
 
         int
             _moveInterval =
+#ifdef MADPAC
                 madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynConfig()->getBoundaryConfig()->getMovingWallConfig()->getMoveInterval();
         //_movingWall = madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynCouplingConfig()->getMovingWall();
         //		 _densityCoupling = madpac::PeanoCouplingService::getInstance().getConfig()->getCouplingConfig()->getDensityCoupling();
 
-
+#else
+        0;
+#endif
         //		 std::cout << " GAMMA " << _gamma << " MI " << _moveInterval << std::endl;
 
 

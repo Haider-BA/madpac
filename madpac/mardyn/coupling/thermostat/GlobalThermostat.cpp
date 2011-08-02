@@ -20,7 +20,6 @@
 #include "GlobalThermostat.h"
 #include "molecules/Molecule.h"
 #include "mardyn/coupling/configurations/MarDynCouplingConfiguration.h"
-#include "madpac/PeanoCouplingService.h"
 
 namespace madpac
 {

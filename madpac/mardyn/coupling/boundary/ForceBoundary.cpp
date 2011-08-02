@@ -20,8 +20,12 @@
 #include "ForceBoundary.h"
 #include "molecules/Molecule.h"
 #include "particleContainer/ParticleContainer.h"
-#include "madpac/PeanoCouplingService.h"
+#include "particleContainer/handlerInterfaces/ParticlePairsHandler.h"
 #include "mardyn/coupling/configurations/MarDynCouplingConfiguration.h"
+
+#ifdef MADPAC
+#include "madpac/PeanoCouplingService.h"
+#endif
 
 namespace madpac
 {
@@ -39,10 +43,10 @@ namespace madpac
       {
         _fStream = false;
         _RBinFB = false;
-
+#ifdef MADPAC
         _fStreamDamping
             = madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynConfig()->getBoundaryConfig()->getFStreamDamping();
-
+#endif
         _LJCutoffRadiusSquare = _moleculeContainer->getLJCutoff()
             * _moleculeContainer->getLJCutoff();
         _particlePairsHandler = _moleculeContainer->getPairHandler();

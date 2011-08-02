@@ -108,7 +108,7 @@ public:
   virtual void
   setMDBorderZero();
 
-#ifdef MADPAC_MARDYNCOUPLING
+
   /**
    * Syncronizes the global energy e between the md MPI processes.
    */
@@ -120,7 +120,8 @@ public:
    */
   unsigned long
   syncV(double *v, unsigned long numSamples);
-#endif
+
+
   /**
    * Returns the rank of the (MarDyn) MPI process.
    */

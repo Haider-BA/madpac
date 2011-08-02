@@ -19,7 +19,10 @@
 
 #include "MarDynSimulation.h"
 #include "utils/Timer.h"
+
+#ifdef MADPAC
 #include "madpac/PeanoCouplingService.h"
+#endif
 
 namespace mardyn
 {
@@ -61,8 +64,11 @@ namespace mardyn
     //      Molecule* tM;
 
     prepareTimestep();
-
+#ifdef MADPAC
     if (madpac::PeanoCouplingService::getInstance().bEnabled())
+#else
+    if(false)
+#endif
       {
         _hybridTimer->start();
 
@@ -131,8 +137,9 @@ namespace mardyn
       }
 
     forceCalculationEtc();
-
+#ifdef MADPAC
     if (madpac::PeanoCouplingService::getInstance().bEnabled())
+#endif
       {
         _hybridTimer->start();
         global_log->debug() << "fboundary" << endl;

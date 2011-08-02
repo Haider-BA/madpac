@@ -19,8 +19,11 @@
 
 #include "VelocityExchange.h"
 #include "molecules/Molecule.h"
-#include "madpac/PeanoCouplingService.h"
 #include "configurations/MarDynCouplingConfiguration.h"
+
+#ifdef MADPAC
+#include "madpac/PeanoCouplingService.h"
+#endif
 
 namespace madpac
 {
@@ -35,6 +38,8 @@ namespace madpac
           dataContainer), _usherConnector(usherConnector), _dim(dim),
           _thermostat(thermostat), _streamOutDir(streamoutdir)
     {
+#ifdef MADPAC
+
       _md2ms
           = madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynConfig()->getCouplingConfig()->getMd2ms();
 
@@ -50,6 +55,7 @@ namespace madpac
       else
         _bordersize
             = madpac::PeanoCouplingService::getInstance().getConfig()->getGeometryConfig()->getMidNoCouplingLowerCorner()[0];
+#endif
       std::cout << "md2ms " << _md2ms << std::endl;
 
       std::cout << "alpha " << _alpha << std::endl;

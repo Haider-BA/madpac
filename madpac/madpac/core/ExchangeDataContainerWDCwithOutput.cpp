@@ -23,7 +23,10 @@
 #include <string>
 #include "madpac/configurations/CouplingOutputConfiguration.h"
 #include "madpac/configurations/CouplingGeometryConfiguration.h"
+
+#ifdef MADPAC_PEANOCOUPLING
 #include "madpac/PeanoCouplingService.h"
+#endif
 
 ExchangeDataContainerWDCwithOutput::ExchangeDataContainerWDCwithOutput(int dim,
     int mdIterations, int lbIterations) :
@@ -33,12 +36,14 @@ ExchangeDataContainerWDCwithOutput::ExchangeDataContainerWDCwithOutput(int dim,
   _output = new double[_size[X] * _size[Y] * _size[Z] * _dataSize];
   _voutput = new double[(_size[X] + 2 * _lbOffset[X]) * (_size[Y] + 2
       * _lbOffset[Y]) * (_size[Z] + 2 * _lbOffset[Z]) * _dataSize];
+#ifdef MADPAC_PEANOCOUPLING
   _outputRate
       = madpac::PeanoCouplingService::getInstance().getConfig()->getOutputConfig()->getOutputRate();
   _outputFile
       = madpac::PeanoCouplingService::getInstance().getConfig()->getOutputConfig()->getOutputFile();
   _bvoutput
       = madpac::PeanoCouplingService::getInstance().getConfig()->getOutputConfig()->getVOutput();
+#endif
   std::cout << _outputFile << " OUTPUT " << _outputRate << std::endl;
   for (int i = 0; i < _size[X]; i++)
     for (int j = 0; j < _size[Y]; j++)

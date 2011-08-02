@@ -20,7 +20,10 @@
 #include "MovingWall.h"
 #include "mardyn/coupling/configurations/MarDynCouplingConfiguration.h"
 #include "molecules/Molecule.h"
+
+#ifdef MADPAC
 #include "madpac/PeanoCouplingService.h"
+#endif
 
 namespace madpac
 {
@@ -34,6 +37,7 @@ namespace madpac
         Boundary(moleculeContainer), _thermostat(thermostat), _streamOutDir(
             streamOutDir)
       {
+#ifdef MADPAC
         _moveInterval
             = madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynConfig()->getBoundaryConfig()->getMovingWallConfig()->getMoveInterval();
         _movingWall
@@ -41,7 +45,7 @@ namespace madpac
         _densityCoupling
             = madpac::PeanoCouplingService::getInstance().getConfig()->getCouplingConfig()->getDensityCoupling();
         //_timestepLength = madpac::PeanoCouplingService::getInstance().getDt();
-
+#endif
       }
 
       MovingWall::~MovingWall()
@@ -62,7 +66,11 @@ namespace madpac
       MovingWall::applyBoundary()
       {
         if (_movingWall && !_densityCoupling
+#ifdef MADPAC
             && madpac::PeanoCouplingService::getInstance().bEnabled())
+#else
+          )
+#endif
           {
           //  std::cout << "MOVE " << _vmove[0] << " " << _vmove[1] << " "
           //      << _vmove[2] << std::endl;

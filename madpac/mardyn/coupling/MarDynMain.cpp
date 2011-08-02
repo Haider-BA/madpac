@@ -16,18 +16,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
+#ifdef MADPAC
 #include "MarDynMain.h"
 #include "utils/Logger.h"
 #include "utils/compile_info.h"
 #include "parallel/DomainDecompBase.h"
+
+
 #include "madpac/PeanoCouplingService.h"
 
 madpac::mardyncoupling::MarDynMain::MarDynMain()
 {
   config
       = madpac::PeanoCouplingService::getInstance().getConfig()->getMarDynConfig();
-
   configfileName = config->getMardynConfig();
   logfileName = config->getMardynLog();
   _console = config->getConsole();
@@ -120,3 +121,4 @@ madpac::mardyncoupling::MarDynMain::simStep(int _numMdIterations)
   _mdSimulation->finishFirstStep();
 }
 
+#endif

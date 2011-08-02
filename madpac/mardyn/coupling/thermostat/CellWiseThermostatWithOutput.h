@@ -16,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifdef MADPAC
 
 #ifndef CELLWISETHERMOSTATWITHOUTPUT_H_
 #define CELLWISETHERMOSTATWITHOUTPUT_H_
@@ -66,3 +67,4 @@ namespace madpac
 }
 
 #endif /* CELLWISETHERMOSTATWITHOUTPUT_H_ */
+#endif

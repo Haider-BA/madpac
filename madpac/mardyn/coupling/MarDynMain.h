@@ -16,20 +16,20 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
+#ifdef MADPAC
 #ifndef MADPAC_MARDYNMAIN_H_
 #define MADPAC_MARDYNMAIN_H_
 #include "Simulation.h"
 #include "configurations/MarDynConfiguration.h"
 #include "MarDynSimulation.h"
-#include "madpac/mdcoupling/MDMain.h"
-
 #include "tarch/services/Service.h"
 #include "tarch/logging/Log.h"
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
 #include "peano/applications/latticeboltzmann/LatticeBoltzmannDefinitions.h"
 #include "peano/applications/latticeboltzmann/blocklatticeboltzmann/BlockDefinitions.h"
+#include "madpac/mdcoupling/MDMain.h"
+
 
 namespace madpac
 {
@@ -76,3 +76,4 @@ namespace madpac
   }
 }
 #endif /* MADPAC_MARDYNMAIN_H_ */
+#endif

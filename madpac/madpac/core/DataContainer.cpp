@@ -24,15 +24,25 @@
 #include "madpac/configurations/CouplingOutputConfiguration.h"
 #include "madpac/configurations/CouplingGeometryConfiguration.h"
 
+#ifdef MADPAC_PEANOCOUPLING
 #include "madpac/PeanoCouplingService.h"
+#endif
 
 DataContainer::DataContainer(int dim) :
   _dim(dim), _insertMolecules(0)
 {
 
+
+
   madpac::configurations::CouplingGeometryConfiguration
-      *_config =
+      *_config
+#ifdef MADPAC_PEANOCOUPLING
+      =
           madpac::PeanoCouplingService::getInstance().getConfig()->getGeometryConfig();
+#else
+   = NULL;
+#endif
+
   _cellSize = _config->getCellSize();
 
   if (dim == 2)

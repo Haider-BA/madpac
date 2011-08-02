@@ -16,13 +16,17 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifdef MADPAC
 
 #ifndef MADPAC_CELLWISETHERMOSTAT_H_
 #define MADPAC_CELLWISETHERMOSTAT_H_
-#include "madpac/core/DataContainer.h"
+
 #include "mardyn/coupling/configurations/MarDynCellWiseThermostatConfiguration.h"
 #include "Thermostat.h"
+
+//TODO:
 #include "madpac/core/utils/Vector.h"
+#include "madpac/core/DataContainer.h"
 
 namespace madpac
 {
@@ -71,3 +75,4 @@ namespace madpac
   }
 }
 #endif /* MADPAC_CELLWISETHERMOSTAT_H_ */
+#endif

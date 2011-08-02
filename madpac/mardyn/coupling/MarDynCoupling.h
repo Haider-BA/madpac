@@ -27,7 +27,7 @@
 #include "utils/OptionParser.h"
 #include "utils/Logger.h"
 #include "utils/Testing.h"
-#include "madpac/core/ExchangeDataContainerWDCwithOutput.h"
+
 #include "particleContainer/ParticleContainer.h"
 #include "Domain.h"
 #include "parallel/DomainDecompBase.h"
@@ -42,6 +42,9 @@
 #include "thermostat/CellWiseThermostatWithOutput.h"
 
 #include "VelocityExchange.h"
+
+//TODO:
+#include "madpac/core/ExchangeDataContainerWDCwithOutput.h"
 
 using Log::global_log;
 using optparse::OptionParser;
