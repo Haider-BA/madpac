@@ -28,8 +28,7 @@
 class ExchangeDataContainerWDC : public ExchangeDataContainer
 {
 public:
-  ExchangeDataContainerWDC(int dim,
-      bool lb2md, bool md2lb, int mdIterations, int lbIterations);
+  ExchangeDataContainerWDC(int dim, int mdIterations, int lbIterations);
   virtual
   ~ExchangeDataContainerWDC();
 

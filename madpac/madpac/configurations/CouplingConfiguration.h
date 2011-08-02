@@ -55,7 +55,7 @@ namespace madpac
         return _forceCoupling;
       }
 
-      bool
+      int
       getLb2md() const
       {
         return _lb2md;
@@ -73,7 +73,7 @@ namespace madpac
         return _lbinittime;
       }
 
-      bool
+      int
       getMd2lb() const
       {
         return _md2lb;
@@ -118,8 +118,8 @@ namespace madpac
       bool _velocityCoupling;
       bool _forceCoupling;
       bool _densityCoupling;
-      bool _lb2md;
-      bool _md2lb;
+      int _lb2md;
+      int _md2lb;
       int _lbIterations;
       bool _dirichletBoundary;
     };

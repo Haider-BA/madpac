@@ -26,9 +26,9 @@
 #include "madpac/mdcoupling/UsherAlgorithm.h"
 
 
-ExchangeDataContainerWDC::ExchangeDataContainerWDC(int dim, bool lb2md, bool md2lb,
+ExchangeDataContainerWDC::ExchangeDataContainerWDC(int dim,
     int mdIterations, int lbIterations) :
-  ExchangeDataContainer(dim, lb2md, md2lb, mdIterations,
+  ExchangeDataContainer(dim, mdIterations,
       lbIterations)
 {
   _particleInserted = new bool[_size[X] * _size[Y] * _size[Z]];

@@ -162,6 +162,7 @@ private:
   madpac::mdcoupling::MDMain<madpac::mdsbcoupling::MDSBMain> *_mardyn;
 #endif
   int _numMdIterations;
+  int _numLbIterations;
   int _streamdir;
   madpac::configurations::MDCouplingConfiguration* config;
 

@@ -23,7 +23,7 @@ namespace madpac
   namespace mdsbcoupling
   {
 
-    MDSBSetVelocity::MDSBSetVelocity(ParticleContainer& container, ExchangeDataContainer *dataContainer) :
+    MDSBSetVelocity::MDSBSetVelocity(ParticleContainer& container, ExchangeDataContainerwithOutput *dataContainer) :
       _container(container), _md2ms(157.0), _dataContainer(dataContainer)
     {
       // TODO Auto-generated constructor stub

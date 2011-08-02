@@ -29,8 +29,7 @@ class ExchangeDataContainer : public DataContainer
 {
 public:
 
-  ExchangeDataContainer(int dim,
-      bool lb2md, bool md2lb, int mdIterations, int lbIterations);
+  ExchangeDataContainer(int dim, int mdIterations, int lbIterations);
 
   virtual
   ~ExchangeDataContainer();
@@ -53,7 +52,11 @@ public:
   bool
   lb2md()
   {
-    return _lb2md;
+	  bool b = false;
+
+	  if(_ilb2md != 0 && _ilb2md%_timestep == 0)
+		  b = true;
+    return b;
   }
 
   /**
@@ -62,7 +65,11 @@ public:
   bool
   md2lb()
   {
-    return _md2lb;
+	  bool b = false;
+
+	  if(_imd2lb != 0 && _imd2lb%_timestep == 0)
+		  b = true;
+    return b;
   }
 
   /**
@@ -133,13 +140,14 @@ protected:
   double* _mdDataRead;
 
   double* _lbDataRead;
-  bool _md2lb;
-  bool _lb2md;
+  int _imd2lb;
+  int _ilb2md;
   int _numProcs;
   int _rank;
 
   int _numMDiterations;
   int _numLBiterations;
+  int _timestep;
 
   virtual void
   setZeroLB();

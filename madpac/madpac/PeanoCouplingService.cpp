@@ -16,15 +16,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #include "madpac/PeanoCouplingService.h"
 #ifdef ENABLE_MPI
 #include <mpi.h>
 #endif
 #include "tarch/services/ServiceFactory.h"
-
 #include "peanocoupling/PeanoDataExchangeService.h"
-
 registerService( madpac::PeanoCouplingService)
 
 tarch::logging::Log madpac::PeanoCouplingService::_log(
@@ -47,6 +44,7 @@ madpac::PeanoCouplingService::setConfig(
     madpac::configurations::MDCouplingConfiguration* cfg)
 {
   config = cfg;
+  _numLbIterations = config->getCouplingConfig()->getLbIterations();
   _numMdIterations = config->getCouplingConfig()->getMdIterations();
   _lbinittime = config->getCouplingConfig()->getLbinittime();
 #ifdef MADPAC_MARDYNCOUPLING
@@ -70,8 +68,7 @@ madpac::PeanoCouplingService::init(int lbtimesteps, double dx, double dt,
   if (!_config)
     {
       std::cout << "NO CONFIG!" << std::endl;
-    }
-  assertion( _config);
+    }assertion( _config);
   int _numMdTimesteps = lbtimesteps * _numMdIterations;
 
   _timestep = -1;
@@ -84,14 +81,12 @@ madpac::PeanoCouplingService::init(int lbtimesteps, double dx, double dt,
   _mardyn = new madpac::mardyncoupling::MarDynMain();
   mardyn::MarDynSimulation* _mdSimulation = _mardyn->init(_numMdTimesteps);
 
- #endif
+#endif
 
   //INIT HYBIRD
   logInfo("init()", "INIT MADPAC");
 
   _dataContainer = new ExchangeDataContainerWDCwithOutput(DIMENSIONS,
-      config->getCouplingConfig()->getLb2md(),
-      config->getCouplingConfig()->getMd2lb(),
       config->getCouplingConfig()->getMdIterations(),
       config->getCouplingConfig()->getLbIterations());//_mdSimulation->domainDecomposition();
   //END  INIT HYBIRD
@@ -122,12 +117,19 @@ madpac::PeanoCouplingService::runMarDyn()
       logInfo("runMarDyn()", "RUN MARDYN TIMESTEP: " << _timestep);
 
       //std::cout << "RUN MARDYN TIMESTEP: "<< _timestep << std::endl;
-      _dataContainer->syncLB();
-
+      if (_timestep % _numLbIterations == 0)
+        {
+          _dataContainer->syncLB();
+        }
       if (_timestep > _lbinittime)
-        _dataContainer->output(_timestep);
+        {
+          _dataContainer->output(_timestep);
+        }
       _mardyn->simStep(_numMdIterations);
-      _dataContainer->syncMD();
+      if (_timestep % _numLbIterations == 0)
+        {
+          _dataContainer->syncMD();
+        }
     }
 }
 

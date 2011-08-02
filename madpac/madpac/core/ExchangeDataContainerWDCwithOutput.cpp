@@ -25,9 +25,9 @@
 #include "madpac/configurations/CouplingGeometryConfiguration.h"
 #include "madpac/PeanoCouplingService.h"
 
-ExchangeDataContainerWDCwithOutput::ExchangeDataContainerWDCwithOutput(int dim, bool lb2md, bool md2lb,
+ExchangeDataContainerWDCwithOutput::ExchangeDataContainerWDCwithOutput(int dim,
     int mdIterations, int lbIterations) :
-  ExchangeDataContainerWDC(dim, lb2md, md2lb,
+  ExchangeDataContainerWDC(dim,
       mdIterations, lbIterations)
 {
   _output = new double[_size[X] * _size[Y] * _size[Z] * _dataSize];

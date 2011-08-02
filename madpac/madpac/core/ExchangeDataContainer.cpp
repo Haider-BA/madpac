@@ -24,15 +24,16 @@
 #include "madpac/configurations/CouplingOutputConfiguration.h"
 #include "madpac/configurations/CouplingGeometryConfiguration.h"
 
-
 #include "madpac/PeanoCouplingService.h"
-ExchangeDataContainer::ExchangeDataContainer(int dim, bool lb2md, bool md2lb,
+
+ExchangeDataContainer::ExchangeDataContainer(int dim,
     int mdIterations, int lbIterations) :
-  DataContainer(dim), _md2lb(md2lb),
-      _lb2md(lb2md), _numMDiterations(mdIterations), _numLBiterations(
+  DataContainer(dim),  _numMDiterations(mdIterations), _numLBiterations(
           lbIterations)
 {
-
+	_timestep = madpac::PeanoCouplingService::getInstance().getTimestep();
+	_ilb2md = madpac::PeanoCouplingService::getInstance().getConfig()->getCouplingConfig()->getLb2md(),
+		_imd2lb =	madpac::PeanoCouplingService::getInstance().getConfig()->getCouplingConfig()->getMd2lb(),
 #ifdef MADPAC_MARDYNCOUPLING
   _domainDecomposition = madpac::PeanoCouplingService::getInstance().getDomainDecomposition();
   _numProcs = _domainDecomposition->getNumProcs();
@@ -41,7 +42,7 @@ ExchangeDataContainer::ExchangeDataContainer(int dim, bool lb2md, bool md2lb,
   _numProcs = 1;
   _rank = 0;
 #endif
-  std::cout << "LB2MD " << _lb2md << " MD2LB " << _md2lb << std::endl;
+  std::cout << "LB2MD " << _ilb2md << " MD2LB " << _imd2lb << std::endl;
   _mdDataRead = new double[_size[X] * _size[Y] * _size[Z] * _dataSize];
   _lbDataRead = new double[_size[X] * _size[Y] * _size[Z] * _dataSize];
   _mdDataWriteSum = new double[_size[X] * _size[Y] * _size[Z] * _dataSize];
@@ -124,6 +125,7 @@ ExchangeDataContainer::syncLB()
   _lbDataWrite = tmp;
 #endif
   setZeroLB();
+  _timestep = madpac::PeanoCouplingService::getInstance().getTimestep();
 }
 
 void
@@ -169,6 +171,7 @@ ExchangeDataContainer::syncMD()
   _lbDataWrite = tmp;
 #endif
   setZeroMDSum();
+  _timestep = madpac::PeanoCouplingService::getInstance().getTimestep();
   //	std::cout << "lub"<< _domainDecomposition->getRank()  <<std::endl;
 }
 
@@ -203,6 +206,7 @@ ExchangeDataContainer::finishMDts()
             }
         }
     }
+  _timestep = madpac::PeanoCouplingService::getInstance().getTimestep();
 }
 #ifdef MADPAC_MARDYNCOUPLING
 

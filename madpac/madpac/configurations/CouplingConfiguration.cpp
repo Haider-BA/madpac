@@ -163,11 +163,11 @@ namespace madpac
       if (xmlReader->getAttributeValue(LB2MD.c_str()) == 0)
         {
           _log.info("parseSubtag()", "'lb2md' not defined!");
-          _lb2md = true;
+          _lb2md = 1;
         }
       else
         {
-          _lb2md = xmlReader->getAttributeValueAsBool(LB2MD.c_str());
+          _lb2md = xmlReader->getAttributeValueAsInt(LB2MD.c_str());
 
           logDebug("parseSubtag()", "'lb2md': " << (_lb2md));
         }
@@ -176,11 +176,11 @@ namespace madpac
       if (xmlReader->getAttributeValue(MD2LB.c_str()) == 0)
         {
           _log.info("parseSubtag()", "'md2lb' not defined!");
-          _md2lb = true;
+          _md2lb = 1;
         }
       else
         {
-          _md2lb = xmlReader->getAttributeValueAsBool(MD2LB.c_str());
+          _md2lb = xmlReader->getAttributeValueAsInt(MD2LB.c_str());
 
           logDebug("parseSubtag()", "'md2lb': " << (_md2lb));
         }

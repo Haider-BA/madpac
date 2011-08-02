@@ -33,7 +33,7 @@ namespace madpac
     class MDSBSetVelocity : public ParticleHandler
     {
     public:
-      MDSBSetVelocity(ParticleContainer& container, ExchangeDataContainer *dataContainer);
+      MDSBSetVelocity(ParticleContainer& container, ExchangeDataContainerwithOutput *dataContainer);
       virtual
       ~MDSBSetVelocity();
 

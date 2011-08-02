@@ -25,7 +25,7 @@
 class ExchangeDataContainerWDCwithOutput : public ExchangeDataContainerWDC
 {
 public:
-  ExchangeDataContainerWDCwithOutput(int dim, bool lb2md, bool md2lb,
+  ExchangeDataContainerWDCwithOutput(int dim,
       int mdIterations, int lbIterations);
   virtual
   ~ExchangeDataContainerWDCwithOutput();
