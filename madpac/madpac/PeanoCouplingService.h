@@ -26,8 +26,8 @@
 #include "configurations/MDCouplingConfiguration.h"
 #include "mdcoupling/MDMain.h"
 #ifdef MADPAC_MARDYNCOUPLING
-#include "mardyncoupling/MarDynSimulation.h"
-#include "madpac/mardyncoupling/MarDynMain.h"
+#include "mardyn/coupling/MarDynSimulation.h"
+#include "mardyn/coupling/MarDynMain.h"
 #include "parallel/DomainDecompBase.h"
 
 #elif MADPAC_MDSBCOUPLING

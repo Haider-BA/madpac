@@ -785,11 +785,11 @@ sourcesMarDyn = [
 	]
 	
 sourcesMadpacMardyn = [
-	Glob(buildpath + 'madpac/mardyncoupling/boundary/*.cpp'),
-	Glob(buildpath + 'madpac/mardyncoupling/configurations/*.cpp'),
-	Glob(buildpath + 'madpac/mardyncoupling/thermostat/*.cpp'),
-	Glob(buildpath + 'madpac/mardyncoupling/usher/*.cpp'),
-	Glob(buildpath + 'madpac/mardyncoupling/*.cpp')
+	Glob(buildpath + 'mardyn/coupling/boundary/*.cpp'),
+	Glob(buildpath + 'mardyn/coupling/configurations/*.cpp'),
+	Glob(buildpath + 'mardyn/coupling/thermostat/*.cpp'),
+	Glob(buildpath + 'mardyn/coupling/usher/*.cpp'),
+	Glob(buildpath + 'mardyn/coupling/*.cpp')
 	]
 	
 

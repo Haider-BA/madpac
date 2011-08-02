@@ -27,7 +27,7 @@
 #include "CouplingGeometryConfiguration.h"
 #include "CouplingConfiguration.h"
 #ifdef MADPAC_MARDYNCOUPLING
-#include "madpac/mardyncoupling/configurations/MarDynConfiguration.h"
+#include "mardyn/coupling/configurations/MarDynConfiguration.h"
 #endif
 #ifdef MADPAC_MDSBCOUPLING
 #include "madpac/mdsbcoupling/configurations/MDSBConfiguration.h"
