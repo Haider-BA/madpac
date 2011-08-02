@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<!--
+  -
+  - Run integration tests.
+  -
+  - (C) 2005 Tobias Weinzierl
+  - Revision: $Revision: 1.3 $
+  -
+  -->
+<peano-configuration>
+  <assert-compiler-switch state="on" switch="Asserts" />
+  <assert-compiler-switch state="on" switch="Debug" />
+
+  <run-tests>
+    <!--
+      - Switches debug output from different components on / off. If no switch is
+      - defined for a component in Debug mode, the default is on, i.e. the filter
+      - works with a filter list.
+      --> 
+    <log-filter target="debug" component="tarch"      switch="off" />
+    <log-filter target="debug" component="peano"      switch="off" />
+
+    <log-output column-separator=" " log-time-stamp="yes" log-time-stamp-human-readable="yes" log-machine-name="no" log-message-type="yes" log-trace="yes" />
+  </run-tests>
+
+
+  <run-integration-tests output-directory="/home/weinzier/temp">
+    <log-filter target="debug" component="tarch"      switch="off" />
+    <log-filter target="debug" component="peano"      switch="off" />
+
+    <log-output column-separator=" " log-time-stamp="yes" log-time-stamp-human-readable="yes" log-machine-name="no" log-message-type="yes" log-trace="yes" />
+  </run-integration-tests>
+</peano-configuration>

@@ -1,0 +1,905 @@
+# Peano/SConstruct
+
+#########################################################################
+##### HOW TO ADD YOUR BUILD CONFIGURATION
+#########################################################################
+#
+# 1. Add a unique build target name and short description to the printed 
+#    output of function printTragets().
+# 2. Add a section for setting the build variables (cpppath, libs, libpath, ...).
+#    You find the position by looking for the text comment:
+#    Determine build targets and specify their build variable settings
+# 3. Add variables holding the sources of your configuration, but check before,
+#    whether somebody added the sources already for another configuration.
+#    You find the location of sources by looking for the comment:
+#    Define sources
+# 4. Add the command to build your target, by using the build variables and 
+#    sources you need. You find the location of build commands by looking for
+#    the comment:
+#    Build selected target
+#
+#########################################################################
+
+import os;
+import sys;
+
+#########################################################################
+##### FUNCTION DEFINITIONS
+#########################################################################
+
+#
+##### Prints out the available options for command line parameter "target"
+#
+def printTargets():   
+   print
+   print "       Possible target-names: "
+   print "         heatequation            : Heat equation"
+   print "         kernel                  : Peano Kernel"
+   print "         latticeboltzmann        : application for Lattice Boltzmann simulations"
+   print "         latticeboltzmann-cca    : cca application for Lattice Boltzmann simulations"
+   print "         navierstokes-prototype1 : prototype for Navier-Stokes simulations (exlicit euler, enhanced div-free elements)"
+   print "         navierstokes-prototype2 : prototype for Navier-Stokes simulations"
+   print "         jacobi                  : Jacobi Poisson Solver"
+   print "         puregrid                : Application Using the Regular Grid"
+   print "         tarch                   : Technical Architecture"
+   
+   
+   
+#
+##### Adds all PETSc relevant compile flags
+#
+def addPETScFlags(build, cppdefines, cpppath, libs, libpath):
+   # Determine petsc directory and architecture from environment variables:
+   petscDir = os.getenv ( 'PETSC_DIR' )
+   if ( petscDir == None ):
+      print 'ERROR: Environment variable PETSC_DIR not defined!'
+      sys.exit(1)
+   else:
+      print 'Using environment variable PETSC_DIR =', petscDir
+   if ( build == 'debug' ):
+      petscArch = os.getenv ('PETSC_ARCH_DEBUG')   
+      if ( petscArch == None ):
+         print 'ERROR: Environment variable PETSC_ARCH_DEBUG not defined!'
+         sys.exit(1)
+      else:
+         print 'Using environment variable PETSC_ARCH_DEBUG =', petscArch  
+   else:
+      petscArch = os.getenv ('PETSC_ARCH_RELEASE')   
+      if ( petscArch == None ):
+         print 'ERROR: Environment variable PETSC_ARCH_RELEASE not defined!'
+         sys.exit(1)
+      else:
+         print 'Using environment variable PETSC_ARCH_RELEASE =', petscArch   
+   # PETSc needs this in combination with mpi
+   cppdefines.append ('MPICH_IGNORE_CXX_SEEK')
+   # Add include paths
+   cpppath.append (petscDir)
+   cpppath.append (petscDir + '/' + petscArch + '/include')
+   cpppath.append (petscDir + '/' + petscArch)
+   cpppath.append (petscDir + '/include')
+   # Add libraries
+   libs.append ('petscsnes')
+   libs.append ('petscksp')
+   libs.append ('petscdm')
+   libs.append ('petscmat')
+   libs.append ('petscvec')
+   libs.append ('petsc')
+   libs.append ('pthread')
+   libs.append ('nsl')
+   libs.append ('rt')
+   libs.append ('X11')
+   libs.append ('lapack')
+   libs.append ('blas')
+   libs.append ('m')
+   libs.append ('dl')
+   libs.append ('gcc_s')
+   libs.append ('gfortranbegin')
+   libs.append ('gfortran')
+   libs.append ('mpich')
+   # Add libpaths
+   libpath.append ('/usr/X11R6/lib')
+   libpath.append (petscDir + '/lib/' + petscArch)
+   libpath.append (petscDir + '/' + petscArch + '/lib')
+   
+   
+def addPreciceFlags(libpath,libs,cpppath,cppdefines,dim):
+   # Determine precice root path from environment variable:
+   preciceRootPath = os.getenv ( 'PRECICE_ROOT' )
+   if ( preciceRootPath == None ):
+      print 'ERROR: Environment variable PRECICE_ROOT not defined!'
+      sys.exit(1)
+   else:
+      print 'Using environment variable PRECICE_ROOT =', preciceRootPath
+   # Determine boost root path from environment variable:
+   boost_root_path = os.getenv ( 'BOOST_ROOT' )
+   if ( boost_root_path == None ):
+      print 'ERROR: Environment variable BOOST_ROOT not defined!'
+      sys.exit(1)
+   else:
+      print 'Using environment variable BOOST_ROOT =', boost_root_path
+   libpath.append (preciceRootPath + '/build/' + build + '-nopython')
+   libs.append ('precice')
+   libs.append ('mpich')
+   libs.append ('pthread')
+   # add include paths
+   cpppath.append (preciceRootPath + '/src')
+   cppdefines.append('Precice')
+   #cpppath.append (boost_root_path + '/boost/tr1/tr1')
+   cpppath.append (boost_root_path)
+
+
+#########################################################################
+##### MAIN CODE
+#########################################################################
+
+##### Initialize build variables
+#
+cxx = ''
+cppdefines = []
+cpppath = ['./']
+ccflags = []
+linkerflags = []
+libpath = []
+libs = []
+#compiler_tools = [ 'mingw' ]
+
+##### Determine dimension for which to build
+#
+dim = ARGUMENTS.get('dim', 2)   # Read command line parameter
+if int(dim) == 2:
+   cppdefines.append('Dim2')
+elif int(dim) == 3:
+   cppdefines.append('Dim3')
+elif int(dim) == 4:
+   cppdefines.append('Dim4')
+elif int(dim) == 5:
+   cppdefines.append('Dim5')
+else:
+   print "ERROR: dim must be either '2', '3', '4', or '5'!"
+   sys.exit(1)
+
+##### Add build parameter specific build variable settings:
+# This section only defines Peano-specific flags. It does not
+# set compiler specific stuff.
+#
+build = ARGUMENTS.get('build', 'debug')   # Read command line parameter
+if build == 'debug':
+   cppdefines.append('Debug')
+   cppdefines.append('Asserts')
+   cppdefines.append('LogTrace')
+   cppdefines.append('LogSeparator')
+   
+elif build == 'release':
+   pass
+else:
+   print "ERROR: build must be 'debug' or 'release'!"
+   sys.exit(1)
+
+##### Determine MPI-Parallelization
+#
+parallel = ARGUMENTS.get('parallel', 'parallel_no') # Read command line parameter
+if parallel == 'yes' or parallel == 'parallel_yes':
+   cppdefines.append('Parallel')
+   cpppath.append('/usr/include/mpi')
+   libpath.append('/usr/lib/mpi/')
+   libs.append ('mpich')
+   libs.append ('rt')
+   libs.append ('pthread')
+   cxx = 'mpiCC'
+elif parallel == 'no' or parallel == 'parallel_no':
+   pass
+else:
+   print "ERROR: parallel must be = 'yes', 'parallel_yes', 'no' or 'parallel_no'!"
+   sys.exit(1)
+
+##### Determine preCICE usage
+#
+precice = ARGUMENTS.get('precice', 'precice_no') # Read command line parameter
+if precice == 'yes' or precice == 'precice_yes':
+   addPreciceFlags(libpath,libs,cpppath,cppdefines,dim)
+elif precice == 'no' or precice == 'precice_no':
+   pass
+else:
+   print "ERROR: precice must be = 'yes', 'precice_yes', 'no' or 'precice_no'!"
+   sys.exit(1)
+
+##### Determine CCA usage
+#
+cca = ARGUMENTS.get('cca', 'cca_no')   # Read command line parameter
+if cca == 'no' or cca == 'cca_no':
+   pass
+elif cca == 'yes':
+   ccflags.append('-Wstrict-aliasing')
+   cppdefines.append('CCA')
+   jdkHeaderDir = os.getenv ( 'JDK_HEADER_DIR', '' )
+   sciCoDEUtilsDir = os.getenv ( 'SCICODE_UTILS_HEADER_DIR', '' )	
+   sciCoDEUtilsLibDir = os.getenv ( 'SCICODE_UTILS_LIB_DIR', '' )
+   cpppath.append(jdkHeaderDir+'/include')
+   cpppath.append(jdkHeaderDir+'/include/linux')
+   cpppath.append(sciCoDEUtilsDir)
+   libpath.append(sciCoDEUtilsLibDir)
+   libs.append('sciCoDE_Utils')  
+else:
+   print "ERROR: cca must be = 'yes','no' or 'cca_no'!"
+   sys.exit(1)
+
+##### Determine Multicore usage
+#   
+multicore = ARGUMENTS.get('multicore', 'multicore_no')   # Read command line parameter
+
+if multicore == 'no' or multicore == 'multicore_no':
+   pass
+elif multicore == 'openmp':
+   ompDir = os.getenv ( 'OMP_DIR', '' )
+   cppdefines.append('SharedOMP')
+   cpppath.append(ompDir + '/include')   
+   #libpath.append(ompDir + '/build/' + tbbArch)
+   pass
+elif multicore == 'tbb':
+   libs.append('pthread')
+   libs.append('dl')
+   # Determine tbb directory and architecture from environment variables:
+   tbbDir = os.getenv ( 'TBB_DIR' )
+   
+   if ( tbbDir == None ):
+      print 'ERROR: Environment variable TBB_DIR not defined!'
+      sys.exit(1)
+   else:
+      print 'Using environment variable TBB_DIR =', tbbDir
+      
+   tbbArch = os.getenv ( 'TBB_ARCH' );
+   if( tbbArch == None ):
+      print 'ERROR: Environment variable TBB_ARCH not defined!'
+      sys.exit(1)
+   else:
+      print 'Using environment variable TBB_ARCH =', tbbArch
+          
+   if ( build == 'debug' ):
+      libs.append ('tbb_debug')
+      #tbbArch = tbbArch + '_debug'     
+   else:
+      libs.append ('tbb')
+      #tbbArch = tbbArch + '_release'      
+
+   cppdefines.append('SharedTBB')
+   cpppath.append(tbbDir + '/include')   
+   #libpath.append(tbbDir + '/build/' + tbbArch)
+   libpath.append(tbbDir + tbbArch)
+else:
+   print "ERROR: multicore must be = 'tbb',  'openmp', 'no' or 'multicore_no'!"
+   sys.exit(1)
+   
+##### Determine GProf usage
+# 
+gprof = ARGUMENTS.get('gprof', 'gprof_no') # Read command line parameter
+if gprof == 'no' or gprof == 'gprof_no':
+   pass
+elif gprof == 'yes' or gprof == 'gprof_yes':
+   ccflags.append('-p')
+   ccflags.append('-pg')
+   linkerflags.append('-p')
+   linkerflags.append('-pg')
+else:
+   print "ERROR: gprof must be = 'yes', 'gprof_yes', 'no' or 'gprof_no'!"
+   sys.exit(1)
+   
+##### Determine Thread Profiler usage
+# 
+threadProfiler = ARGUMENTS.get('threadProfiler', 'no')
+if threadProfiler == 'no':
+   pass
+elif threadProfiler=='yes':
+   ccflags.append('-tprofile')
+   ccflags.append('-openmp')
+else:
+   print "ERROR: threadProfiler must be = 'yes' or 'no'!"
+   sys.exit(1)
+   
+##### Determine Valgrind usage
+# 
+valgrind = ARGUMENTS.get('valgrind', 'no')
+if valgrind == 'no':
+   pass
+elif valgrind=='yes':
+   ccflags.append('-g')
+   ccflags.append('-O3')
+else:
+   print "ERROR: valgrind must be = 'yes' or 'no'!"
+   sys.exit(1)
+   
+##### Switch Compiler
+#
+compiler = ARGUMENTS.get('compiler', 'gcc') # Read command line parameter
+if compiler == 'gcc':
+   if(parallel=='parallel_no' or parallel=='no'):
+     cxx = 'g++'
+   else:
+     cxx = 'mpiCC'
+     cppdefines.append('MPICH_SKIP_MPICXX')
+   ccflags.append('-Wall')
+   #ccflags.append('-Werror')
+   ccflags.append('-w')
+   ccflags.append('-pedantic')
+   ccflags.append('-pedantic-errors')
+   ccflags.append('-Wstrict-aliasing')
+   ccflags.append('-fstrict-aliasing')
+   ccflags.append('-fno-exceptions')
+   ccflags.append('-fno-rtti')
+   ccflags.append('-Wno-long-long')
+   ccflags.append('-Wno-unknown-pragmas')
+   ccflags.append('-Wno-non-virtual-dtor')
+   if build == 'debug':
+      ccflags.append('-g3')
+      ccflags.append('-O0')
+   elif build == 'release':
+      ccflags.append('-O3') 
+   if multicore == 'openmp':
+      ccflags.append('-fopenmp')
+      linkerflags.append('-fopenmp')
+elif compiler == 'xlc':
+   if(parallel=='parallel_no' or parallel=='no'):
+     cxx = 'xlc++'
+   else:
+     cxx = 'mpixlcxx'
+   if build == 'debug':
+      ccflags.append('-g3')
+      ccflags.append('-O0')
+   elif build == 'release':
+      ccflags.append('-O3')   
+
+elif compiler == 'icc':
+   cxx = 'icpc'
+   #ccflags.append('-fast')
+   ccflags.append('-fstrict-aliasing')
+   ccflags.append('-qpack_semantic=gnu')
+   if build == 'debug':
+      ccflags.append('-O0')
+   elif build == 'release':
+#      ccflags.append('-fast')
+      #ccflags.append('-vec-report5') # is supressed by -ipo (included in -fast)
+      #ccflags.append('-xHost')       # done by -fast
+      #ccflags.append('-O3')          # done by -fast
+      #ccflags.append('-no-prec-div') # done by -fast
+      #ccflags.append('-static')      # done by -fast
+      ccflags.append('-w')
+#     ccflags.append('-Werror-all')
+      ccflags.append('-align')
+      ccflags.append('-ansi-alias')
+   #PN: If -fast is used for linking, the tbb-lib cannot be found :-(   
+   #linkerflags.append('-fast')
+   if multicore == 'openmp':
+      ccflags.append('-openmp')
+      linkerflags.append('-openmp')
+else:
+   print "ERROR: compiler must be = 'gcc', 'xlc' or 'icc'!"
+   sys.exit(1)
+   
+##### Determine Scalasca Usage
+#
+scalasca = ARGUMENTS.get('scalasca', 'scalasca_no') # Read command line parameter
+if scalasca == 'yes' or scalasca == 'scalasca_yes':
+   cxx = 'scalasca -instrument ' + cxx
+elif scalasca == 'no' or scalasca == 'scalasca_no':
+   pass
+else:
+   print "ERROR: scalasca must be = 'scalasca_yes', 'yes', 'scalasca_no' or 'no'!"
+   sys.exit(1)
+   
+##### Determine build path
+#
+target = ARGUMENTS.get('target', '')  # Read command line parameter
+build_offset = ARGUMENTS.get('buildoffset', 'build')
+buildpath = build_offset  + '/' + str(target) + '/' + str(build) + '/dim' + str(dim) + '/' 
+if multicore == 'tbb':
+   buildpath = buildpath + 'tbb/'
+elif multicore == 'openmp':
+   buildpath = buildpath + 'openmp/'
+else:
+   buildpath = buildpath + 'multicore_no/'
+if parallel == 'yes' or parallel == 'parallel_yes':
+   buildpath = buildpath + 'parallel_yes/'
+else:
+   buildpath = buildpath + 'parallel_no/'
+if compiler == 'icc':
+   buildpath = buildpath + 'icc/'
+if compiler == 'gcc':
+   buildpath = buildpath + 'gcc/'
+if compiler == 'xlc':
+   buildpath = buildpath + 'xlc/'
+if gprof == 'yes' or gprof == 'gprof_yes':
+   buildpath = buildpath + 'gprof/'
+if threadProfiler == 'yes':
+   buildpath = buildpath + 'threadProfiler/'
+if valgrind == 'yes':
+   buildpath = buildpath + 'valgrind/'
+if scalasca == 'yes' or scalasca == 'scalasca_yes':
+   buildpath = buildpath + 'scalasca/'
+   
+
+   
+##### Determine build targets and specify their build variable settings
+#
+if target == 'heatequation':
+   pass
+elif target == 'kernel':
+   pass
+elif target == 'latticeboltzmann':
+   pass
+elif target == 'latticeboltzmann-cca':
+   pass
+elif target == 'navierstokes-prototype1':
+   pass
+elif target == 'navierstokes-prototype2':
+   pass            
+elif target == 'jacobi':
+   pass
+elif target == 'puregrid':
+   pass
+elif target == 'tarch':
+   pass
+else:
+   print "ERROR: Target", target, "is invalid!"
+   printTargets ()
+   sys.exit(1)     
+
+##### Print options used to build
+#
+print
+print "Target: " + target
+print "Options: build = " + str(build) + ", dim = " + str(dim) + ", build-offset = " + str(build_offset) + ", parallel = " + str(parallel) + ", multicore = " + str(multicore) + ", gprof = " + str(gprof) + ", compiler = " + str(compiler) + ", precice = " + str(precice)
+print "Buildpath: " + buildpath
+print
+
+#print "Build targets: ",  map(str, BUILD_TARGETS)
+#print "Command line target: ", map(str, COMMAND_LINE_TARGETS)
+
+VariantDir (buildpath, './', duplicate=0)  # Change build directory
+
+
+##### Setup construction environment:
+#
+env = Environment ( 
+   CPPDEFINES = cppdefines,
+   LIBPATH    = libpath,
+   LIBS       = libs, 
+   CPPPATH    = cpppath,
+   CCFLAGS    = ccflags,
+   LINKFLAGS  = linkerflags,
+   CXX        = cxx,
+   ENV        = os.environ # Makes environment variables visible to scons
+   #tools      = compiler_tools
+   )
+
+################################################################################
+#
+# Define sources
+#
+
+##### Sub T-components
+
+sourcesTLa = [
+   Glob(buildpath + 'tarch/la/*.cpp'),
+   Glob(buildpath + 'tarch/la/tests/*.cpp')
+   ]
+
+sourcesTCompiler = [
+   Glob(buildpath + 'tarch/compiler/*.cpp')
+   ]
+
+sourcesTConfiguration = [
+   Glob(buildpath + 'tarch/configuration/*.cpp')
+   ]
+
+sourcesTIrr = [
+   Glob(buildpath + 'tarch/irr/*.cpp')
+ ]
+
+sourcesTLogging = [
+  Glob(buildpath + 'tarch/logging/*.cpp'),
+  Glob(buildpath + 'tarch/logging/configurations/*.cpp')
+]
+
+sourcesTServices = [
+  Glob(buildpath + 'tarch/services/*.cpp')
+]
+
+sourcesTTests = [
+  Glob(buildpath + 'tarch/tests/*.cpp'),
+  Glob(buildpath + 'tarch/tests/configurations/*.cpp')
+  ]
+
+sourcesTUtils = [
+  Glob(buildpath + 'tarch/utils/*.cpp')
+]
+
+sourcesTPlotter = [ 
+   Glob(buildpath + 'tarch/plotter/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/globaldata/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/globaldata/tests/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/griddata/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/griddata/multiscale/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/griddata/regular/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/griddata/regular/vtk/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/griddata/unstructured/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/griddata/unstructured/configurations/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/griddata/unstructured/vtk/*.cpp'),
+   Glob(buildpath + 'tarch/plotter/griddata/unstructured/vtk/tests/*.cpp')
+   ]   
+   
+##### Define sources T-components
+#            
+sourcesTComponents = [
+   sourcesTCompiler,
+   sourcesTConfiguration,
+   sourcesTIrr,
+   sourcesTLa,
+   sourcesTLogging,
+   sourcesTPlotter,
+   sourcesTServices,
+   sourcesTTests,
+   sourcesTUtils
+   ]
+
+
+##### Define sources for multicore support
+#    
+sourcesDatatraversal = [
+    Glob(buildpath + 'peano/kernel/datatraversal/*.cpp'),
+    Glob(buildpath + 'peano/kernel/datatraversal/configurations/*.cpp'),
+    Glob(buildpath + 'peano/kernel/datatraversal/tests/*.cpp'),
+    Glob(buildpath + 'peano/kernel/datatraversal/autotuning/*.cpp'),
+    Glob(buildpath + 'tarch/multicore/configurations/*.cpp'),
+    Glob(buildpath + 'tarch/multicore/*.cpp')
+  ]       
+      
+if multicore == 'no' or multicore == 'multicore_no':
+   pass
+elif multicore == 'openmp':
+   sourcesDatatraversal = sourcesDatatraversal + [
+     Glob(buildpath + 'tarch/multicore/openMP/*.cpp')
+   ]
+elif multicore == 'tbb':
+   sourcesDatatraversal = sourcesDatatraversal + [
+     Glob(buildpath + 'tarch/multicore/tbb/*.cpp')
+   ]
+
+
+if parallel == 'yes' or parallel == 'parallel_yes':
+   sourcesParallel = [
+     Glob(buildpath + 'tarch/parallel/*.cpp'),
+     Glob(buildpath + 'tarch/parallel/strategy/*.cpp'),
+     Glob(buildpath + 'tarch/parallel/messages/*.cpp'),
+     Glob(buildpath + 'tarch/parallel/dastgen/*.cpp'),
+     Glob(buildpath + 'tarch/parallel/configurations/*.cpp'),
+     Glob(buildpath + 'peano/kernel/parallel/*.cpp'),
+     Glob(buildpath + 'peano/kernel/parallel/tests/*.cpp'),
+     Glob(buildpath + 'peano/kernel/regulargrid/parallel/*.cpp'),
+     Glob(buildpath + 'peano/kernel/regulargrid/parallel/messages/*.cpp'),
+     Glob(buildpath + 'peano/kernel/regulargrid/parallel/tests/*.cpp')
+   ]
+   pass
+else:
+  sourcesParallel = []
+  
+
+#### Peano Utils
+sourcesPeanoUtils = [
+  Glob(buildpath + 'peano/utils/*.cpp')
+]
+
+
+### Peano partition coupling
+sourcesPartitionCoupling = [
+  Glob(buildpath + 'peano/integration/partitioncoupling/*.cpp'),
+  Glob(buildpath + 'peano/integration/partitioncoupling/builtin/*.cpp'),
+  Glob(buildpath + 'peano/integration/partitioncoupling/builtin/configurations/*.cpp'),
+  Glob(buildpath + 'peano/integration/partitioncoupling/builtin/tests/*.cpp'),
+  Glob(buildpath + 'peano/integration/partitioncoupling/builtin/records/*.cpp'),
+  Glob(buildpath + 'peano/integration/partitioncoupling/services/*.cpp')
+]
+
+### Precice
+if precice == 'yes' or precice =='precice_yes':
+   sourcesPrecice = [
+     Glob(buildpath + 'peano/integration/partitioncoupling/precice/*.cpp'),
+     Glob(buildpath + 'peano/geometry/precice/*.cpp'),
+     Glob(buildpath + 'peano/geometry/precice/configurations/*.cpp'),
+     Glob(buildpath + 'peano/geometry/precice/services/*.cpp')
+   ]
+   pass
+else:
+  sourcesPrecice = []
+
+### Queries
+sourcesQueries = [
+    Glob(buildpath + 'peano/integration/dataqueries/*.cpp'),
+    Glob(buildpath + 'peano/integration/dataqueries/configuration/*.cpp')
+    ]
+
+### Kernel
+sourcesKernelConfiguration = [
+   Glob(buildpath + 'peano/kernel/configurations/*.cpp')
+   ]
+
+sourcesGridInterface = [
+   Glob(buildpath + 'peano/kernel/gridinterface/*.cpp')
+   ]
+         
+sourcesPeanoGrid = [
+   Glob(buildpath + 'peano/kernel/peanogrid/*.cpp')
+   ]
+   
+sourcesRegularGrid = [
+   Glob(buildpath + 'peano/kernel/regulargrid/*.cpp'),
+   Glob(buildpath + 'peano/kernel/regulargrid/configurations/*.cpp'),
+   Glob(buildpath + 'peano/kernel/regulargrid/tests/*.cpp'),
+   Glob(buildpath + 'peano/kernel/regulargrid/tests/adapters/*.cpp'),
+   Glob(buildpath + 'peano/kernel/regulargrid/tests/records/*.cpp')
+   ]
+
+sourcesSpacetreeGrid = [
+   Glob(buildpath + 'peano/kernel/spacetreegrid/*.cpp'),
+   Glob(buildpath + 'peano/kernel/spacetreegrid/aspects/*.cpp'),
+   Glob(buildpath + 'peano/kernel/spacetreegrid/nodes/*.cpp'),
+   Glob(buildpath + 'peano/kernel/spacetreegrid/tests/*.cpp'),
+   Glob(buildpath + 'peano/kernel/spacetreegrid/tests/records/*.cpp')
+   ]
+sourcesStacks = [
+    Glob(buildpath + 'peano/kernel/stacks/*.cpp'),
+    Glob(buildpath + 'peano/kernel/stacks/implementation/*.cpp')
+    ]
+
+sourcesPeanoKernel = [
+   Glob(buildpath + 'peano/kernel/*.cpp'),
+   sourcesKernelConfiguration,
+   sourcesGridInterface,
+   sourcesPeanoGrid,
+   sourcesRegularGrid,
+   sourcesSpacetreeGrid,
+   sourcesStacks
+   ]
+
+#### Geometry
+##### Builtin Geometry
+sourcesBuiltinGeometry = [
+   Glob(buildpath + 'peano/geometry/builtin/*.cpp'),
+   Glob(buildpath + 'peano/geometry/builtin/services/*.cpp'),
+   Glob(buildpath + 'peano/geometry/extensions/*.cpp'),
+   Glob(buildpath + 'peano/geometry/builtin/configurations/*.cpp'),
+   Glob(buildpath + 'peano/geometry/builtin/tests/*.cpp')
+   ]
+
+
+sourcesPeanoGeometry = [
+   Glob(buildpath + 'peano/geometry/*.cpp'),
+   Glob(buildpath + 'peano/geometry/tests/*.cpp'),
+   Glob(buildpath + 'peano/geometry/configurations/*.cpp'),
+   Glob(buildpath + 'peano/geometry/services/*.cpp'),
+   sourcesBuiltinGeometry
+   ]
+
+sourcesPeanoBase = [
+  sourcesPeanoKernel,
+  sourcesPeanoGeometry,
+  sourcesPeanoUtils,
+  sourcesDatatraversal,
+  sourcesQueries,
+  Glob(buildpath + 'peano/*.cpp'),
+  Glob(buildpath + '*.cpp')
+]
+
+sourcesToolBox = [
+  Glob(buildpath + 'peano/toolbox/solver/*.cpp'),
+  Glob(buildpath + 'peano/toolbox/solver/test/*.cpp'),
+  Glob(buildpath + 'peano/toolbox/stencil/*.cpp')
+]
+
+### Applications
+#### Define sources of application latticeboltzmann
+sourcesHeatEquation = [
+    Glob(buildpath + 'peano/applications/heatequation/*.cpp'),
+    Glob(buildpath + 'peano/applications/heatequation/timestepping/*.cpp'),
+    Glob(buildpath + 'peano/applications/heatequation/timestepping/adapters/*.cpp'),
+    Glob(buildpath + 'peano/applications/heatequation/timestepping/configurations/*.cpp'),
+    Glob(buildpath + 'peano/applications/heatequation/timestepping/mappings/*.cpp'),
+    Glob(buildpath + 'peano/applications/heatequation/timestepping/records/*.cpp'),
+    Glob(buildpath + 'peano/applications/heatequation/timestepping/repositories/*.cpp'),
+    Glob(buildpath + 'peano/applications/heatequation/timestepping/runners/*.cpp'),
+    Glob(buildpath + 'peano/applications/heatequation/timestepping/tests/*.cpp'),
+    Glob(buildpath + 'scenario/heatequation/*.cpp')
+    ]
+sourcesLatticeBoltzmann = [
+    Glob(buildpath + 'scenario/latticeboltzmann/blocklatticeboltzmann/*.cpp'),
+    Glob(buildpath + 'scenario/latticeboltzmann/blocklatticeboltzmann/services/*.cpp'),
+    Glob(buildpath + 'scenario/latticeboltzmann/blocklatticeboltzmann/configurations/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/configurations/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/adapters/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/boundaryconditions/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/collisionmodels/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/configurations/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/mappings/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/nonlocaltreatment/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/parallel/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/records/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/forcerecords/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/repositories/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/runners/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/scenarios/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/services/*.cpp'),
+    Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/tests/*.cpp')
+    ]
+#### Define sources of application navierstokes with cca
+sourcesLatticeBoltzmannCCA = [
+   sourcesLatticeBoltzmann,
+   Glob(buildpath + 'tarch/plotter/griddata/regular/cca/*.cpp'),
+   Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/*.cpp'),
+   Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/scicode/*.cpp'),
+   Glob(buildpath + 'peano/applications/latticeboltzmann/blocklatticeboltzmann/cca/ports/*.cpp'),
+   Glob(buildpath + 'peano/integration/cca/*.ccp'),
+   Glob(buildpath + 'peano/integration/cca/ports/*.cpp'),
+   Glob(buildpath + 'peano/integration/cca/ports/grid/*.cpp')
+   ]    
+    
+#### Define sources of application navierstokes
+sourcesNavierStokesPrototype1 = [
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/adapters/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/configurations/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/fluidnumerics/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/fluidnumerics/tests/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/mappings/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/records/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/repositories/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/runners/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/scenarios/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/scenarios/configuration/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/scenarios/integrationtests/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype1/tests/*.cpp')
+    ]
+sourcesNavierStokesPrototype2 = [
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/adapters/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/configurations/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/mappings/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/records/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/repositories/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/runners/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/scenarios/*.cpp'),
+    Glob(buildpath + 'peano/applications/navierstokes/prototype2/tests/*.cpp')
+    ]        
+##### Define sources of application puregrid
+sourcesPureGrid = [
+	Glob(buildpath + 'peano/applications/puregrid/*.cpp'),
+	Glob(buildpath + 'peano/applications/puregrid/adapters/*.cpp'),
+	Glob(buildpath + 'peano/applications/puregrid/configurations/*.cpp'),
+	Glob(buildpath + 'peano/applications/puregrid/mappings/*.cpp'),
+	Glob(buildpath + 'peano/applications/puregrid/records/*.cpp'),
+	Glob(buildpath + 'peano/applications/puregrid/repositories/*.cpp'),
+	Glob(buildpath + 'peano/applications/puregrid/runners/*.cpp'),
+	Glob(buildpath + 'peano/applications/puregrid/tests/*.cpp')
+    ]
+##### Define sources of application jacobi   
+sourcesJacobi = [
+    Glob(buildpath + 'peano/applications/poisson/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/adapters/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/codesnippets/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/configurations/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/mappings/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/records/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/repositories/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/runners/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/tests/*.cpp')
+	]
+  
+################################################################################
+
+##### Build selected target
+#
+if target == 'heatequation':
+   env.Program (
+      target = buildpath + 'peano-heatequation',
+    source = [
+       sourcesHeatEquation,
+       sourcesTComponents,
+       sourcesPeanoBase,
+       sourcesParallel,
+       sourcesToolBox
+     ]
+      )   
+if target == 'kernel':
+   env.Program (
+      target = buildpath + 'peano-kernel',
+	  source = [
+	     sourcesTComponents,
+		   sourcesPeanoBase,
+		   sourcesParallel,
+       sourcesToolBox
+		 ]
+      )
+if target == 'latticeboltzmann':
+   env.Program(
+      target = buildpath + 'peano-latticeboltzmann',
+      source = [
+        sourcesTComponents,
+        sourcesPeanoBase,
+        sourcesLatticeBoltzmann,
+        sourcesParallel,
+        sourcesPrecice,
+        sourcesPartitionCoupling
+        ]
+      )
+if target == 'latticeboltzmann-cca':
+   env.Program(
+      target = buildpath + 'peano-latticeboltzmann-cca',
+      source = [
+        sourcesTComponents,
+        sourcesPeanoBase,
+        sourcesLatticeBoltzmannCCA,
+        sourcesParallel,
+        sourcesPrecice,
+        sourcesPartitionCoupling
+        ]
+      )      
+if target == 'navierstokes-prototype1':
+   env.Program(
+      target = buildpath + 'peano-navierstokes-prototype1',
+      source = [
+        sourcesTComponents,
+        sourcesPeanoBase,
+        sourcesNavierStokesPrototype1,
+        sourcesParallel
+        ]
+      )
+if target == 'navierstokes-prototype2':
+   env.Program(
+      target = buildpath + 'peano-navierstokes-prototype2',
+      source = [
+        sourcesTComponents,
+        sourcesPeanoBase,
+        sourcesNavierStokesPrototype2,
+        sourcesParallel
+        ]
+      )            
+if target == 'jacobi':
+   env.Program (
+      target = buildpath + 'peano-jacobi',
+	  source = [
+	     sourcesToolBox,
+	     sourcesTComponents,
+       sourcesPeanoBase,
+		   sourcesJacobi,
+       sourcesParallel
+		 ]
+      )
+if target == 'puregrid':
+   env.Program (
+      target = buildpath + 'peano-puregrid',
+	  source = [
+	     sourcesTComponents,
+		   sourcesPeanoBase,
+		   sourcesPureGrid,
+        sourcesParallel
+		 ]
+      )
+if target == 'tarch':
+   env.StaticLibrary (
+      target = buildpath + 'peano-tarch',
+      source = [
+         sourcesTComponents
+         ]
+      )
+   env.Program (
+      target = buildpath + 'peano-tarch',
+      source = [
+         sourcesTComponents,
+         #Glob(buildpath + 'tarch/la_new/*.cpp'),
+         #Glob(buildpath + 'tarch/la_new/tests/*.cpp'),
+         sourcesPeanoUtils,
+         Glob(buildpath + 'peano/*.cpp'),
+         Glob(buildpath + '*.cpp')
+         ]
+      )
+
