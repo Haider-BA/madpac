@@ -31,7 +31,7 @@ ExchangeDataContainer::ExchangeDataContainer(int dim,
   DataContainer(dim),  _numMDiterations(mdIterations), _numLBiterations(
           lbIterations)
 {
-	_timestep = madpac::PeanoCouplingService::getInstance().getTimestep();
+	_timestep = -1;
 	_ilb2md = madpac::PeanoCouplingService::getInstance().getConfig()->getCouplingConfig()->getLb2md(),
 		_imd2lb =	madpac::PeanoCouplingService::getInstance().getConfig()->getCouplingConfig()->getMd2lb(),
 #ifdef MADPAC_MARDYNCOUPLING
@@ -125,7 +125,6 @@ ExchangeDataContainer::syncLB()
   _lbDataWrite = tmp;
 #endif
   setZeroLB();
-  _timestep = madpac::PeanoCouplingService::getInstance().getTimestep();
 }
 
 void
@@ -171,7 +170,6 @@ ExchangeDataContainer::syncMD()
   _lbDataWrite = tmp;
 #endif
   setZeroMDSum();
-  _timestep = madpac::PeanoCouplingService::getInstance().getTimestep();
   //	std::cout << "lub"<< _domainDecomposition->getRank()  <<std::endl;
 }
 
@@ -206,7 +204,7 @@ ExchangeDataContainer::finishMDts()
             }
         }
     }
-  _timestep = madpac::PeanoCouplingService::getInstance().getTimestep();
+  _timestep++;
 }
 #ifdef MADPAC_MARDYNCOUPLING
 

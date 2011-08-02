@@ -112,24 +112,22 @@ void
 madpac::PeanoCouplingService::runMarDyn()
 {
   _timestep++;
-  if (_timestep >= _lbinittime)
+  if (_timestep % _numLbIterations == 0 && _timestep >= _lbinittime)
     {
       logInfo("runMarDyn()", "RUN MARDYN TIMESTEP: " << _timestep);
 
       //std::cout << "RUN MARDYN TIMESTEP: "<< _timestep << std::endl;
-      if (_timestep % _numLbIterations == 0)
-        {
+
           _dataContainer->syncLB();
-        }
+
       if (_timestep > _lbinittime)
         {
           _dataContainer->output(_timestep);
         }
       _mardyn->simStep(_numMdIterations);
-      if (_timestep % _numLbIterations == 0)
-        {
+
           _dataContainer->syncMD();
-        }
+
     }
 }
 

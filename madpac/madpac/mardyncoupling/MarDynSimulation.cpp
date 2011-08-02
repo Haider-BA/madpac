@@ -92,6 +92,8 @@ namespace mardyn
         global_log->debug() << "Updating container and decomposition" << endl;
         updateParticleContainerAndDecomposition();
 
+
+
         if (!_firstMDStep)
           _lbConnector->adjustRho(_domainDecomposition, _simstep);
         else

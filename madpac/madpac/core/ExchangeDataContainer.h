@@ -54,7 +54,7 @@ public:
   {
 	  bool b = false;
 
-	  if(_ilb2md != 0 && _ilb2md%_timestep == 0)
+	  if(_ilb2md != 0 && _timestep%_ilb2md == 0)
 		  b = true;
     return b;
   }
@@ -67,7 +67,7 @@ public:
   {
 	  bool b = false;
 
-	  if(_imd2lb != 0 && _imd2lb%_timestep == 0)
+	  if(_imd2lb != 0)
 		  b = true;
     return b;
   }

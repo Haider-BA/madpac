@@ -85,7 +85,7 @@ namespace madpac
     {
       if (_dataContainer->lb2md())
         {
-          //std::cout << "getV" << std::endl;
+       //   std::cout << "MD: getV" << std::endl;
           Molecule *mol;
           double pos[3];
           //int index=0;

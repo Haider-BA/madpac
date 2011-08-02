@@ -99,10 +99,13 @@ namespace madpac
             pos[2] = 0;
 #endif
             //GET
+
+
             if (_timestep % _numLbIterations == 0 && _timestep > _lbinittime)
               {
                 if (_dataContainer->md2lb())
                   {
+
                     if (_dataContainer->getMDData4LB(data, pos))
                       {
                         for (int q = 0; q < DIMENSIONS; q++)
