@@ -2,28 +2,63 @@
 
  @page "CCA - Peano's Integration into the a Simplified Common Component Architecture"
  
- !!! Prepare Your Component For CCA 
+ !! Prepare Your Component For CCA 
  
- Once before you start to work with CCA, you have to do some preparation steps.
- These steps have to be done once and only once.   
- Run the following script on the terminal to generate all the glue code:
+ Once before you start to work with CCA, you have to do some preparation steps. 
+ These steps have to be done once and only once. Before you start, you have do 
+ download sciCoDE's stand-alone compiler from http://www5.in.tum.de/scicode in 
+ the subsection Libraries and Stand-alone Compiler. There is a version of this 
+ compiler available in Peano's releases/tools directory (if you are working 
+ directly with the svn), but this one might be outdated. 
+
+ With the compiler - it is a plain jar archive - at hand, run the following 
+ scripts from your Peano directory holding src. These scripts generate all the 
+ glue code - either for remote execution or direct execution due to Java JNI.
+ 
+ !!! Direct Execution (JNI Interface)
+ 
+ @todo
+  
  \code
- cd Peano's src directory
- java -jar ../releases/tools/scicode-compiler.jar -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L xml-c++   -l libdiffusionequationWithExplicitTimeStepping.so peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
- java -jar ../releases/tools/scicode-compiler.jar -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-ports peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
- java -jar ../releases/tools/scicode-compiler.jar -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-plain peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
+ java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.plugins.Peano -L xml-c++ -o src -l libdiffusionequationWithExplicitTimeStepping.so peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
+ java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.plugins.Peano -L c++-ports -o src -l libdiffusionequationWithExplicitTimeStepping.so peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
+ java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.plugins.Peano -L c++-plain -o src -l libdiffusionequationWithExplicitTimeStepping.so peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
+ java -jar ../releases/tools/scicode-compiler.jar -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-ports -o src peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
+ java -jar ../releases/tools/scicode-compiler.jar -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-plain -o src peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
  \endcode
 
- Sometimes, this doesn't work as the jar file depends on other jar files. In 
- this case, you might try: 
+ It might make sense to augment $libdiffusionequationWithExplicitTimeStepping.so$ with a prefix 
+ indicating whether it is the 2d or 3d variant and what the target architecture 
+ (Intel, MPI without OpenMP, e.g.) is.  
+ 
+ !!! Remove Execution
+ 
+ If you want to run Peano remotely as stand-alone process, follow the following 
+ steps: 
+ 
  \code
- cd Peano's src directory
- java -classpath ../releases/tools/scicode-compiler.jar:../releases/tools/jargs.jar de.tum.scicode.sidl.Compiler -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L xml-c++   -l libdiffusionequationWithExplicitTimeStepping.so peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
- java -classpath ../releases/tools/scicode-compiler.jar:../releases/tools/jargs.jar de.tum.scicode.sidl.Compiler -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-ports peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
- java -classpath ../releases/tools/scicode-compiler.jar:../releases/tools/jargs.jar de.tum.scicode.sidl.Compiler -I peano/integration/cca/standard-ports.sidl --naming de.tum.scicode.sidl.plugins.Peano -L c++-plain peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
+ java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.plugins.Peano -L c++-ports -o src src/peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
+ java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.plugins.Peano -L c++-plain -o src src/peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
+ java -jar scicode-compiler.jar --naming de.tum.scicode.sidl.plugins.Peano -L c++-proxy -o src src/peano/applications/diffusionequation/explicittimestepping/cca/ForwardBatchJob.sidl 
  \endcode
- Also, adding the argument $-v$ might give you some hints what actually goes wrong.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ @todo -I peano/integration/cca/standard-ports.sidl wieder einfuegen
 
+
+
+
+ !! Build Your CCA Component
  Include the directory peano/integration/cca into your build path and recompile 
  your code with $-DCCA$ into a shared lib. For this, Peano's setup script has 
  already prepared a makefile. 

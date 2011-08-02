@@ -2,6 +2,8 @@
 // This file is part of the Peano project. For conditions of distribution and
 // use, please see the copyright notice at www5.in.tum.de/peano
 
+@todo 
+
 /**
  * This file describes some interfaces which are used by all Peano components 
  * due to the common technical architecture.

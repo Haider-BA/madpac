@@ -81,6 +81,9 @@ tarch::la::Vector<DIMENSIONS,double> LaplacianBasedForceCalculator::computeForce
 					+ /*radius*radius**/laplacian[1]);
 
 	flog << count << std::endl;
+	flog << "PI: " << tarch::la::PI << std::endl;
+	flog << "viscosity: " << viscosity << std::endl;
+	flog << "radius: " << radius << std::endl;
 	flog << "l: " << laplacian[0] << " : " << laplacian[1] << std::endl;
 	flog << "f: " << force[0] << " : " << force[1] << std::endl;
 	flog << "vp: " << particlesVelocity[0] << " : " << particlesVelocity[1] << std::endl;

@@ -84,7 +84,7 @@ double ParticlesService::getParticlesRadius(int particlesIndex) const
 	return _particlesData[particlesIndex].getRadius();
 }
 
-double ParticlesService::getPaticlesDensity(int particlesIndex) const
+double ParticlesService::getParticlesDensity(int particlesIndex) const
 {
 	return _particlesData[particlesIndex].getDensity();
 }
@@ -133,6 +133,13 @@ void ParticlesService::writeVTKHeader(std::ofstream& vtkFile){
 	vtkFile << "\n";
 	vtkFile << "DATASET POLYDATA\n";
 	vtkFile << "POINTS " << getNumberOfParticles() << " float\n";
+}
+
+int ParticlesService::belongs2Particle(tarch::la::Vector<DIMENSIONS,double>& point){
+	for(int index=0; index < static_cast<int>(_particlesData.size()); index++){
+		if(_particlesData[index].isPointInside(point)) return index;
+	}
+	return -1;
 }
 
 }

@@ -3,14 +3,16 @@
 #include "peano/utils/Globals.h"
 
 #include <cstdlib>
+#include <math.h>
 
 
 tarch::logging::Log  peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling::_log( "peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling" );
 
 
-peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling::OracleForOnePhaseWithGrainSizeSampling(int numberOfSamples):
+peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling::OracleForOnePhaseWithGrainSizeSampling(int numberOfSamples, bool logarithmicDistribution):
   _currentGrainSize(0),
-  _numberOfSamples(numberOfSamples) {
+  _numberOfSamples(numberOfSamples),
+  _logarithmicDistribution(logarithmicDistribution){
   assertion( _numberOfSamples>0 );
 }
 
@@ -23,7 +25,13 @@ int peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSamp
     _executionTimes[_currentMeasurementDescription].push_back( std::pair<double,double>(0.0,0.0) );
   }
 
-  _currentGrainSize = (problemSize/_numberOfSamples) * (rand() % _numberOfSamples);
+  if(_logarithmicDistribution){
+//    double q = 1.0 / pow(problemSize, 1.0 / _numberOfSamples);
+//    _currentGrainSize =  pow(q, (rand() % _numberOfSamples)) * problemSize;
+    _currentGrainSize = pow(pow(0.5, 0.25), rand() % _numberOfSamples) * problemSize;
+  } else {
+    _currentGrainSize = (problemSize/_numberOfSamples) * (rand() % _numberOfSamples);
+  }
 
   if(askingMethod == RegularGridHandleCells) {
     _currentGrainSize /= (TWO_POWER_D);
@@ -88,5 +96,5 @@ peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling
 
 
 peano::kernel::datatraversal::autotuning::OracleForOnePhase* peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling::createNewOracle() const {
-  return new OracleForOnePhaseWithGrainSizeSampling(_numberOfSamples);
+  return new OracleForOnePhaseWithGrainSizeSampling(_numberOfSamples, _logarithmicDistribution);
 }

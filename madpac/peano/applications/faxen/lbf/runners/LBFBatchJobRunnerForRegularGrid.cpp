@@ -4,7 +4,6 @@
 #include "peano/applications/faxen/lbf/repositories/LBFBatchJobRepositoryForRegularGrid.h"
 
 // services
-#include "peano/applications/faxen/lbf/services/ForcesService.h"
 #include "peano/applications/faxen/lbf/services/ParticlesService.h"
 #include "peano/applications/faxen/lbf/services/ScenarioService.h"
 #include "peano/applications/faxen/lbf/services/NSEDataTraceService.h"
@@ -15,6 +14,9 @@
 
 // information when to launch particles
 #include "peano/integration/partitioncoupling/builtin/PartitionCoupling4MovingSphere.h"
+
+// oracle
+#include "peano/kernel/datatraversal/autotuning/OracleForOnePhaseWithoutParallelisation.h"
 
 #include "peano/UserInterface.h"
 
@@ -62,6 +64,10 @@ int peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::r
 	assertion( configuration.isValid() );
 
 	// configure multicore support
+	peano::kernel::datatraversal::autotuning::OracleForOnePhase* oracle =
+			new peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithoutParallelisation();
+	peano::kernel::datatraversal::autotuning::Oracle::getInstance().setOracle(oracle);
+
 #if defined(SharedTBB)
 	assertion1(false, "Not supported yet!");
 	tarch::multicore::tbb::Core::getInstance().configure( configuration.getCoreConfiguration().getNumberOfThreads() );
@@ -140,19 +146,55 @@ int peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::r
 	initGridManagementAndGeometryServices(configuration);
 
 	// initialization of Faxen forces services
-	//	initFaxenForcesServices();
+	peano::applications::faxen::lbf::forces::LaplacianBasedForceCalculator forceCalculator;
+	initFaxenForcesServices(forceCalculator);
 
 	// initialization procedure for data structures
 	repository.switchToInitializeAndSetBoundary(); repository.iterate();
 
-
 	if(!repository.getRegularGridState().isOnlyNSE()){
 		initLBServices(configuration); // initialize LB services
+
+		int t_lb;
 		// time loop for LB
-		for (int t = 0; t <repository.getRegularGridState().getNumberTimesteps(); t++){
+		repository.getRegularGridState().setVTKFilename("lb_channel_before_switching2NSE");
+		for (t_lb = 0; t_lb <repository.getRegularGridState().getNumberTimesteps(); t_lb++){
 			runOneLBTimeStep(repository);
-			logInfo("runAsMaster()","Finish timestep " << t);
+			logInfo("runAsMaster()","Finish timestep " << t_lb);
 		}
+
+		initNSEServicesAferLB(configuration);
+
+		// switching from LB to NSE simulations
+		repository.switchToSwitchFromLB2NSE(); repository.iterate();
+
+		shutdownLBServices(configuration); // shutdown LB services
+
+		// NSE Simulations after switching
+		double t_nse    = 0.0;                                  		// time
+		double t_end  = repository.getRegularGridState().getTEnd();      // end time
+
+		// time loop for NSE
+		while(t_nse < t_end) {
+			runOneNSETimeStep(t_nse,repository);
+		}
+
+		repository.getRegularGridState().setTimestep(0);
+		initLBServicesAfterNSE(configuration,0); // initialize LB services
+
+		// switching from NSE to LB simulations
+		repository.switchToExtractDataNSE2LB(); repository.iterate();
+		repository.switchToCorrectDensityAndComputeEqPDF4LB(); repository.iterate();
+
+		shutdownNSEServices(configuration); // shutdown NSE services
+
+		//time loop for LB
+		repository.getRegularGridState().setVTKFilename("lb_channel_after_switching2NSE");
+		for (t_lb = 0; t_lb <repository.getRegularGridState().getNumberTimesteps(); t_lb++){
+			runOneLBTimeStep(repository);
+			logInfo("runAsMaster()","Finish timestep " << t_lb);
+		}
+
 		shutdownLBServices(configuration); // shutdown LB services
 	}
 	else {
@@ -166,7 +208,7 @@ int peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::r
 			runOneNSETimeStep(t,repository);
 		}
 
-		initLBServices(configuration); // initialize LB services
+		initLBServicesAfterNSE(configuration,0); // initialize LB services
 
 		// switching from NSE to LB simulations
 		repository.switchToExtractDataNSE2LB(); repository.iterate();
@@ -175,16 +217,16 @@ int peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::r
 		shutdownNSEServices(configuration); // shutdown NSE services
 
 		repository.switchToBlockVTKOutputAdapter(); repository.iterate();
-		//		//time loop for LB
-		//		for (int t = 0; t <repository.getRegularGridState().getNumberTimesteps(); t++){
-		//			runOneLBTimeStep(repository);
-		//			logInfo("runAsMaster()","Finish timestep " << t);
-		//		}
+		//time loop for LB
+		for (int t = 0; t <repository.getRegularGridState().getNumberTimesteps(); t++){
+			runOneLBTimeStep(repository);
+			logInfo("runAsMaster()","Finish timestep " << t);
+		}
 
 		shutdownLBServices(configuration); // shutdown LB services
 	}
 
-	//	shutdownFaxenForcesServices(); // shutdown Faxen forces services
+	shutdownFaxenForcesServices(); // shutdown Faxen forces services
 
 	repository.logIterationStatistics();
 	repository.terminate();
@@ -303,13 +345,14 @@ shutdownLBServices(const peano::applications::faxen::lbf::configurations::LBFBat
 			|| (configuration.getBlockLatticeBoltzmannScenarioConfiguration().getScenario() == scenario::latticeboltzmann::blocklatticeboltzmann::EMPTY_BOX)
 			|| (configuration.getBlockLatticeBoltzmannScenarioConfiguration().getScenario() == scenario::latticeboltzmann::blocklatticeboltzmann::MOVING_SPHERE_IN_DRIFT_RATCHET)
 	){
+		// service for force synchronisation
+		peano::applications::latticeboltzmann::blocklatticeboltzmann::services::ForceSynchronisationService::getInstance().shutdown();
 
 		peano::integration::partitioncoupling::services::ReceiveDataService::getInstance().shutdown();
 		peano::integration::partitioncoupling::services::SendDataService::getInstance().shutdown();
 		peano::integration::partitioncoupling::services::CouplingService::getInstance().shutdown();
 
-		// service for force synchronisation
-		peano::applications::latticeboltzmann::blocklatticeboltzmann::services::ForceSynchronisationService::getInstance().shutdown();
+
 	}
 }
 
@@ -352,9 +395,9 @@ void peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::
 	peano::applications::faxen::lbf::services::ParticlesService::getInstance().destroyAllParticles();
 }
 
-void peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::initFaxenForcesServices(){
+void peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::initFaxenForcesServices(
+		peano::applications::faxen::lbf::forces::ForceCalculator& forceCalculator){
 	// initialization of force services
-	peano::applications::faxen::lbf::forces::LaplacianBasedForceCalculator forceCalculator;
 	peano::applications::faxen::lbf::services::ForcesService::getInstance().loadDataFromParticlesService();
 	peano::applications::faxen::lbf::services::ForcesService::getInstance().setForceCalculator(&forceCalculator);
 }
@@ -420,6 +463,7 @@ void peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::
 	}
 
 	repository.switchToControlTimeStep(); repository.iterate();	       // selection of time step
+	std::cout << "time step is " << repository.getRegularGridState().getDelt() << std::endl;
 	logDebug("runOneNSETimeStep()","time step is " << repository.getRegularGridState().getDelt());
 
 	repository.switchToSetVelocitiesBoundary(); repository.iterate();  // setting boundary values for u and v
@@ -456,6 +500,7 @@ void peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::
 
 void peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::printInfoOnScreen(
 		peano::applications::faxen::lbf::repositories::LBFBatchJobRepositoryForRegularGrid& repository){
+	logInfo("printInfoOnScreen()","run only NSE:" << repository.getRegularGridState().isOnlyNSE());
 	logInfo("printInfoOnScreen()","Simulations Reynolds number: " << repository.getRegularGridState().getReynoldsNumber());
 	logInfo("printInfoOnScreen()","Simulations time step size: " << repository.getRegularGridState().getDelt()
 			<< " and from LB: " << repository.getRegularGridState().getDt());
@@ -471,7 +516,8 @@ void peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::
 // faxen correction additional methods
 
 void  peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::initLBServicesAfterNSE(
-		const peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationForRegularGrid& configuration){
+		const peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationForRegularGrid& configuration,
+		int initTimestepCounter){
 	if (   (configuration.getBlockLatticeBoltzmannScenarioConfiguration().getScenario() == scenario::latticeboltzmann::blocklatticeboltzmann::CHANNEL_WITH_MOVING_OBSTACLE)
 			|| (configuration.getBlockLatticeBoltzmannScenarioConfiguration().getScenario() == scenario::latticeboltzmann::blocklatticeboltzmann::EMPTY_BOX)
 			|| (configuration.getBlockLatticeBoltzmannScenarioConfiguration().getScenario() == scenario::latticeboltzmann::blocklatticeboltzmann::MOVING_SPHERE_IN_DRIFT_RATCHET)
@@ -481,15 +527,16 @@ void  peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid:
 		double radius = peano::applications::faxen::lbf::services::ParticlesService::
 				getInstance().getParticlesRadius(0);
 		double density = peano::applications::faxen::lbf::services::ParticlesService::
-				getInstance().getPaticlesDensity(0);
+				getInstance().getParticlesDensity(0);
 		tarch::la::Vector<DIMENSIONS,double> velocity = peano::applications::faxen::lbf::services::ParticlesService::
 				getInstance().getParticlesVelocity(0);
 
-		// convert to appropriate units velocity of the particle
-		tarch::la::Vector<3,double> velocity3;
+		// convert to appropriate velocity units
+		tarch::la::Vector<3,double> velocity3(0.0);
 		velocity3[0] = velocity[0];
 		velocity3[1] = velocity[1];
 		velocity3[2] = 0.0;
+		logInfo("initLBServicesAfterNSE()","sphere velocity before switching: " << velocity3);
 
 		peano::integration::partitioncoupling::services::ReceiveDataService::getInstance().init(
 				position,radius,velocity3,tarch::la::Vector<3,double>(0.0));
@@ -509,7 +556,8 @@ void  peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid:
 				density,
 				configuration.getBlockLatticeBoltzmannScenarioConfiguration().getPartitionCoupling4MovingSphereConfiguration().getTimestepsPerPlottingVtk(),
 				configuration.getBlockLatticeBoltzmannScenarioConfiguration().getPartitionCoupling4MovingSphereConfiguration().getTimestepsPerPlottingPovray(),
-				configuration.getBlockLatticeBoltzmannScenarioConfiguration().getPartitionCoupling4MovingSphereConfiguration().getFilename()
+				configuration.getBlockLatticeBoltzmannScenarioConfiguration().getPartitionCoupling4MovingSphereConfiguration().getFilename(),
+				initTimestepCounter
 		);
 
 		// service for force synchronisation
@@ -546,25 +594,51 @@ void peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForRegularGrid::
 			configuration.getNSEConfiguration().getReynoldsNumber()
 	);
 
+	// initialize data tracing services
+	peano::applications::faxen::lbf::services::NSEDataTraceService::getInstance().init(
+			configuration.getRegularGridConfiguration().getDomainSize()[0],
+			configuration.getRegularGridConfiguration().getDomainSize()[1],
+			configuration.getRegularGridConfiguration().getDomainOffset()[0],
+			configuration.getRegularGridConfiguration().getDomainOffset()[1],
+			configuration.getNSEConfiguration().getMeshSize()[0],
+			configuration.getNSEConfiguration().getMeshSize()[1]);
+
 	/*
 	 * initialization of particles services;
 	 * temporary solution to shutdown particles service and reinitialize;
 	 * initialization should be removed from configuration of regular grid;
 	 */
 	peano::applications::faxen::lbf::services::ParticlesService::getInstance().destroyAllParticles();
-	// how should I get radius, density, position, velocity?
 
-	// from config
-	double radius = 1.0;
+	// get radius from configuration
+	double radius =
+			configuration.getBlockLatticeBoltzmannScenarioConfiguration().getPartitionCoupling4MovingSphereConfiguration().getRadius();
+	logInfo("initNSEServicesAferLB()","switching to NSE: particle radius: " << radius);
+	logInfo("initNSEServicesAferLB()","switching to NSE: zero particle radius: " <<
+			peano::applications::faxen::lbf::services::ParticlesService::getInstance().getParticlesRadius(0));
 
-	// from config
-	double density =1.0;
+	// from density from configuration
+	double density =
+			configuration.getBlockLatticeBoltzmannScenarioConfiguration().getPartitionCoupling4MovingSphereConfiguration().getDensity();
+	logInfo("initNSEServicesAferLB()","switching to NSE: particle density: " << density);
+	logInfo("initNSEServicesAferLB()","switching to NSE: zero particle density: " <<
+			peano::applications::faxen::lbf::services::ParticlesService::getInstance().getParticlesDensity(0));
 
 	// static_cast receive data 4 moving sphere
-	tarch::la::Vector<DIMENSIONS,double> position(0.0);
+	peano::integration::partitioncoupling::builtin::ReceiveDataFromMovingSphere& rds =
+			static_cast<peano::integration::partitioncoupling::builtin::ReceiveDataFromMovingSphere&>(
+					peano::integration::partitioncoupling::services::ReceiveDataService::getInstance().getReceiveData());
+	tarch::la::Vector<DIMENSIONS,double> position = rds.getPosition();
 
-	tarch::la::Vector<DIMENSIONS,double> velocity =
-	 peano::integration::partitioncoupling::services::ReceiveDataService::getInstance().getReceiveData().getVelocity();
+	logInfo("initNSEServicesAferLB()","switching to NSE: particle position: " << position);
+	logInfo("initNSEServicesAferLB()","switching to NSE: zero particle position: " <<
+			peano::applications::faxen::lbf::services::ParticlesService::getInstance().getParticlesPostion(0));
+
+	tarch::la::Vector<DIMENSIONS,double> velocity = rds.getVelocity(position);
+
+	logInfo("initNSEServicesAferLB()","switching to NSE: particle velocity: " << velocity);
+	logInfo("initNSEServicesAferLB()","switching to NSE: zero particle velocity: " <<
+			peano::applications::faxen::lbf::services::ParticlesService::getInstance().getParticlesVelocity(0));
 
 	peano::applications::faxen::lbf::services::ParticlesService::getInstance().
 			createParticle(radius,density,position,velocity);

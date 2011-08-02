@@ -1,15 +1,3 @@
-#ifdef CCA
-template <class Vertex, class Cell, class State>
-void peano::UserInterface::writeDatatypeStatistics(peano::integration::cca::ports::grid::Statistics& writeToPort) {
-  writeToPort.setMemoryFootprint(
-    static_cast<const long long>(sizeof(Cell)),
-    static_cast<const long long>(sizeof(Vertex)),
-    static_cast<const long long>(sizeof(typename Cell::PersistentCell)),
-    static_cast<const long long>(sizeof(typename Vertex::PersistentVertex)),
-    static_cast<const long long>(sizeof(State))
-  );
-}
-#else
 template <class Vertex, class Cell, class State>
 void peano::UserInterface::writeDatatypeStatistics() {
   writeDatatypeStatisticsHeader();
@@ -37,4 +25,3 @@ void peano::UserInterface::writeDatatypeStatistics() {
 
   writeDatatypeStatisticsTrailer();
 }
-#endif

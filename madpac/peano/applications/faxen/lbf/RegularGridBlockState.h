@@ -163,6 +163,10 @@ public:
 	/** returns the current timestep */
 	int getTimestep() const;
 
+	// added for hybrid version
+	/** set time step */
+	void setTimestep(int timestep);
+
 	/** triggers the plotting, i.e. returns true if a VTK plot shall be done and increments the timestep */
 	bool triggerPlotting();
 
@@ -394,6 +398,17 @@ public:
 	 * @param delt time step.
 	 */
 	void setDelt(double delt);
+
+	/**
+	 *  Proxy for getting timestep threshold for NSE.
+	 */
+	double getThresDt() const;
+
+	/**
+	 * Proxy for setting timestep threshold for NSE;
+	 * @param thresDt time step threshold
+	 */
+	void setThresDt(double thresDt);
 
 	/**
 	 * Proxy for getting visualization time interval.

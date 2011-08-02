@@ -7,10 +7,6 @@
 
 #include <string>
 
-#if defined(CCA)
-#include "peano/integration/cca/ports/grid/Statistics.h"
-#endif
-
 
 namespace peano { 
   namespace applications { 
@@ -44,32 +40,27 @@ class peano::applications::diffusionequation::explicittimestepping::repositories
     /**
      * Switch to another event handle.
      */
-     virtual void switchToSetupExperiment() = 0;    
-     virtual void switchToSetupExperimentAndPlot() = 0;    
-     virtual void switchToPerformExplitEulerTimeStep() = 0;    
-     virtual void switchToPerformExplitEulerTimeStepAndPlot() = 0;    
-     virtual void switchToPlotSolution() = 0;    
-     virtual void switchToApplyRefineDeleteCriterion() = 0;    
+    virtual void switchToSetupExperiment() = 0;    
+    virtual void switchToSetupExperimentAndPlot() = 0;    
+    virtual void switchToPerformExplitEulerTimeStep() = 0;    
+    virtual void switchToPerformExplitEulerTimeStepAndPlot() = 0;    
+    virtual void switchToPlotSolution() = 0;    
+    virtual void switchToApplyRefineDeleteCriterion() = 0;    
 
-     virtual bool isActiveAdapterSetupExperiment() const = 0;
-     virtual bool isActiveAdapterSetupExperimentAndPlot() const = 0;
-     virtual bool isActiveAdapterPerformExplitEulerTimeStep() const = 0;
-     virtual bool isActiveAdapterPerformExplitEulerTimeStepAndPlot() const = 0;
-     virtual bool isActiveAdapterPlotSolution() const = 0;
-     virtual bool isActiveAdapterApplyRefineDeleteCriterion() const = 0;
+    virtual bool isActiveAdapterSetupExperiment() const = 0;
+    virtual bool isActiveAdapterSetupExperimentAndPlot() const = 0;
+    virtual bool isActiveAdapterPerformExplitEulerTimeStep() const = 0;
+    virtual bool isActiveAdapterPerformExplitEulerTimeStepAndPlot() const = 0;
+    virtual bool isActiveAdapterPlotSolution() const = 0;
+    virtual bool isActiveAdapterApplyRefineDeleteCriterion() const = 0;
 
     
     /**
      * Give Some Statistics
      *
      * This operation gives you a table which tells you for each adapter how 
-     * much time was spent in it. The result is written to the info log device 
-     * if you are not using CCA/sciCoDE. If you use the PSE framework, it is 
-     * written to the corresponding output port. 
+     * much time was spent in it. The result is written to the info log device. 
      */
-    #ifdef CCA
-    virtual void logIterationStatistics(peano::integration::cca::ports::grid::Statistics& writeToPort) const = 0;
-    #endif
     virtual void logIterationStatistics() const = 0;
 };
 

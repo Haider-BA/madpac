@@ -100,6 +100,15 @@ void Particle::moveOneStep(double dt, tarch::la::Vector<DIMENSIONS,double> &forc
 //	_trajectory.push_back(_position);
 }
 
+bool Particle::isPointInside(tarch::la::Vector<DIMENSIONS,double>& point){
+	tarch::la::Vector<DIMENSIONS,double> distance = _position - point;
+	double distance2 = 0;
+	for(int d=0; d<DIMENSIONS; d++){
+		distance2 += distance[d]*distance[d];
+	}
+	return (distance2<_radius*_radius) ? true : false;
+}
+
 }
 
 }

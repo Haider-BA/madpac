@@ -53,6 +53,7 @@ bool validateProgramArguments(int argc, char** argv) {
 }
 
 
+#ifndef CCA
 int main(int argc, char** argv) {
   fillLookupTables();
 
@@ -125,3 +126,4 @@ int main(int argc, char** argv) {
 
   return programExitCode;
 }
+#endif

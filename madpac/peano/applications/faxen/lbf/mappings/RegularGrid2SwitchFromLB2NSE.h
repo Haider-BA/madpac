@@ -43,6 +43,11 @@ class peano::applications::faxen::lbf::mappings::RegularGrid2SwitchFromLB2NSE {
 	double _dxbydt;
 
 	/**
+	 * size of LB cell edge
+	 */
+	double _dx;
+
+	/**
 	 * density
 	 */
 	double _rho;

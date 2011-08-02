@@ -21,7 +21,7 @@ namespace lbf {
 namespace services {
 
 ScenarioService::ScenarioService():
-						_log("peano::applications::faxen::lbf::services::ScenarioServices"){}
+								_log("peano::applications::faxen::lbf::services::ScenarioServices"){}
 
 ScenarioService::~ScenarioService() {
 	// TODO Auto-generated destructor stub
@@ -62,6 +62,9 @@ void ScenarioService::init(
 						characteristicVelocity,useParabolicProfile,ReynoldsNumber);
 		break;
 	case scenario::latticeboltzmann::blocklatticeboltzmann::CHANNEL_WITH_MOVING_OBSTACLE:
+		_scenario =
+				new scenarios::ChannelScenario(domainSize,domainOffset,
+						characteristicVelocity,useParabolicProfile,ReynoldsNumber);
 		// channel scenario using precice
 		//		_scenario = new scenario::latticeboltzmann::blocklatticeboltzmann::BoundaryData4PreciceChannel(
 		//				domainSize,domainOffset,characteristicVelocity,useParabolicProfile

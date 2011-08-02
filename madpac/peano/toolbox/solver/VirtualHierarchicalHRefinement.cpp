@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <list>
 tarch::logging::Log peano::toolbox::solver::VirtualHierarchicalHRefinement::_log( "peano::toolbox::tests::InterpolationTest" );
@@ -12,7 +13,8 @@ peano::toolbox::solver::VirtualHierarchicalHRefinement::VirtualHierarchicalHRefi
     _fineGrid(partitionFactor+2),
     _otherFineGrid(partitionFactor+2),
     _partitionFactor(partitionFactor),
-    _sizeFineGrid(_fineGrid.size())
+    _sizeFineGrid(_fineGrid.size()),
+    _h(1.0/(_sizeFineGrid-1.0))
 {}
 
 
@@ -124,8 +126,7 @@ peano::toolbox::solver::VirtualHierarchicalHRefinement::computeVirtualHierarchic
 
   _fineGrid = refineGrid(in, _partitionFactor);
   _otherFineGrid = _fineGrid; //needed to copy boundary-values to others grid, they would be uninitialized otherwise
-  double h = 1.0/(_sizeFineGrid-1.0);
-
+  double h = _h;
   HyperCube fineRhs = refineGrid(rhs*pow(h, DIMENSIONS), _partitionFactor);
 
   stencil *= pow(h, DIMENSIONS-2);
@@ -207,22 +208,78 @@ peano::toolbox::solver::VirtualHierarchicalHRefinement::computeVirtualHierarchic
 
 peano::toolbox::stencil::ElementWiseVector peano::toolbox::solver::VirtualHierarchicalHRefinement::calculateCoarserReturnValues()
 {
-      const peano::toolbox::stencil::ElementWiseVector result;
+  peano::toolbox::stencil::ElementWiseVector result;
+  for(int i = 0; i<TWO_POWER_D; i++){ // initialize result
+    result[i] = 0;
+  }
 
-    //  for (int i = 0; i<_fineGrid.size(); i++){ // for all cells (they are identified by their "left" corner)
-    //    if(_fineGrid.isRightBorder(i))
-    //      continue;
-    //    for(int j = 0; j<TWO_POWER_D; j++){ //for all vertices of the processed cell
-    //      int vertex_index = i+ tarch::la::aPowI(j/2, _fineGrid.size());
-    //      for(int k = 0; k<DIMENSIONS; k++){ // in every direction
-    //        for(int l = 0; k<TWO_POWER_D; l++){
-    //        }
-    //      }
-    //    }
-    //  }
-    return result;
+  int offset[TWO_POWER_D];
+  for(int i = 0; i<TWO_POWER_D; i++){
+    offset[i] = 0;
+    for(int j = 0; j<DIMENSIONS; j++){
+      if((i & (1<<j)) != 0){
+        offset[i] += tarch::la::aPowI(j, _fineGrid.size());
+      }
+    }
+    logDebug("calculateCoarserReturnValues()", "offset[" << i << "]: " << offset[i] << " (size:  " << _fineGrid.size() << ")")
+  }
+
+
+
+  for (int cell = 0; cell<_fineGrid.size(); cell++){ // for all cells (they are identified by their "left" corner)
+    if(_fineGrid.isRightBorder(cell))
+      continue;
+    for(int coarseVertexNumer = 0; coarseVertexNumer<TWO_POWER_D; coarseVertexNumer++){ //for all vertices of the coarse grid
+      for(int fineVertexNumber = 0; fineVertexNumber<TWO_POWER_D; fineVertexNumber++){ //for all vertices of the processed cell
+        int cell_index = cell + offset[fineVertexNumber];
+        double integral = 0;
+        for(int direction = 0; direction<DIMENSIONS; direction++){ // in every direction
+            integral += calculatePartialIntegral(direction, fineVertexNumber, coarseVertexNumer);
+        }
+        result[coarseVertexNumer] += _fineGrid[cell_index] * integral;
+      }
+    }
+  }
+  return result;
 }
 
+
+double peano::toolbox::solver::VirtualHierarchicalHRefinement::calculatePartialIntegral(int direction, int testFunctionSmallIndex, int testFunctionCoarseIndex)
+{
+  using namespace std;
+  cout << "dir: " << direction << "  smallIndex: " << testFunctionSmallIndex << " indexCoarse: " <<  testFunctionCoarseIndex << " : ";
+  double result = 1.0;
+  for(int dir = 0; dir<DIMENSIONS; dir++){
+    int testPattern = 1 << (DIMENSIONS - 1 - dir);
+    //cout << " testpattern " << testPattern;
+    if(DIMENSIONS - 1 - dir == direction){ //differetiate
+      if(((testPattern & testFunctionSmallIndex) != 0) ^ ((testPattern & testFunctionCoarseIndex) != 0)){
+        result *= -1;
+        cout << "(-1)";
+      }
+    } else {
+      if((testPattern & testFunctionSmallIndex) == 0){     // small testfunction in direction dir is (1-x/h)
+        if((testPattern & testFunctionCoarseIndex) == 0){    // large testfunction in direction dir is (1-x)
+          result *= _h * (0.5 - _h/6); // == h/2 - (h^2)/6
+          cout << "(h/2 - (h^2)/6)";
+        } else{                                             // large testfunction in direction dir is (x)
+          result *= _h * _h / 6;       // == (h^2)/6
+          cout << "((h^2)/6)";
+        }
+      } else{                                              // small testfunction in direction dir is (x/h)
+        if((testPattern & testFunctionCoarseIndex) == 0){    // large testfunction in direction dir is (1-x)
+          result *= _h * (0.5 - _h/3); // == h/2 - h^2/3
+          cout << "(h/2 - (h^2)/3)";
+        } else{                                             // large testfunction in direction dir is (x)
+          result *= _h * _h / 3;       // == h^2/3
+          cout << "((h^2)/3)";
+        }
+      }
+    }
+  }
+  cout << endl;
+  return result;
+}
 
 
 void peano::toolbox::solver::VirtualHierarchicalHRefinement::visualize(const std::string & identifier)

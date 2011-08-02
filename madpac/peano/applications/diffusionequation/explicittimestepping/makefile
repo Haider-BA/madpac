@@ -20,7 +20,7 @@ INCLUDE_TBB=$(TBB_INC)
 #INCLUDE_OMP=$(OMP_INC)
 INCLUDE_OMP=-fopenmp
 INCLUDE_MPI=-I/usr/include/mpi 
-INCLUDE_SCICODE=-I/work_fast/weinzier/workspace/sciCoDE/third-party-libs/sciCoDE_Utils
+INCLUDE_SCICODE=-I/home/weinzier/bin/sciCoDE_Utils
 INCLUDE_JAVA="-I/usr/lib/jvm/java-6-sun/include -I/usr/lib/jvm/java-6-sun/include/linux"
 
 
@@ -29,12 +29,13 @@ LINK_TBB=$(TBB_SHLIB)
 #LINK_OMP=$(OMP_SHLIB)
 LINK_OMP=-fopenmp
 LINK_MPI=-lpthread -lrt -lmpich
+LINK_SCICODE=-L/home/weinzier/bin/sciCoDE_Utils/Debug -lsciCoDE_Utils
 
 
 # Settings for the GNU Compiler (Debug Mode)
 # ------------------------------------------
 CC=g++
-CFLAGS=-O0 -pedantic -pedantic-errors -Wall -Werror -Wstrict-aliasing -fstrict-aliasing -DDebug -DAsserts
+CFLAGS=-O0 -pedantic -pedantic-errors -Wall -Werror -Wstrict-aliasing -fstrict-aliasing -DDebug -DAsserts -ggdb
 LFLAGS=
 EXECUTABLE=peano-diffusionequationWithExplicitTimeStepping-debug
 
@@ -45,14 +46,6 @@ EXECUTABLE=peano-diffusionequationWithExplicitTimeStepping-debug
 #CFLAGS=-O3 -fstrict-aliasing -fno-rtti -fno-exceptions
 #LFLAGS=
 #EXECUTABLE=peano-diffusionequationWithExplicitTimeStepping-release
-
-
-# Settings for the GNU Compiler (with sciCoDE)
-# --------------------------------------------
-#### CC=g++
-# ## ## #CFLAGS=-I/usr/lib/jvm/java-6-sun/include -I/usr/lib/jvm/java-6-sun/include/linux  -fPIC -shared -Wl,-soname=$(EXECUTABLE_CCA)a
-###### EXECUTABLE_CCA=libdiffusionequationWithExplicitTimeStepping.so
-
 
 
 # Settinsg for the Intel Compiler (Debug Mode)
@@ -75,16 +68,6 @@ OBJECTS=$(SOURCES:.cpp=.o)
 all: header
 
 
-# @echo This is just a template. Please adopt your makefile before you invoke this target
-#      exit
-#       mkdir dist
-#   cp $(EXECUTABLE) dist
-#  cp src/peano/applications/diffusionequation/explicittimestepping/cca/*.sidl dist
-#        cp src/peano/applications/diffusionequation/explicittimestepping/cca/*.xml dist
-#        cd dist
-#        zip diffusionequationWithExplicitTimeStepping.scicode-component $(EXECUTABLE) *.sidl *.xml
-
-
 header:
 	@echo  --- This is Peano 2 ---
 	@echo \(C\) 2010 Technische Universitaet Muenchen
@@ -97,17 +80,17 @@ header:
 	@echo   make addtbb \(if you want TBB support\)
 	@echo   make addomp \(if yuo want OpenMP support\)
 	@echo   make addmpi \(if you want MPI support\)
-	@echo   make addcca \(if you want to use Peano within sciCoDE\)
+	@echo   make addcca-remote \(if you want to use Peano within sciCoDE\)
 	@echo
 	@echo Then, create your target with one of the following operations:
 	@echo   make dist \(to create a tar with a basic version of your release\)
-	@echo   make build \(or make build-cca\)
+	@echo   make build 
 	@echo 
 	@echo To speed up the build process, append an -j4 to your call with 4 being the 
 	@echo number of your cores.
 
 build: $(OBJECTS)
-	$(CC) $(LFLAGS) $(LINKER_ARGUMENTS_FROM_FILE) $(OBJECTS) -o $(EXECUTABLE)
+	$(CC) $(LFLAGS) $(OBJECTS) $(LINKER_ARGUMENTS_FROM_FILE) -o $(EXECUTABLE)
 	@echo
 	@echo build of Peano with component diffusionequationWithExplicitTimeStepping successful
 	@echo visit Peano\'s homepage at http://www5.in.tum.de/peano
@@ -157,8 +140,7 @@ addfiles-component:
 	find src/peano/applications/diffusionequation/explicittimestepping/repositories/*.cpp -name '*.cpp' -printf '%p ' >> files.mk
 	find src/peano/applications/diffusionequation/explicittimestepping/runners/*.cpp -name '*.cpp' -printf '%p ' >> files.mk
 	find src/peano/applications/diffusionequation/explicittimestepping/tests/*.cpp -name '*.cpp' -printf '%p ' >> files.mk
-	find src/scenario/diffusionequation   -name '*.cpp' -printf '%p ' >> files.mk
-
+	find src/scenario/diffusionequation -name '*.cpp' -printf '%p ' >> files.mk
 
 init: addfiles-preamble addfiles-tarch addfiles-peano addfiles-component
 
@@ -184,12 +166,14 @@ addmpi:
 	echo -n "COMPILER_ARGUMENTS_FROM_FILE+=$(INCLUDE_MPI)\n" >> compiler-variables.mk
 	echo -n "LINKER_ARGUMENTS_FROM_FILE+=$(LINK_MPI)\n" >> compiler-variables.mk
 
-addcca:
+addcca-remote:
+	find src/peano/applications/diffusionequation/explicittimestepping/cca/*.cpp -name '*.cpp' -printf '%p ' >> files.mk
 	find src/peano/applications/diffusionequation/explicittimestepping/cca/scicode/*.cpp -name '*.cpp' -printf '%p ' >> files.mk
 	echo -n "COMPILER_ARGUMENTS_FROM_FILE+=-DCCA\n" >> compiler-variables.mk
 	echo -n "COMPILER_ARGUMENTS_FROM_FILE+=-Wno-long-long\n" >> compiler-variables.mk
 	echo -n "COMPILER_ARGUMENTS_FROM_FILE+=$(INCLUDE_SCICODE)\n" >> compiler-variables.mk
 	echo -n "COMPILER_ARGUMENTS_FROM_FILE+=$(INCLUDE_JAVA)\n" >> compiler-variables.mk
+	echo -n "LINKER_ARGUMENTS_FROM_FILE+=$(LINK_SCICODE)\n" >> compiler-variables.mk
 	
 dist: all
 	tar -cf peano-diffusionequationWithExplicitTimeStepping.tar src/tarch src/peano/utils src/peano/geometry src/peano/kernel src/peano/applications/diffusionequation/explicittimestepping src/*.cpp src/peano/*.cpp src/*.xml

@@ -2,6 +2,8 @@
 #include "peano/applications/faxen/lbf/runners/LBFBatchJobRunnerForSpacetreeGrid.h"
 #include "tarch/configuration/TopLevelConfigurationFactory.h"
 
+#include <iostream>
+
 
 registerTopLevelConfiguration( peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationForSpacetreeGrid )
 
@@ -62,7 +64,7 @@ tarch::configuration::TopLevelConfiguration* peano::applications::faxen::lbf::co
 
 int peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationForSpacetreeGrid::interpreteConfiguration() {
   peano::applications::faxen::lbf::runners::LBFBatchJobRunnerForSpacetreeGrid runner; 
-  // @insert your code here 
+  // @insert your code here
   return runner.run(*this);
 }
  

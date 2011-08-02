@@ -37,11 +37,13 @@ class peano::applications::faxen::lbf::dastgen::BlockState {
   * current time value;
   * final time;
   * time step size;
+  * time step size threshold;
   * safety factor for time step control.
   */
   persistent double t;
   persistent double t_end;
   persistent double delt;
+  persistent double thresdelt;
   persistent double ftau;
   persistent double vis_delt;
   

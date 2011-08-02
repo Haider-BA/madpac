@@ -56,6 +56,9 @@ public:
 
 	/** move particle for one time step*/
 	void moveOneStep(double dt, tarch::la::Vector<DIMENSIONS,double> &force);
+
+	/** is point inside the particle */
+	bool isPointInside(tarch::la::Vector<DIMENSIONS,double>& point);
 };
 
 }

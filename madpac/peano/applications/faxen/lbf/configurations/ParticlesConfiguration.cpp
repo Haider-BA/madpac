@@ -32,7 +32,8 @@ tarch::logging::Log ParticlesConfiguration::_log(
 
 ParticlesConfiguration::ParticlesConfiguration():
 																_isValid(true),
-																_isDefinedInitFile(false)
+																_isDefinedInitFile(false),
+																_isDefinedViscosity(false)
 {}
 
 ParticlesConfiguration::~ParticlesConfiguration() {}

@@ -147,7 +147,7 @@ void peano::applications::faxen::lbf::mappings::RegularGrid2ExploreBoundaries::t
 		const tarch::la::Vector<DIMENSIONS,double>&  x
 ) {
 	logTraceInWith2Arguments( "touchVertexLastTime()", x, vertex );
-	int flag = vertex.getFlag();
+//	int flag = vertex.getFlag();
 //	std::cout << "vertex position: " << x << std::endl;
 //	std::cout << "flag: " << flag << std::endl;
 //	std::cout << "BOUNDARY: " << BOUNDARY << std::endl;

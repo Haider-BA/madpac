@@ -34,7 +34,7 @@ namespace peano {
     *
     * 		   build date: 09-12-2010 17:47
     *
-    * @date   23/07/2011 08:27
+    * @date   31/07/2011 17:27
     */
    class peano::applications::faxen::lbf::records::SpacetreeGridBlockState { 
       
@@ -50,6 +50,7 @@ namespace peano {
             double _dely;
             double _t;
             double _tEnd;
+            double _thresdelt;
             double _delt;
             double _ftau;
             double _visDelt;
@@ -109,7 +110,7 @@ namespace peano {
             bool _hasTriggeredEraseForNextIteration;
             bool _hasChangedVertexOrCellState;
             bool _isTraversalInverted;
-            bool _deriveAdjacencyInformation;
+            int _loadBalancingFlag;
             /**
              * Generated
              */
@@ -118,7 +119,7 @@ namespace peano {
             /**
              * Generated
              */
-            PersistentRecords(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& globalNumberOfCells, const double& globalCpuTime, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& deriveAdjacencyInformation);
+            PersistentRecords(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& thresdelt, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& globalNumberOfCells, const double& globalCpuTime, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const int& loadBalancingFlag);
             
             /**
              * Generated
@@ -189,6 +190,16 @@ namespace peano {
              * Generated
              */
             void setTEnd(const double& tEnd);
+            
+            /**
+             * Generated
+             */
+            double getThresdelt() const;
+            
+            /**
+             * Generated
+             */
+            void setThresdelt(const double& thresdelt);
             
             /**
              * Generated
@@ -783,12 +794,12 @@ namespace peano {
             /**
              * Generated
              */
-            bool getDeriveAdjacencyInformation() const;
+            int getLoadBalancingFlag() const;
             
             /**
              * Generated
              */
-            void setDeriveAdjacencyInformation(const bool& deriveAdjacencyInformation);
+            void setLoadBalancingFlag(const int& loadBalancingFlag);
             
             
          };
@@ -810,7 +821,7 @@ namespace peano {
          /**
           * Generated
           */
-         SpacetreeGridBlockState(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& globalNumberOfCells, const double& globalCpuTime, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& deriveAdjacencyInformation);
+         SpacetreeGridBlockState(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& thresdelt, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& globalNumberOfCells, const double& globalCpuTime, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const int& loadBalancingFlag);
          
          /**
           * Generated
@@ -886,6 +897,16 @@ namespace peano {
           * Generated
           */
          void setTEnd(const double& tEnd);
+         
+         /**
+          * Generated
+          */
+         double getThresdelt() const;
+         
+         /**
+          * Generated
+          */
+         void setThresdelt(const double& thresdelt);
          
          /**
           * Generated
@@ -1540,12 +1561,12 @@ namespace peano {
          /**
           * Generated
           */
-         bool getDeriveAdjacencyInformation() const;
+         int getLoadBalancingFlag() const;
          
          /**
           * Generated
           */
-         void setDeriveAdjacencyInformation(const bool& deriveAdjacencyInformation);
+         void setLoadBalancingFlag(const int& loadBalancingFlag);
          
          /**
           * Generated
@@ -1605,7 +1626,7 @@ namespace peano {
        *
        * 		   build date: 09-12-2010 17:47
        *
-       * @date   23/07/2011 08:27
+       * @date   31/07/2011 17:27
        */
       class peano::applications::faxen::lbf::records::SpacetreeGridBlockStatePacked { 
          
@@ -1619,6 +1640,7 @@ namespace peano {
                double _dely;
                double _t;
                double _tEnd;
+               double _thresdelt;
                double _delt;
                double _ftau;
                double _visDelt;
@@ -1673,7 +1695,7 @@ namespace peano {
                double _numberOfOuterCells;
                int _maxLevel;
                bool _isTraversalInverted;
-               bool _deriveAdjacencyInformation;
+               int _loadBalancingFlag;
                
                /** mapping of records:
                || Member 	|| startbit 	|| length
@@ -1693,7 +1715,7 @@ namespace peano {
                /**
                 * Generated
                 */
-               PersistentRecords(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& globalNumberOfCells, const double& globalCpuTime, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& deriveAdjacencyInformation);
+               PersistentRecords(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& thresdelt, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& globalNumberOfCells, const double& globalCpuTime, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const int& loadBalancingFlag);
                
                /**
                 * Generated
@@ -1764,6 +1786,16 @@ namespace peano {
                 * Generated
                 */
                void setTEnd(const double& tEnd);
+               
+               /**
+                * Generated
+                */
+               double getThresdelt() const;
+               
+               /**
+                * Generated
+                */
+               void setThresdelt(const double& thresdelt);
                
                /**
                 * Generated
@@ -2358,12 +2390,12 @@ namespace peano {
                /**
                 * Generated
                 */
-               bool getDeriveAdjacencyInformation() const;
+               int getLoadBalancingFlag() const;
                
                /**
                 * Generated
                 */
-               void setDeriveAdjacencyInformation(const bool& deriveAdjacencyInformation);
+               void setLoadBalancingFlag(const int& loadBalancingFlag);
                
                
             };
@@ -2385,7 +2417,7 @@ namespace peano {
             /**
              * Generated
              */
-            SpacetreeGridBlockStatePacked(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& globalNumberOfCells, const double& globalCpuTime, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& deriveAdjacencyInformation);
+            SpacetreeGridBlockStatePacked(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& thresdelt, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& globalNumberOfCells, const double& globalCpuTime, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const int& loadBalancingFlag);
             
             /**
              * Generated
@@ -2461,6 +2493,16 @@ namespace peano {
              * Generated
              */
             void setTEnd(const double& tEnd);
+            
+            /**
+             * Generated
+             */
+            double getThresdelt() const;
+            
+            /**
+             * Generated
+             */
+            void setThresdelt(const double& thresdelt);
             
             /**
              * Generated
@@ -3115,12 +3157,12 @@ namespace peano {
             /**
              * Generated
              */
-            bool getDeriveAdjacencyInformation() const;
+            int getLoadBalancingFlag() const;
             
             /**
              * Generated
              */
-            void setDeriveAdjacencyInformation(const bool& deriveAdjacencyInformation);
+            void setLoadBalancingFlag(const int& loadBalancingFlag);
             
             /**
              * Generated
@@ -3182,7 +3224,7 @@ namespace peano {
           *
           * 		   build date: 09-12-2010 17:47
           *
-          * @date   23/07/2011 08:27
+          * @date   31/07/2011 17:27
           */
          class peano::applications::faxen::lbf::records::SpacetreeGridBlockState { 
             
@@ -3198,6 +3240,7 @@ namespace peano {
                   double _dely;
                   double _t;
                   double _tEnd;
+                  double _thresdelt;
                   double _delt;
                   double _ftau;
                   double _visDelt;
@@ -3263,7 +3306,7 @@ namespace peano {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                  PersistentRecords(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& thresdelt, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                   
                   /**
                    * Generated
@@ -3334,6 +3377,16 @@ namespace peano {
                    * Generated
                    */
                   void setTEnd(const double& tEnd);
+                  
+                  /**
+                   * Generated
+                   */
+                  double getThresdelt() const;
+                  
+                  /**
+                   * Generated
+                   */
+                  void setThresdelt(const double& thresdelt);
                   
                   /**
                    * Generated
@@ -3925,7 +3978,7 @@ namespace peano {
                /**
                 * Generated
                 */
-               SpacetreeGridBlockState(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+               SpacetreeGridBlockState(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& thresdelt, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                
                /**
                 * Generated
@@ -4001,6 +4054,16 @@ namespace peano {
                 * Generated
                 */
                void setTEnd(const double& tEnd);
+               
+               /**
+                * Generated
+                */
+               double getThresdelt() const;
+               
+               /**
+                * Generated
+                */
+               void setThresdelt(const double& thresdelt);
                
                /**
                 * Generated
@@ -4690,7 +4753,7 @@ namespace peano {
              *
              * 		   build date: 09-12-2010 17:47
              *
-             * @date   23/07/2011 08:27
+             * @date   31/07/2011 17:27
              */
             class peano::applications::faxen::lbf::records::SpacetreeGridBlockStatePacked { 
                
@@ -4704,6 +4767,7 @@ namespace peano {
                      double _dely;
                      double _t;
                      double _tEnd;
+                     double _thresdelt;
                      double _delt;
                      double _ftau;
                      double _visDelt;
@@ -4775,7 +4839,7 @@ namespace peano {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                     PersistentRecords(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& thresdelt, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                      
                      /**
                       * Generated
@@ -4846,6 +4910,16 @@ namespace peano {
                       * Generated
                       */
                      void setTEnd(const double& tEnd);
+                     
+                     /**
+                      * Generated
+                      */
+                     double getThresdelt() const;
+                     
+                     /**
+                      * Generated
+                      */
+                     void setThresdelt(const double& thresdelt);
                      
                      /**
                       * Generated
@@ -5437,7 +5511,7 @@ namespace peano {
                   /**
                    * Generated
                    */
-                  SpacetreeGridBlockStatePacked(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                  SpacetreeGridBlockStatePacked(const bool& onlyNse, const double& xlength, const double& ylength, const double& delx, const double& dely, const double& t, const double& tEnd, const double& thresdelt, const double& delt, const double& ftau, const double& visDelt, const int& itermax, const double& res, const double& eps, const double& omega, const double& fgamma, const double& Re, const double& GX, const double& GY, const double& UI, const double& VI, const double& PI, const double& avrExtractedDensity, const int& fileNumber, const int& level, const int& numberLevels, const double& dx, const double& dt, const int& numberTimesteps, const double& density, const short int& dynamicGeometry, const short int& computeForces, const tarch::la::Vector<LB_MAXIMUM_NUMBER_OF_SIMULATION_LEVELS,short int>& collisionModelId, const double& viscosityL, const double& bulkViscosityL, const double& tau, const double& boltzmannConstant, const double& mu, const tarch::la::Vector<LB_CURRENT_DIR,double>& gamma, const tarch::la::Vector<LB_CURRENT_DIR,double>& mrtHumieresGamma, const int& timestep, const short int& plotVtk, const int& numberTimestepsPerPlotting, const tarch::la::Vector<128,signed char>& vtkFilename, const short int& measurePerformance, const int& localNumberOfCells, const int& lastLevel, const int& currentLevel, const int& nextLevel, const short int& geometryChanged, const int& cellCounter, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                   
                   /**
                    * Generated
@@ -5513,6 +5587,16 @@ namespace peano {
                    * Generated
                    */
                   void setTEnd(const double& tEnd);
+                  
+                  /**
+                   * Generated
+                   */
+                  double getThresdelt() const;
+                  
+                  /**
+                   * Generated
+                   */
+                  void setThresdelt(const double& thresdelt);
                   
                   /**
                    * Generated

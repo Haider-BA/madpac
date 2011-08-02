@@ -124,9 +124,63 @@ void peano::applications::faxen::lbf::mappings::RegularGrid2ExtractDataNSE2LB::t
 		const tarch::la::Vector<DIMENSIONS,double>&  x
 ) {
 	logTraceInWith2Arguments( "touchVertexFirstTime()", x, vertex );
+	tarch::la::Vector<DIMENSIONS,double> h = _h*((double)LB_BLOCKSIZE);
 
-	// reflag
+	tarch::la::Vector<DIMENSIONS,double> position(0.0);
+	tarch::la::Vector<DIMENSIONS,double> meshSize((1.0/((double) LB_BLOCKSIZE))*h(0));
 
+	int cellCounter = 0;
+
+	// load vertex
+	peano::applications::latticeboltzmann::blocklatticeboltzmann::services::GridManagementService::getInstance().
+			loadVertex(vertex.getVertexNumber());
+	std::bitset<LB_BLOCK_NUMBER_OF_CELLS>& inner(
+			peano::applications::latticeboltzmann::blocklatticeboltzmann::services::GridManagementService::getInstance().getInner());
+	std::bitset<LB_BLOCK_NUMBER_OF_CELLS>& boundary(
+			peano::applications::latticeboltzmann::blocklatticeboltzmann::services::GridManagementService::getInstance().getBoundary());
+
+	// initialize boundary flags
+
+	// for boundary vertices: check for boundary states
+#if (DIMENSIONS == 3)
+	for (int zv = 0; zv < LB_BLOCKSIZE; zv++){
+		position(2) = x(2) - 0.5*h(2) + 0.5*meshSize(2) + zv*meshSize(2);
+#endif
+		for (int yv = 0; yv < LB_BLOCKSIZE; yv++){
+			position(1) = x(1) - 0.5*h(1) + 0.5*meshSize(1) + yv*meshSize(1);
+			for (int xv = 0; xv < LB_BLOCKSIZE; xv++){
+				position(0) = x(0) - 0.5*h(0) + 0.5*meshSize(0) + xv*meshSize(0);
+
+				// if the cell is inner, do the same as in createInnerVertex
+				if (peano::geometry::services::GeometryService::getInstance().getGeometry().isCompletelyInside(position,meshSize)){
+					logDebug("setBoundaryFlags()", "Cell " << cellCounter << ", position " << position << " is completely inside");
+					inner[cellCounter] = true;
+					boundary[cellCounter] = false;
+				} else {
+					// for outer cells: set inner-flag to false
+					if (peano::geometry::services::GeometryService::getInstance().getGeometry().isOutsideClosedDomain(position)){
+						inner[cellCounter] = false;
+						logDebug("setBoundaryFlags()", "Cell " << cellCounter << ", position " << position << " is outside closed domain");
+					} else {
+						inner[cellCounter] = true;
+						logDebug("setBoundaryFlags()", "Cell " << cellCounter << ", position " << position << " is not outside closed domain");
+					}
+
+					// if the cell is outside and away from the boundary, set boundary flag to false, otherwise true
+					if (peano::geometry::services::GeometryService::getInstance().getGeometry().isCompletelyOutside(position,meshSize)){
+						boundary[cellCounter] = false;
+						logDebug("setBoundaryFlags()", "Cell " << cellCounter << ", position " << position << " is completely outside");
+					} else {
+						boundary[cellCounter] = true;
+						logDebug("setBoundaryFlags()", "Cell " << cellCounter << ", position " << position << " is not completely outside");
+					}
+				}
+				cellCounter++;
+			}
+		}
+#if (DIMENSIONS == 3)
+	}
+#endif
 
 	logTraceOutWith1Argument( "touchVertexFirstTime()", vertex );
 }
@@ -168,6 +222,21 @@ void peano::applications::faxen::lbf::mappings::RegularGrid2ExtractDataNSE2LB::b
 
 	// average density
 	_avrDensity = 0.0;
+
+	// set multi-level simulation data
+	_multiLevelSimData = std::auto_ptr<peano::applications::latticeboltzmann::MultiLevelSimData>(
+			new peano::applications::latticeboltzmann::MultiLevelSimData(solverState)
+	);
+	assertion(_multiLevelSimData.get() != NULL);
+
+	// determine simulation level
+	_level = _multiLevelSimData->getSimData(0).getLevel();
+
+	// determine meshsize
+	_h = tarch::la::Vector<DIMENSIONS,double>(
+			_multiLevelSimData->getSimData(_level).getDx()
+			*tarch::la::Vector<DIMENSIONS,double>(1.0)
+	);
 
 	logTraceOutWith1Argument( "beginIteration()", solverState );
 }
@@ -226,11 +295,6 @@ void peano::applications::faxen::lbf::mappings::RegularGrid2ExtractDataNSE2LB::i
 	default:
 		return;
 	}
-
-//	std::cout << "vertex number: "  << vertices[enumerator(vertexNumber)].getVertexNumber() << std::endl;
-//	std::cout << "vertex position: " << vertexNumber << std::endl;
-//	std::cout << "block size: " << LB_BLOCKSIZE << "; and number of cells in block: " << LB_BLOCK_NUMBER_OF_CELLS << std::endl;
-//	std::cout << "origin: " << origin << "; correction: " << correction << std::endl;
 
 	// load vertex
 	peano::applications::latticeboltzmann::blocklatticeboltzmann::services::GridManagementService::getInstance().

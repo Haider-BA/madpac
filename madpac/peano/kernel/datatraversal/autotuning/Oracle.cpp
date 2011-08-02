@@ -75,6 +75,7 @@ void peano::kernel::datatraversal::autotuning::Oracle::setNumberOfOracles(int va
 
 
 void peano::kernel::datatraversal::autotuning::Oracle::createOracles(int numberOfOracles) {
+  #if defined(SharedOMP) || defined(SharedTBB)
   if (_oraclePrototype==0) {
 	  logWarning( "createOracles(int)", "no oracle type configured" );
   }
@@ -86,6 +87,7 @@ void peano::kernel::datatraversal::autotuning::Oracle::createOracles(int numberO
 	    _oracles.push_back( newOracle );
     }
   }
+  #endif
 }
 
 
@@ -102,16 +104,19 @@ void peano::kernel::datatraversal::autotuning::Oracle::deleteOracles() {
 
 
 void peano::kernel::datatraversal::autotuning::Oracle::switchToOracle(int id) {
+  #if defined(SharedOMP) || defined(SharedTBB)
   assertion1( id>=0, id );
   assertion2( id<static_cast<int>(_oracles.size()), id, _oracles.size() );
 
   tarch::multicore::Lock scopeLock( _booleanSemaphore );
 
   _currentOracle=id;
+  #endif
 }
 
 
 int peano::kernel::datatraversal::autotuning::Oracle::parallelise(int problemSize, MethodTrace askingMethod ) {
+  #if defined(SharedOMP) || defined(SharedTBB)
   logTraceInWith2Arguments( "parallelise(int,int)", problemSize, askingMethod );
 
   if (_oraclePrototype==0) {
@@ -148,10 +153,14 @@ int peano::kernel::datatraversal::autotuning::Oracle::parallelise(int problemSiz
       return 0;
     }
   }
+  #else
+  return 0;
+  #endif
 }
 
 
 void peano::kernel::datatraversal::autotuning::Oracle::parallelSectionHasTerminated(MethodTrace askingMethod) {
+  #if defined(SharedOMP) || defined(SharedTBB)
   if (_oraclePrototype!=0) {
     assertion( _currentOracle>=0 );
     assertion( _currentOracle<static_cast<int>(_oracles.size()) );
@@ -168,4 +177,5 @@ void peano::kernel::datatraversal::autotuning::Oracle::parallelSectionHasTermina
       _oracles[_currentOracle]->parallelSectionHasTerminated(_watches.at(askingMethod).first.getCalendarTime());
     }
   }
+  #endif
 }

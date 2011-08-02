@@ -114,7 +114,6 @@ getDt() const {
 	return Base::_stateData.getDt();
 }
 
-
 void peano::applications::faxen::lbf::RegularGridBlockState::
 setNumberTimesteps(int numberTimesteps) {
 	Base::_stateData.setNumberTimesteps(numberTimesteps);
@@ -262,6 +261,11 @@ getNumberTimestepsPerPlotting() const {
 int peano::applications::faxen::lbf::RegularGridBlockState::
 getTimestep() const {
 	return Base::_stateData.getTimestep();
+}
+
+void peano::applications::faxen::lbf::RegularGridBlockState::
+setTimestep(int timestep) {
+	Base::_stateData.setTimestep(timestep);
 }
 
 
@@ -557,6 +561,16 @@ void peano::applications::faxen::lbf::RegularGridBlockState::setDelt(double delt
 
 double peano::applications::faxen::lbf::RegularGridBlockState::getDelx() const{
 	return _stateData.getDelx();
+}
+
+void peano::applications::faxen::lbf::RegularGridBlockState::
+setThresDt(double thresDt) {
+	return Base::_stateData.setThresdelt(thresDt);
+}
+
+double peano::applications::faxen::lbf::RegularGridBlockState::
+getThresDt() const{
+	return Base::_stateData.getThresdelt();
 }
 
 void peano::applications::faxen::lbf::RegularGridBlockState::setDelx(double delx){

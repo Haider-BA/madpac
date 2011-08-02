@@ -8,10 +8,6 @@
 #include "tarch/logging/Log.h"
 #include "tarch/la/Vector.h"
 
-#ifdef CCA
-#include "peano/integration/cca/ports/grid/Statistics.h"
-#endif
-
 
 namespace peano {
   class UserInterface;
@@ -101,19 +97,11 @@ class peano::UserInterface {
      */
     void writeHeader();
 
-    #ifdef CCA
-    /**
-     * Argument may not be const as something is written to this port.
-     */
-    template <class Vertex, class Cell, class State>
-    void writeDatatypeStatistics(peano::integration::cca::ports::grid::Statistics& writeToPort);
-    #else
     /**
      * Write some information about the amount of data / datatypes used.
      */
     template <class Vertex, class Cell, class State>
     void writeDatatypeStatistics();
-    #endif
 
     /**
      * Method for getting the application's memory footprint

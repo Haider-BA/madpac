@@ -22,13 +22,13 @@ _log(
 );
 
 peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationForRegularGrid::LBFBatchJobConfigurationForRegularGrid():
-																																												  tarch::configuration::TopLevelConfiguration(),
-																																												  _latticeBoltzmannConfiguration(peano::applications::latticeboltzmann::configurations::LatticeBoltzmannConfiguration()),
-																																												  _plotterConfiguration(peano::applications::latticeboltzmann::configurations::LatticeBoltzmannPlotterConfiguration()),
-																																												  _particlesConfiguration(peano::applications::faxen::lbf::configurations::ParticlesConfiguration()),
-																																												  _NSEConfiguration(peano::applications::faxen::lbf::configurations::NSEConfiguration()),
-																																												  _gridLevel(0),
-																																												  _isValid(true) {
+																																														  tarch::configuration::TopLevelConfiguration(),
+																																														  _latticeBoltzmannConfiguration(peano::applications::latticeboltzmann::configurations::LatticeBoltzmannConfiguration()),
+																																														  _plotterConfiguration(peano::applications::latticeboltzmann::configurations::LatticeBoltzmannPlotterConfiguration()),
+																																														  _particlesConfiguration(peano::applications::faxen::lbf::configurations::ParticlesConfiguration()),
+																																														  _NSEConfiguration(peano::applications::faxen::lbf::configurations::NSEConfiguration()),
+																																														  _gridLevel(0),
+																																														  _isValid(true) {
 }
 
 
@@ -154,7 +154,7 @@ bool peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationFo
 #if defined(SharedTBB)
 	&& _coreConfiguration.isValid()
 #endif
-																																							;
+																																									;
 }
 
 
@@ -242,19 +242,19 @@ int peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationFor
 	}
 	if(!_NSEConfiguration.isReynoldsNumberDefined() ||
 			!_NSEConfiguration.getOnlyNSE()){
-		/**
-		 *  Lattice Boltzmann characteristic length is number of cells in y direction
-		 *  divided by domain size in this direction
-		 */
-		double lLB = (blocks(1)-1)*LB_BLOCKSIZE/domainSize(1);
-		logDebug("computeUndefinedValues()", "LB characteristic length: " << lLB);
-		/**
-		 * Reynolds number is set to
-		 * (<LB characteristic velocity>*<LB characteristic length 'lLB'>)/(<LB viscosity>)
-		 */
-		double ReynoldsNumber = _scenarioConfiguration.getCharacteristicVelocityL()*lLB/
-				_latticeBoltzmannConfiguration.getViscosityL();
-		_NSEConfiguration.setReynoldsNumber(ReynoldsNumber);
+		//		/**
+		//		 *  Lattice Boltzmann characteristic length is number of cells in y direction
+		//		 *  divided by domain size in this direction
+		//		 */
+		//		double lLB = (blocks(1)-1)*LB_BLOCKSIZE/domainSize(1);
+		//		logDebug("computeUndefinedValues()", "LB characteristic length: " << lLB);
+		//		/**
+		//		 * Reynolds number is set to
+		//		 * (<LB characteristic velocity>*<LB characteristic length 'lLB'>)/(<LB viscosity>)
+		//		 */
+		//		double ReynoldsNumber = _scenarioConfiguration.getCharacteristicVelocityL()*lLB/
+		//				_latticeBoltzmannConfiguration.getViscosityL();
+		_NSEConfiguration.setReynoldsNumber(1/_latticeBoltzmannConfiguration.getViscosity());
 	}
 
 	if(!_NSEConfiguration.isGravityDefined() ||
@@ -279,10 +279,11 @@ int peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationFor
 	logDebug("computeUndefinedValues()", "gravity = " << _NSEConfiguration.getGravity());
 	logDebug("computeUndefinedValues()", "visualization's time step size = " << _NSEConfiguration.getVisTimeStepSize());
 
+
 	if(!_particlesConfiguration.isViscosityDefined()){
-		_particlesConfiguration.setViscosity(_latticeBoltzmannConfiguration.getViscosityL()*dx*dx/dt);
+		//_particlesConfiguration.setViscosity(_latticeBoltzmannConfiguration.getViscosityL()*dx*dx/dt);
+		_particlesConfiguration.setViscosity(_latticeBoltzmannConfiguration.getViscosity());
 	}
-	logDebug("computeUndefinedValues()", "viscosity for force computations = " << _particlesConfiguration.getViscosity());
 
 	if(!_particlesConfiguration.readParticlesParameters()){
 		logError("interpreteConfiguration()","Couldn't read parameters!");
@@ -727,6 +728,7 @@ getStateForReferenceGridLevel() const {
 	sim.setMeshSize(buffer);
 
 	sim.setDelt(_NSEConfiguration.getTimeStepSize());
+	sim.setThresDt(_NSEConfiguration.getTimeStepSize());
 	sim.setTEnd(_NSEConfiguration.getEndTime());
 	sim.setTimeSafetyFactor(_NSEConfiguration.getTimeSafetyFactor());
 
@@ -884,6 +886,8 @@ void peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationFo
 	state.setDely(myState.getDely());
 
 	state.setDelt(myState.getDelt());
+	state.setThresDt(myState.getThresDt());
+
 	state.setTEnd(myState.getTEnd());
 	state.setTimeSafetyFactor(myState.getTimeSafetyFactor());
 

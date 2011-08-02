@@ -76,7 +76,7 @@ public:
 	 * Get particle's density;
 	 * @param particlesIndex particle's index.
 	 */
-	double getPaticlesDensity(int particlesIndex) const;
+	double getParticlesDensity(int particlesIndex) const;
 
 	/**
 	 * Get particle's position;
@@ -109,6 +109,14 @@ public:
 	 * @param vtkFile .vtk output file
 	 */
 	void writeVTKHeader(std::ofstream& vtkFile);
+
+	/**
+	 * Find an index of particle that has the point inside;
+	 * @param point position that is checked for belonging to particle;
+	 * @return index of the particle that contains the specified point;
+	 * returns -1 if the point is outside all particles.
+	 */
+	int belongs2Particle(tarch::la::Vector<DIMENSIONS,double>& point);
 
 private:
 

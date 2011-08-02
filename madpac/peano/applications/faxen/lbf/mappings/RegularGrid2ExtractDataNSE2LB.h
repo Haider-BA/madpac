@@ -4,6 +4,7 @@
 #ifndef PEANO_APPLICATIONS_FAXEN_LBF_MAPPINGS_RegularGrid2ExtractDataNSE2LB_H_
 #define PEANO_APPLICATIONS_FAXEN_LBF_MAPPINGS_RegularGrid2ExtractDataNSE2LB_H_
 
+#include <memory>
 
 #include "tarch/logging/Log.h"
 #include "tarch/la/Vector.h"
@@ -12,6 +13,8 @@
 #include "peano/applications/faxen/lbf/RegularGridBlockCell.h"
 #include "peano/applications/faxen/lbf/RegularGridBlockVertex.h"
 #include "peano/applications/faxen/lbf/RegularGridBlockState.h"
+
+#include "peano/applications/latticeboltzmann/MultiLevelSimData.h"
 
 
 namespace peano { 
@@ -66,6 +69,14 @@ private:
 	 * number of LB cells used for injection
 	 */
 	int _numberOfInjLBCells;
+
+	std::auto_ptr<peano::applications::latticeboltzmann::MultiLevelSimData> _multiLevelSimData;
+
+	/** level always initialized with 1 */
+	int _level;
+
+	/** meshsize */
+	tarch::la::Vector<DIMENSIONS,double> _h;
 
 	/**
 	 * Logging device.

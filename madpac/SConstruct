@@ -488,6 +488,8 @@ elif target == 'puregrid':
    pass
 elif target == 'tarch':
    pass
+elif target == 'vhh':
+   pass
 else:
    print "ERROR: Target", target, "is invalid!"
    printTargets ()
@@ -753,7 +755,7 @@ sourcesPeanoBase = [
 
 sourcesToolBox = [
   Glob(buildpath + 'peano/toolbox/solver/*.cpp'),
-  Glob(buildpath + 'peano/toolbox/solver/test/*.cpp'),
+  Glob(buildpath + 'peano/toolbox/solver/tests/*.cpp'),
   Glob(buildpath + 'peano/toolbox/stencil/*.cpp')
 ]
 
@@ -893,6 +895,19 @@ sourcesJacobi = [
 	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/runners/*.cpp'),
 	Glob(buildpath + 'peano/applications/poisson/jacobitutorial/tests/*.cpp')
 	]
+##### Define sources of application vhh   
+sourcesvhh = [
+    Glob(buildpath + 'peano/applications/poisson/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/adapters/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/codesnippets/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/configurations/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/mappings/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/records/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/repositories/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/runners/*.cpp'),
+	Glob(buildpath + 'peano/applications/poisson/vhhjacobi/tests/*.cpp')
+	]
   
 ################################################################################
 
@@ -909,6 +924,17 @@ if target == 'diffusionequation':
        sourcesToolBox
      ]
       )   
+if target == 'vhh':
+   env.Program (
+      target = buildpath + 'peano-vhh',
+	  source = [
+		sourcesToolBox,
+		sourcesTComponents,
+		sourcesPeanoBase,
+		sourcesParallel,
+		sourcesvhh
+	]
+      )
 if target == 'kernel':
    env.Program (
       target = buildpath + 'peano-kernel',

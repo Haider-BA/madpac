@@ -76,6 +76,7 @@ class peano::toolbox::solver::VirtualHierarchicalHRefinement {
       int divisionFactor
     );
     peano::toolbox::stencil::ElementWiseVector calculateCoarserReturnValues();
+    double calculatePartialIntegral(int direction, int testFunctionSmallIndex, int testFunctionLargeIndex);
     virtual void visualize(const std::string& identifier);
 
   static tarch::logging::Log _log;
@@ -84,7 +85,7 @@ private:
   HyperCube _otherFineGrid;
   int _partitionFactor;
   int _sizeFineGrid; // number of vertices per dimension of finegrid
-
+  double _h;
 };
 
 

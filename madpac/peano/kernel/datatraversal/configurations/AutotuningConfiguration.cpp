@@ -49,6 +49,9 @@ void peano::kernel::datatraversal::configurations::AutotuningConfiguration::pars
     _oracleType!="grain-size-sampling-32" &&
     _oracleType!="grain-size-sampling-64" &&
     _oracleType!="grain-size-sampling-128" &&
+    _oracleType!="grain-size-sampling-16-logarithmic" &&
+    _oracleType!="grain-size-sampling-32-logarithmic" &&
+    _oracleType!="grain-size-sampling-64-logarithmic" &&
     _oracleType!="fixed-grain-size-4" &&
     _oracleType!="fixed-grain-size-64" &&
     _oracleType!="fixed-grain-size-128" &&
@@ -58,7 +61,7 @@ void peano::kernel::datatraversal::configurations::AutotuningConfiguration::pars
     _log.error(
       "parseSubtag(...)",
       "attribute \"strategy\" within tag <" + getTag() +
-      "> has invalid value. Suported values: \"no-shared-memory-parallisation\",\"oscillating-search\",\"interval-search\", \"grain-size-sampling-{8, 32, 64, 128}\", and \"fixed-grain-size-{4, 64, 128,1024, 65536}\" ");
+      "> has invalid value. Suported values: \"no-shared-memory-parallisation\",\"oscillating-search\",\"interval-search\", \"grain-size-sampling-{8, 32, 64, 128}\", \"grain-size-sampling-{16, 32, 64}-logarithmic\", and \"fixed-grain-size-{4, 64, 128,1024, 65536}\" ");
     _isValid = false;
   }
 
@@ -115,6 +118,15 @@ peano::kernel::datatraversal::configurations::AutotuningConfiguration::interpret
   }
   else if ( _oracleType=="grain-size-sampling-128" ) {
     result = new peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling(128);
+  }
+  else if ( _oracleType=="grain-size-sampling-16-logarithmic" ) {
+    result = new peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling(16, true);
+  }
+  else if ( _oracleType=="grain-size-sampling-32-logarithmic" ) {
+    result = new peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling(32, true);
+  }
+  else if ( _oracleType=="grain-size-sampling-64-logarithmic" ) {
+    result = new peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSampling(64, true);
   }
   else if ( _oracleType=="fixed-grain-size-4" ) {
     result = new peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithFixedGrainSize(4);

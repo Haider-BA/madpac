@@ -3,6 +3,9 @@
 #endif
 
 template <class LoopBody>
+tarch::logging::Log peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::_log( "peano::kernel::datatraversal::ActionSetTraversalLoop" );
+
+template <class LoopBody>
 peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::ActionSetTraversalLoop(
   peano::kernel::datatraversal::ActionSetTraversal traversal,
   const LoopBody&                                  loopBody,
@@ -67,13 +70,13 @@ void peano::kernel::datatraversal::ActionSetTraversalLoop<LoopBody>::loopParalle
       );
       #elif SharedOMP
       #pragma omp parallel
-        {
+      {
         LoopBody localIterationLoopBody(loopBody);
+
         #pragma omp for schedule(dynamic, grainSize)
-	
         for (int j = 0; j < traversal.getActionSet(currentStepInPath).getNumberOfParallelActions(); j++) {
           localIterationLoopBody(traversal.getActionSet(currentStepInPath).getAction(j));
-          }
+        }
         #pragma omp critical(updateGlobalValues)
 	      localIterationLoopBody.updateGlobalValues();
 	    }

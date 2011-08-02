@@ -248,19 +248,6 @@ void peano::applications::diffusionequation::explicittimestepping::repositories:
 
 
 
-#ifdef CCA
-void peano::applications::diffusionequation::explicittimestepping::repositories::ForwardBatchJobRepositoryForRegularGridStandardImplementation::logIterationStatistics(peano::integration::cca::ports::grid::Statistics& writeToPort) const {
-  writeToPort.addAdapterRuntime( "SetupExperiment", _countSetupExperimentRuns, _measureSetupExperimentCPUTime, _measureSetupExperimentCPUTime );
-  writeToPort.addAdapterRuntime( "SetupExperimentAndPlot", _countSetupExperimentAndPlotRuns, _measureSetupExperimentAndPlotCPUTime, _measureSetupExperimentAndPlotCPUTime );
-  writeToPort.addAdapterRuntime( "PerformExplitEulerTimeStep", _countPerformExplitEulerTimeStepRuns, _measurePerformExplitEulerTimeStepCPUTime, _measurePerformExplitEulerTimeStepCPUTime );
-  writeToPort.addAdapterRuntime( "PerformExplitEulerTimeStepAndPlot", _countPerformExplitEulerTimeStepAndPlotRuns, _measurePerformExplitEulerTimeStepAndPlotCPUTime, _measurePerformExplitEulerTimeStepAndPlotCPUTime );
-  writeToPort.addAdapterRuntime( "PlotSolution", _countPlotSolutionRuns, _measurePlotSolutionCPUTime, _measurePlotSolutionCPUTime );
-  writeToPort.addAdapterRuntime( "ApplyRefineDeleteCriterion", _countApplyRefineDeleteCriterionRuns, _measureApplyRefineDeleteCriterionCPUTime, _measureApplyRefineDeleteCriterionCPUTime );
-
-}
-#endif
-
-
 void peano::applications::diffusionequation::explicittimestepping::repositories::ForwardBatchJobRepositoryForRegularGridStandardImplementation::logIterationStatistics() const {
   logInfo( "logIterationStatistics()", "|| adapter name \t || iterations \t || total CPU time [t]=s \t || average CPU time [t]=s \t || total user time [t]=s \t || average user time [t]=s " );  
    logInfo( "logIterationStatistics()", "| SetupExperiment \t |  " << _countSetupExperimentRuns << " \t |  " << _measureSetupExperimentCPUTime << " \t |  " << (_countSetupExperimentRuns==0 ? 0 : _measureSetupExperimentCPUTime / static_cast<double>(_countSetupExperimentRuns))  << " \t |  " << _measureSetupExperimentCalendarTime << " \t |  " << (_countSetupExperimentRuns==0 ? 0 : _measureSetupExperimentCalendarTime / static_cast<double>(_countSetupExperimentRuns))  );  

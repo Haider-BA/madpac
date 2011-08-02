@@ -295,16 +295,16 @@ bool peano::applications::navierstokes::prototype1::scenarios::FluidScenario::re
 //    if (_manualRefinementTubes[i].refine(x,h,axis)) return true;
 //  }
 //
-//  return false;
+  return false;
 }
 #ifdef ComponentSteering
-void peano::applications::navierstokes::prototype1::scenarios::FluidScenario::synchronize( peano::applications::navierstokes::prototype1::scenarios::FluidScenario *scenario)
-{
-
-}
+//void peano::applications::navierstokes::prototype1::scenarios::FluidScenario::synchronize( peano::applications::navierstokes::prototype1::scenarios::FluidScenario *scenario)
+//{
+//
+//}
 #endif
 
-std::ostream& operator<<(std::ostream& out,  const peano::applications::navierstokes::prototype1::scenarios::FluidScenario::FluidScenario& fluidScenario) {
+std::ostream& operator<<(std::ostream& out,  const peano::applications::navierstokes::prototype1::scenarios::FluidScenario& fluidScenario) {
   fluidScenario.toString(out);
   out.flush();
   return out;

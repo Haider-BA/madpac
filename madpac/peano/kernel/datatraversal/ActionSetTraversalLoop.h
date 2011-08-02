@@ -28,6 +28,11 @@ namespace peano {
 template <class LoopBody>
 class peano::kernel::datatraversal::ActionSetTraversalLoop {
   private:
+    /**
+     * Logging device
+     */
+    static tarch::logging::Log _log;
+
     void loopParallel(
       const peano::kernel::datatraversal::ActionSetTraversal&  traversal,
       const LoopBody&                                          loopBody,

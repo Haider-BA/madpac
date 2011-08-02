@@ -44,12 +44,18 @@ class peano::kernel::datatraversal::autotuning::OracleForOnePhaseWithGrainSizeSa
     MeasurementDescription  _currentMeasurementDescription;
     int                     _currentGrainSize;
     int                     _numberOfSamples;
+    bool                    _logarithmicDistribution;
 
     typedef std::map< MeasurementDescription, std::vector< std::pair<double,double> > > ExecutionTimeDatabase;
 
     ExecutionTimeDatabase  _executionTimes;
   public:
-    OracleForOnePhaseWithGrainSizeSampling(int numberOfSamples);
+    /**
+     * @param numberOfSamples The number of samples that the Oracle will use.
+     * @param logarithmicDistribution Decides wether the samples will be distributed in an logarithmic (true) or
+     * an equidistant (false) way.
+     */
+    OracleForOnePhaseWithGrainSizeSampling(int numberOfSamples, bool logarithmicDistribution = false);
 
     virtual ~OracleForOnePhaseWithGrainSizeSampling();
 

@@ -111,18 +111,9 @@ void peano::applications::faxen::lbf::mappings::RegularGrid2SetScenarioBoundary:
 		const tarch::la::Vector<DIMENSIONS,double>&  x
 ) {
 	logTraceInWith2Arguments( "touchVertexFirstTime()", x, vertex );
+
 	peano::applications::faxen::lbf::services::ScenarioService::getInstance().
 			setVelocityBoundaryConditionOnVertex(vertex,x,_meshSize);
-
-	//	if((x(1)+_dy/2) > _height){
-	//		vertex.setU0(1.0);
-	//		vertex.setU1(1.0);
-	//	}
-
-	//	if(x(1) > _height){
-	//		vertex.setU0(1.0);
-	//		vertex.setU1(1.0);
-	//	}
 
 	logTraceOutWith1Argument( "touchVertexFirstTime()", vertex );
 }

@@ -125,9 +125,6 @@ class peano::applications::diffusionequation::explicittimestepping::repositories
 	
     virtual void iterate( bool reduceState = true );
     
-    #ifdef CCA
-    virtual void logIterationStatistics(peano::integration::cca::ports::grid::Statistics& writeToPort) const;
-    #endif
     virtual void logIterationStatistics() const;
     
     virtual peano::applications::diffusionequation::explicittimestepping::RegularGridState& getRegularGridState();

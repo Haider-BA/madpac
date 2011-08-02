@@ -31,7 +31,7 @@ namespace peano {
  *
  * 		   build date: 09-12-2010 17:47
  *
- * @date   23/07/2011 08:27
+ * @date   31/07/2011 17:27
  */
 class peano::applications::faxen::lbf::records::RegularGridBlockCell { 
    
@@ -303,7 +303,7 @@ class peano::applications::faxen::lbf::records::RegularGridBlockCell {
     *
     * 		   build date: 09-12-2010 17:47
     *
-    * @date   23/07/2011 08:27
+    * @date   31/07/2011 17:27
     */
    class peano::applications::faxen::lbf::records::RegularGridBlockCellPacked { 
       

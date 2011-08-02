@@ -11,7 +11,9 @@ TestCase( "peano::toolbox::solver::tests::VHHwJACTest" ){
 
 void peano::toolbox::solver::tests::VHHwJACTest::run()
 {
-  testMethod(testWriter)
+  //testMethod(testWriter)
+  testMethod(testIntegrals)
+
 }
 peano::toolbox::solver::tests::VHHwJACTest::~VHHwJACTest()
 {
@@ -107,4 +109,17 @@ void peano::toolbox::solver::tests::VHHwJACTest::testWriter()
   logDebug("testWriter()","computeVirtualHierarchicalHRefinement(input, s, rhs, 0.8); was successful")
   vhh.visualize("myOutputfile.vtk");
 #endif
+}
+
+void peano::toolbox::solver::tests::VHHwJACTest::testIntegrals()
+{
+  VirtualHierarchicalHRefinement vhh(2);
+  vhh.calculateCoarserReturnValues();
+  for(int coarse = 0; coarse < TWO_POWER_D; coarse++){
+    for(int fine = 0; fine < TWO_POWER_D; fine++){
+      for(int dir = 0; dir<DIMENSIONS; dir++){
+        vhh.calculatePartialIntegral(dir, fine, coarse);
+      }
+    }
+  }
 }

@@ -19,6 +19,9 @@
 #include "tarch/logging/Log.h"
 #include "peano/kernel/datatraversal/autotuning/Oracle.h"
 
+// force service
+#include "peano/applications/faxen/lbf/services/ForcesService.h"
+
 namespace peano {
 namespace applications {
 namespace faxen {
@@ -62,7 +65,8 @@ private:
 	/**
 	 * init LB services after NSE simulations
 	 */
-	void initLBServicesAfterNSE(const peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationForRegularGrid& configuration);
+	void initLBServicesAfterNSE(const peano::applications::faxen::lbf::configurations::LBFBatchJobConfigurationForRegularGrid& configuration,
+			int initTimestepCounter);
 
 	/**
 	 * shutdown LB services
@@ -87,7 +91,7 @@ private:
 	/**
 	 * initialization services for computing Faxen forces
 	 */
-	void initFaxenForcesServices();
+	void initFaxenForcesServices(peano::applications::faxen::lbf::forces::ForceCalculator& forceCalculator);
 
 	/**
 	 * shutdown Faxen forces services

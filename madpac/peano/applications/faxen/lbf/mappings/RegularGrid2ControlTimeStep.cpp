@@ -162,6 +162,8 @@ void peano::applications::faxen::lbf::mappings::RegularGrid2ControlTimeStep::end
 
 //	std::cout << "time step: " << _dt << std::endl;
 
+	_dt = _dt < solverState.getThresDt() ? _dt : solverState.getThresDt();
+
 	solverState.setDelt(_dt);
 
 	logTraceOutWith1Argument( "endIteration()", solverState );

@@ -23,6 +23,7 @@ namespace peano {
 class peano::toolbox::solver::tests::VHHwJACTest: public tarch::tests::TestCase {
 private:
   void testWriter();
+  void testIntegrals();
 public:
   VHHwJACTest();
   virtual ~VHHwJACTest();

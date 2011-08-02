@@ -6,8 +6,13 @@ package peano {
   package applications { 
     package diffusionequation { 
       package explicittimestepping {
-      package cca {
-        package ports {
+        package cca {
+          /**
+           * This interface describes the Peano repository.
+           * 
+           * Due to it, you can basically encode your runners also within sciCoDE 
+           * as a (Java) stand-alone component. 
+           */
           interface ForwardBatchJob {
             switchToSetupExperiment();
             switchToSetupExperimentAndPlot();
@@ -16,36 +21,38 @@ package peano {
             switchToPlotSolution();
             switchToApplyRefineDeleteCriterion();
 
-            iterate();    
-
+            iterate();
+          
             /**
-             * @todo Add your own operations here
+             * @todo Add your application-specific operations provided by your 
+             *       component here (so-called provides ports).
              */
           }
+        
+        
+          /**
+           * This is the CCA implementation of your component for d=2.
+           *
+           * @todo Add further interfaces your component is using. 
+         
+         Das fehlt noch:
+                   uses
+            peano.integration.cca.ports.Log                as Log,
+            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
+            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
+         
+         Wahrscheinlich nur wenige davon per default
+         
+         
+         Weiterhin sollte zumindest das Grid-Zeugs unbedingt per default provided werden
+         Die Frage ist halt, ob man das eher als getter anbietet oder per fire&forget rausschickt.
+         Wahrscheinlich ist getter viel eleganter und natuerlicher
+           */
+          class ForwardBatchJobForRegularGrid
+            implements-all 
+              peano.applications.diffusionequation.explicittimestepping.cca.ForwardBatchJob
+          {}
         }
-        
-          
-        class ForwardBatchJobForRegularGrid
-          implements-all 
-            peano.applications.diffusionequation.explicittimestepping.cca.ports.ForwardBatchJob,
-            peano.integration.cca.ports.grid.Grid
-          uses
-            peano.integration.cca.ports.Log                as Log,
-            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
-            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
-        {}
-        
-          
-        class ForwardBatchJobForSpacetreeGrid
-          implements-all 
-            peano.applications.diffusionequation.explicittimestepping.cca.ports.ForwardBatchJob,
-            peano.integration.cca.ports.grid.Grid
-          uses
-            peano.integration.cca.ports.Log                as Log,
-            peano.integration.cca.ports.grid.Statistics    as GridStatistics,
-            peano.integration.cca.ports.grid.Visualisation as GridVisualisation
-        {}
-      }
 }
 }
 }
